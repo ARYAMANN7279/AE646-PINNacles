@@ -20,6 +20,12 @@ package-lock.json
 # Weights & Biases
 wandb/
 
+# Course lecture slides — kept locally for reference, NOT part of the project deliverable
+lectures/
+
+# Local Claude working config (personal workflow prefs — not imposed on teammates)
+CLAUDE.md
+
 # OS / editors
 .DS_Store
 .vscode/
