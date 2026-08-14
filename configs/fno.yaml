@@ -1,0 +1,29 @@
+# FNO Darcy Flow Configuration
+# Run: python src/train.py --config configs/fno.yaml
+
+run_name: "fno-darcy-64-12-4"
+
+data:
+  path: "data/processed"
+
+model:
+  type: "fno"  # or "mlp"
+  params:
+    input_channels: 3      # permeability + x_coord + y_coord
+    output_channels: 1     # pressure
+    width: 64              # channel width
+    modes: 12              # Fourier modes to keep
+    n_layers: 4            # number of spectral conv blocks
+    padding: 0
+
+training:
+  epochs: 100
+  batch_size: 16
+  lr: 0.001
+  weight_decay: 0.0001
+  scheduler: "cosine"
+  num_workers: 0
+
+output:
+  results_dir: "results/run_001"
+  save_every: 10

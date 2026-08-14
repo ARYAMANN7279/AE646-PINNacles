@@ -1,0 +1,8 @@
+{
+  "device": "cuda",
+  "fno_ms_per_sample": 0.7137501379474998,
+  "mlp_ms_per_sample": 0.1330925151705742,
+  "fdm_ms_per_sample": 1030.1484370138496,
+  "fno_speedup_vs_fdm": 1443.2900005822803,
+  "mlp_speedup_vs_fdm": 7740.092939814005
+}

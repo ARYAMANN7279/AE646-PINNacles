@@ -1,0 +1,28 @@
+# MLP Baseline Configuration
+# Run: python src/train.py --config configs/mlp.yaml
+
+run_name: "mlp-darcy-baseline"
+
+data:
+  path: "data/processed"
+
+model:
+  type: "mlp"
+  params:
+    input_channels: 3
+    output_channels: 1
+    height: 64
+    width: 64
+    hidden_dims: [2048, 2048, 2048]
+
+training:
+  epochs: 100
+  batch_size: 16
+  lr: 0.001
+  weight_decay: 0.0001
+  scheduler: "cosine"
+  num_workers: 0
+
+output:
+  results_dir: "results/run_002"
+  save_every: 10

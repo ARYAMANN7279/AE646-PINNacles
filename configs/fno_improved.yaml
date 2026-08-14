@@ -1,0 +1,30 @@
+# Improved FNO Darcy Flow Configuration
+# Run: python src/train.py --config configs/fno_improved.yaml
+# Expected: ~0.01-0.03 rel L2 (literature: ~0.01-0.02)
+
+run_name: "fno-darcy-improved-128-20-6"
+
+data:
+  path: "data/processed"
+
+model:
+  type: "fno"
+  params:
+    input_channels: 3      # permeability + x_coord + y_coord
+    output_channels: 1     # pressure
+    width: 128             # increased channel width (from 64)
+    modes: 20              # increased Fourier modes (from 12)
+    n_layers: 6            # increased layers (from 4)
+    padding: 0
+
+training:
+  epochs: 200              # more epochs
+  batch_size: 16
+  lr: 0.001
+  weight_decay: 0.0001
+  scheduler: "cosine"
+  num_workers: 0
+
+output:
+  results_dir: "results/run_003_fno_improved"
+  save_every: 20

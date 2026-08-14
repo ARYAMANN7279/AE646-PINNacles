@@ -1,0 +1,23 @@
+name: ae646-fno
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy=1.26
+  - scipy=1.13
+  - matplotlib=3.8
+  - pytorch=2.3
+  - h5py=3.11
+  - tqdm=4.66
+  - pyyaml=6.0
+  - pip=24.0
+  - pip:
+    - wandb==0.17.3
+    - requests==2.32.3
+
+# Note: no CUDA/platform-specific pin here on purpose - conda selects the
+# right pytorch build for whatever machine this is installed on (CPU, Apple
+# Silicon MPS, or CUDA if available). On a CUDA machine, `conda install
+# pytorch-cuda=12.1 -c pytorch -c nvidia` afterwards enables GPU acceleration.

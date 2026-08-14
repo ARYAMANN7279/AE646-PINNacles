@@ -1,0 +1,26 @@
+# Data (large, regenerable via src/download_data.py + src/preprocess.py)
+data/
+
+# Trained model checkpoints & training logs (large / noisy, regenerable via src/train.py)
+results/**/*.pt
+results/**/train.log
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+
+# Node (for scripts/build_presentation.js)
+node_modules/
+package-lock.json
+
+# Weights & Biases
+wandb/
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
