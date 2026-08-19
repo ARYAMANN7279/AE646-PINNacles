@@ -1,6 +1,7 @@
 # AE646 Project Proposal: Fourier Neural Operator for Parametric Darcy Flow
 
-**Team:** Aryaman Srivastava
+**Team:** PINNacles
+**Members:** Aryamann Srivastava, Varun Sathaye, Atishay Jain, Vedant Shekhar Tiwari
 **Course:** AE646 - Scientific Machine Learning for Fluid Mechanics
 **Project theme:** #8, Operator learning for parametric PDEs
 
@@ -107,7 +108,18 @@ generated data), some deviation from that exact number is expected and will be d
 
 ---
 
-## 8. AI Tool Use Declaration
+## 8. Individual Contributions
+
+| Member | Contribution |
+|--------|-------------|
+| Aryamann Srivastava | Model implementation (FNO, MLP), training and evaluation pipeline, data download and preprocessing, zero-shot super-resolution and speed benchmarks, report writing |
+| Varun Sathaye | [Please fill in your actual contribution before submission] |
+| Atishay Jain | [Please fill in your actual contribution before submission] |
+| Vedant Shekhar Tiwari | [Please fill in your actual contribution before submission] |
+
+---
+
+## 9. AI Tool Use Declaration
 
 AI tools (Claude) were used for: code implementation and debugging (data pipeline, FNO/MLP
 models, training/evaluation scripts), locating and verifying the correct official PDEBench
