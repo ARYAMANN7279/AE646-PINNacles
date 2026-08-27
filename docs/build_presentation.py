@@ -413,39 +413,42 @@ footer(sl, 7)
 
 F5W = (CW - Inches(0.8)) / 5
 FH  = CB - CT  # full content height
-DESC_H = Inches(2.1)   # text description height
-PH_T   = CT + Inches(0.52) + DESC_H + Inches(0.12)  # placeholder top
-PH_H   = CB - PH_T - Inches(0.05)                   # placeholder height
-for j, (num, title, desc, col) in enumerate([
+HDR_H  = Inches(0.68)  # taller header so long titles don't clip
+DESC_H = Inches(2.4)   # enough for ~8 wrapped lines at 15pt
+PH_T   = CT + HDR_H + Inches(0.1) + DESC_H + Inches(0.1)
+PH_H   = CB - PH_T - Inches(0.05)
+for j, (num, title, desc, sub, col) in enumerate([
     ("1", "Error Histograms",
      "Per-sample relative L2 for FNO original, FNO improved, and MLP baseline.\nReveals mean, median, and tail behaviour.",
+     "X-axis: relative L2 error\nY-axis: sample count\nOne histogram per model, overlaid for direct comparison.",
      ACCENT_BLUE),
     ("2", "Sample Predictions",
      "Side-by-side: κ input, target u, FNO prediction, absolute error.\nShown for several representative test cases.",
+     "4-panel grid per sample.\nSelected cases include easy, medium, and hard permeability patterns.",
      MID_BLUE),
-    ("3", "Model Comparison Table",
+    ("3", "Comparison Table",
      "Rel L2 (mean/median), parameter count, and inference time for all three models in one table.",
+     "Rows: MLP, FNO original, FNO improved.\nColumns: Rel L2 mean, Rel L2 median, params, ms/sample.",
      GREEN),
     ("4", "Zero-Shot Super-Res",
-     "FNO evaluated at native 128x128 vs PDEBench ground truth.\nNo retraining - validates resolution-invariance.",
+     "FNO evaluated at native 128x128 vs PDEBench ground truth. No retraining - validates resolution-invariance.",
+     "MLP cannot do this (fixed I/O size).\nFNO tested at 64x64 (train res) and 128x128 (zero-shot).",
      ORANGE),
     ("5", "Efficiency Scatter",
-     "Rel L2 vs parameter count - one point per model.\nShows the accuracy vs model-size trade-off.",
+     "Rel L2 vs parameter count - one point per model. Shows the accuracy vs model-size trade-off.",
+     "FNO sits lower-left (fewer params, lower error).\nMLP sits upper-right - expensive and less accurate.",
      DARK_BLUE),
 ]):
     CX5 = CL + j*(F5W+Inches(0.2))
-    box(sl, CX5, CT, F5W, Inches(0.52), fill=col)
-    tx(sl, f"{num}.  {title}", CX5+Inches(0.12), CT+Inches(0.08),
-       F5W-Inches(0.24), Inches(0.38), sz=Pt(14), bold=True, color=WHITE)
-    card_body(sl, CX5, CT+Inches(0.52), F5W, FH-Inches(0.52))
-    box(sl, CX5, CT+Inches(0.52), F5W, Inches(0.08), fill=col)
-    tx(sl, desc, CX5+Inches(0.15), CT+Inches(0.72), F5W-Inches(0.3), DESC_H,
-       sz=Pt(16), color=DARK_GRAY)
-    # Placeholder figure area
-    box(sl, CX5+Inches(0.12), PH_T, F5W-Inches(0.24), PH_H,
-        fill=RGBColor(0xEB, 0xEE, 0xF2), border=RGBColor(0xBD, 0xC3, 0xC7), bw=Pt(1))
-    tx(sl, "[ Figure ]", CX5+Inches(0.12), PH_T, F5W-Inches(0.24), PH_H,
-       sz=Pt(13), color=MED_GRAY, align=PP_ALIGN.CENTER)
+    box(sl, CX5, CT, F5W, HDR_H, fill=col)
+    tx(sl, f"{num}.  {title}", CX5+Inches(0.12), CT+Inches(0.1),
+       F5W-Inches(0.24), HDR_H-Inches(0.12), sz=Pt(13), bold=True, color=WHITE)
+    card_body(sl, CX5, CT+HDR_H, F5W, FH-HDR_H)
+    box(sl, CX5, CT+HDR_H, F5W, Inches(0.06), fill=col)
+    tx(sl, desc, CX5+Inches(0.15), CT+HDR_H+Inches(0.1), F5W-Inches(0.3), DESC_H,
+       sz=Pt(15), color=DARK_GRAY)
+    tx(sl, sub, CX5+Inches(0.15), PH_T, F5W-Inches(0.3), PH_H,
+       sz=Pt(14), color=MED_GRAY)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # S8 Work Plan
