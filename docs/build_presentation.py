@@ -413,21 +413,24 @@ footer(sl, 7)
 
 F5W = (CW - Inches(0.8)) / 5
 FH  = CB - CT  # full content height
+DESC_H = Inches(2.1)   # text description height
+PH_T   = CT + Inches(0.52) + DESC_H + Inches(0.12)  # placeholder top
+PH_H   = CB - PH_T - Inches(0.05)                   # placeholder height
 for j, (num, title, desc, col) in enumerate([
-    ("1", "Error Distribution Histograms",
-     "Per-sample relative L2 for FNO (original), FNO (improved), and MLP.\n\nShows mean, median, and tail - where does each model struggle?",
+    ("1", "Error Histograms",
+     "Per-sample relative L2 for FNO original, FNO improved, and MLP baseline.\nReveals mean, median, and tail behaviour.",
      ACCENT_BLUE),
     ("2", "Sample Predictions",
-     "Side-by-side panels:\nκ input  |  target u  |  FNO prediction  |  absolute error.\n\nFor several representative test cases.",
+     "Side-by-side: κ input, target u, FNO prediction, absolute error.\nShown for several representative test cases.",
      MID_BLUE),
     ("3", "Model Comparison Table",
-     "Mean / median Rel L2, parameter count, and inference time (ms/sample) for all three models in a single table.",
+     "Rel L2 (mean/median), parameter count, and inference time for all three models in one table.",
      GREEN),
     ("4", "Zero-Shot Super-Res",
-     "Both FNOs evaluated at native 128×128 vs real PDEBench ground truth.\n\nValidates resolution-invariance without any retraining.",
+     "FNO evaluated at native 128x128 vs PDEBench ground truth.\nNo retraining - validates resolution-invariance.",
      ORANGE),
     ("5", "Efficiency Scatter",
-     "Accuracy (Rel L2) vs parameter count - one point per model.\n\nShows the Pareto trade-off between model size and error.",
+     "Rel L2 vs parameter count - one point per model.\nShows the accuracy vs model-size trade-off.",
      DARK_BLUE),
 ]):
     CX5 = CL + j*(F5W+Inches(0.2))
@@ -436,8 +439,13 @@ for j, (num, title, desc, col) in enumerate([
        F5W-Inches(0.24), Inches(0.38), sz=Pt(14), bold=True, color=WHITE)
     card_body(sl, CX5, CT+Inches(0.52), F5W, FH-Inches(0.52))
     box(sl, CX5, CT+Inches(0.52), F5W, Inches(0.08), fill=col)
-    tx(sl, desc, CX5+Inches(0.15), CT+Inches(0.72), F5W-Inches(0.3), FH-Inches(0.9),
-       sz=Pt(15), color=DARK_GRAY)
+    tx(sl, desc, CX5+Inches(0.15), CT+Inches(0.72), F5W-Inches(0.3), DESC_H,
+       sz=Pt(16), color=DARK_GRAY)
+    # Placeholder figure area
+    box(sl, CX5+Inches(0.12), PH_T, F5W-Inches(0.24), PH_H,
+        fill=RGBColor(0xEB, 0xEE, 0xF2), border=RGBColor(0xBD, 0xC3, 0xC7), bw=Pt(1))
+    tx(sl, "[ Figure ]", CX5+Inches(0.12), PH_T, F5W-Inches(0.24), PH_H,
+       sz=Pt(13), color=MED_GRAY, align=PP_ALIGN.CENTER)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # S8 Work Plan
