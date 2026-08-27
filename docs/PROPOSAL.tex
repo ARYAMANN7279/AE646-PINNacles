@@ -1,0 +1,152 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{xcolor}
+
+% Link colors
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    pdftitle={AE646 Stage 1 Proposal}
+}
+
+% Format section headings slightly smaller and tighter
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.5ex plus 1ex minus .2ex}{0.8ex plus .2ex}
+
+\begin{document}
+
+\begin{center}
+    \Large \textbf{AE646 Project Proposal:}\\
+    \textbf{Fourier Neural Operator for Parametric Darcy Flow} \\[1em]
+\end{center}
+
+\noindent
+\textbf{Team:} PINNacles \\
+\textbf{Members:} Aryamann Srivastava, Varun Sathaye, Atishay Jain, Vedant Shekhar Tiwari \\
+\textbf{Course:} AE646 - Scientific Machine Learning for Fluid Mechanics \\
+\textbf{Project Theme:} \#8, Operator learning for parametric PDEs
+\vspace{1em}
+\hrule
+\vspace{1.5em}
+
+\section{Problem Statement}
+Parametric PDEs arise frequently in fluid mechanics and porous media flow. The 2D Darcy flow equation models steady-state pressure in a heterogeneous porous medium:
+\begin{equation*}
+    -\nabla \cdot (\kappa(x,y) \nabla u(x,y)) = f(x,y), \quad (x,y) \in (0,1)^2
+\end{equation*}
+with $u = 0$ on the boundary, where $\kappa$ is a piecewise-constant permeability field (values in $\{0.1, 1.0\}$, from thresholding a smooth Gaussian random field) and $f = \beta = 1.0$ is a constant source term.
+
+\vspace{0.5em}\noindent
+\textbf{Objective:} We aim to learn the solution operator mapping permeability fields to pressure fields. This will enable fast surrogate modeling for parametric studies, optimization, and uncertainty quantification, without re-solving the PDE for every new permeability realization.
+
+\section{Dataset \& PDE Source}
+\textbf{Dataset:} Real PDEBench 2D Darcy Flow ($\beta=1.0$). We will download this from the official source (DaRUS/Uni Stuttgart, DOI 10.18419/darus-2986; which contains 10,000 samples at a native $128 \times 128$ resolution).
+
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item We will draw a reproducible subset: \textbf{1000 samples for train/val} (split 900/100) and \textbf{200 held out for testing}, non-overlapping.
+    \item Our main experiments will use fields downsampled to \textbf{$64 \times 64$} (every 2nd grid point).
+    \item We will keep the 200 test samples' \textbf{native $128 \times 128$} fields aside separately to evaluate zero-shot super-resolution capabilities.
+\end{itemize}
+
+\noindent
+\textbf{Source:} \url{https://github.com/pdebench/PDEBench}
+
+\section{Baseline Method}
+\textbf{MLP (Fully Connected Network):}
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Input:} Flattened ($64 \times 64 \times 3 = 12,288$) [permeability + x\_coord + y\_coord]
+    \item \textbf{Architecture:} 3 hidden layers $\times$ 2048 units, GELU activation
+    \item \textbf{Output:} Flattened ($64 \times 64$) pressure field
+    \item \textbf{Parameters:} $\sim$42.0M
+    \item \textbf{Drawback:} \textbf{No spatial inductive bias} — treats the problem as a dense vector mapping.
+\end{itemize}
+
+\section{Proposed SciML Method}
+\textbf{Fourier Neural Operator (FNO):}
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Architecture:} Lift (3 $\to$ 64) $\to$ 4 Spectral Conv blocks (modes=12) $\to$ Project (64 $\to$ 128 $\to$ 1)
+    \item \textbf{Spectral Conv:} 2D FFT $\to$ multiply learned weights in Fourier space $\to$ IFFT
+    \item \textbf{Parameters:} $\sim$4.7M
+    \item \textbf{Advantage:} \textbf{Spatial inductive bias} via spectral convolutions.
+    \item \textbf{Advantage:} Resolution-invariant: can evaluate on finer grids zero-shot.
+\end{itemize}
+
+\noindent
+We also plan to train a second, larger FNO configuration (width=128, modes=20, 6 layers, $\sim$78.8M params) to study the accuracy vs. parameter-count trade-off.
+
+\section{Evaluation Metrics}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{@{} l X @{}}
+\toprule
+\textbf{Metric} & \textbf{Description} \\
+\midrule
+\textbf{Relative L2 Error} (Primary) & L2 norm of (prediction - target) divided by the L2 norm of the target, per sample, in physical units. \\
+\textbf{Per-sample distribution} & Mean, median, std, min, max. \\
+\textbf{Generalization gap} & Test vs validation error. \\
+\textbf{Zero-shot super-resolution} & FNO evaluated at native $128 \times 128$ against the real ground truth. \\
+\textbf{Inference speed} & Measured wall-clock time vs a finite-difference (FDM) solver. \\
+\textbf{Qualitative} & Prediction vs target vs error plots. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\noindent
+\textbf{Expected results (from literature, Li et al. 2021):} FNO relative L2 $\approx$ 0.01--0.02 on the (differently-generated) Darcy dataset used in their paper. Because PDEBench's Darcy setup uses piecewise-constant permeability rather than a continuous log-permeability field, and we plan to use a smaller training set (1000 vs the $\sim$1000--4000 used in various FNO papers), some deviation from that exact number is expected and will be discussed.
+
+\section{Expected Figures/Tables}
+\begin{enumerate}[noitemsep, topsep=2pt]
+    \item Error distribution histograms (FNO original vs FNO improved vs MLP)
+    \item Sample predictions: permeability input, target pressure, prediction, absolute error
+    \item Comparison table: metrics, parameters, inference time
+    \item Zero-shot super-resolution results at native $128 \times 128$
+    \item Efficiency scatter: error vs parameter count
+\end{enumerate}
+
+\section{Work Plan}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{@{} l X @{}}
+\toprule
+\textbf{Stage} & \textbf{Task} \\
+\midrule
+\textbf{Proposal} & Confirm data source (PDEBench) and finalize pipeline design. \\
+\textbf{Interim} & Implement download/preprocessing pipeline, train the baseline (MLP) and initial FNO model, and gather preliminary results. \\
+\textbf{Final} & Complete hyperparameter comparison (original vs improved FNO), conduct zero-shot super-resolution testing, perform inference-speed benchmarking, and write final report. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Individual Contributions}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{@{} l X @{}}
+\toprule
+\textbf{Member} & \textbf{Contribution} \\
+\midrule
+\textbf{Aryamann Srivastava} & Will work on model implementation (FNO, MLP), build training and evaluation pipelines, manage data download/preprocessing, conduct benchmarks, and draft reports. \\
+\addlinespace
+\textbf{Varun Sathaye} & Will contribute to literature review, baseline model tuning, error analysis and formatting of deliverables. \\
+\addlinespace
+\textbf{Atishay Jain} & Will work on data visualization, plotting (error distributions, field comparisons) and slide preparation. \\
+\addlinespace
+\textbf{Vedant S. Tiwari} & Will work on zero-shot testing, speed benchmarking, cross-checking results and proofreading the final report. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{AI Tool Use Declaration}
+AI tools will be used for conceptual understanding, coding assistance, and debugging (data pipeline, FNO/MLP models, training/evaluation scripts), as well as report drafting. All generated code will be inspected, verified, and fully understood by the team members prior to submission, in accordance with the course's academic integrity policy.
+
+\end{document}
