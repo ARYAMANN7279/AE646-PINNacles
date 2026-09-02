@@ -1,0 +1,22 @@
+{
+  "device": "mps",
+  "iterations": 500,
+  "per_sample_ms": {
+    "lift": 0.531525,
+    "fft": 2.437702,
+    "complex_mul": 8.037881,
+    "ifft": 2.941176,
+    "local_conv": 4.795799,
+    "projection": 0.869404,
+    "component_total": 19.613487,
+    "wall_clock": 19.987157
+  },
+  "pct": {
+    "lift": 2.71,
+    "fft": 12.43,
+    "complex_mul": 40.98,
+    "ifft": 15.0,
+    "local_conv": 24.45,
+    "projection": 4.43
+  }
+}
