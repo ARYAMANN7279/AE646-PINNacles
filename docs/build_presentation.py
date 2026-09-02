@@ -339,9 +339,9 @@ blist(sl,
      "Resolution-invariant: weights don't depend on grid size",
      "  → Evaluates at 128×128 zero-shot, no retraining",
      "Spectral inductive bias: Darcy pressure is low-frequency dominated",
-     "Also training a larger config:",
+     "We also plan to train a larger config:",
      "  → width=128, modes=20, 6 layers - 78.8M params",
-     "  → Studies accuracy vs parameter-count trade-off"],
+     "  → Will study accuracy vs parameter-count trade-off"],
     CL+SW+Inches(0.2), BT5+Inches(0.58), PW, BH5-Inches(0.65),
     sz=Pt(16))
 
@@ -436,7 +436,7 @@ for j, (num, title, desc, sub, col) in enumerate([
      ORANGE),
     ("5", "Efficiency Scatter",
      "Rel L2 vs parameter count - one point per model. Shows the accuracy vs model-size trade-off.",
-     "FNO sits lower-left (fewer params, lower error).\nMLP sits upper-right - expensive and less accurate.",
+     "We expect FNO lower-left (fewer params, lower error).\nMLP expected upper-right - more parameters, likely higher error.",
      DARK_BLUE),
 ]):
     CX5 = CL + j*(F5W+Inches(0.2))
