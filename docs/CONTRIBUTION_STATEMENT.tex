@@ -1,0 +1,66 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{parskip}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=blue}
+
+\title{\textbf{AE646 --- Individual Contribution Statement \&\\AI Tool Use Declaration}\\[0.5em]
+\large Team PINNacles}
+\author{Aryamann Srivastava}
+\date{November 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Individual Contribution Statement}
+
+\textbf{Team member: Aryamann Srivastava}
+
+\begin{itemize}
+  \item \textbf{Problem formulation and literature review}: Identified the 2D Darcy flow benchmark in PDEBench as the project focus; reviewed the FNO paper \cite{li2021fno} and PDEBench paper \cite{takamoto2022pdebench}.
+
+  \item \textbf{Data pipeline}: Implemented \texttt{src/download\_data.py} and \texttt{src/preprocess.py} for downloading and preprocessing PDEBench data; designed the 8\,000/900/200 train/val/test split.
+
+  \item \textbf{Model implementation}: Implemented \texttt{MLPBaseline}, \texttt{SpectralConv2d}, and \texttt{FNO2d} in \texttt{src/models.py}; verified correctness against the reference FNO codebase.
+
+  \item \textbf{Training}: Implemented \texttt{src/train.py} with Adam optimiser, cosine LR annealing, and early stopping; ran all three training runs (FNO original, MLP, FNO improved) on the lab GPU VM.
+
+  \item \textbf{Evaluation}: Implemented \texttt{src/evaluate.py}, \texttt{src/superres\_eval.py}, and \texttt{src/benchmark\_speed.py}; collected all quantitative results.
+
+  \item \textbf{Component profiling}: Designed and implemented \texttt{src/benchmark\_components.py} with correct GPU synchronisation to measure per-layer execution time.
+
+  \item \textbf{Figure generation}: Implemented \texttt{src/generate\_figures.py}; produced all six report figures from stored JSON results.
+
+  \item \textbf{Reports and presentations}: Wrote Stage 1 proposal (\texttt{PROPOSAL.tex}), Stage 1 presentation (10 slides), Stage 2 interim report (\texttt{INTERIM\_REPORT.tex}), and this final report (\texttt{FINAL\_REPORT.tex}).
+\end{itemize}
+
+This is a solo project; all contributions above are by Aryamann Srivastava.
+
+\bigskip
+\section*{AI Tool Use Declaration}
+
+In accordance with the AE646 course policy on generative AI tools, I declare the following use of AI assistance during this project:
+
+\begin{enumerate}
+  \item \textbf{Code debugging}: Claude Code (Anthropic) was used to identify and fix a GPU timing bug in the component profiling script. Specifically, the issue was that \texttt{time.perf\_counter()} measured dispatch time rather than execution time for asynchronous GPU operations; the fix (\texttt{torch.cuda.synchronize()} before each timer call) was suggested by the AI assistant. All code was reviewed, understood, and accepted by me before being committed.
+
+  \item \textbf{LaTeX formatting}: Claude Code assisted with LaTeX document structure and table formatting for the proposal and reports. All technical content, numbers, and scientific claims are my own.
+
+  \item \textbf{Presentation slides}: Claude Code assisted with Python code to programmatically build the Stage 1 PPTX presentation using \texttt{python-pptx}. The technical content of every slide was written by me.
+
+  \item \textbf{No AI-generated results}: All numerical results in this report are from experiments I ran on real hardware. No results were generated or hallucinated by AI tools.
+\end{enumerate}
+
+\bigskip
+\noindent
+\textbf{Signature:} Aryamann Srivastava \hfill \textbf{Date:} November 2026
+
+\bigskip
+\begin{thebibliography}{9}
+\bibitem{li2021fno}
+  Z.\ Li et al., ``Fourier Neural Operator for Parametric Partial Differential Equations,'' \textit{ICLR}, 2021.
+\bibitem{takamoto2022pdebench}
+  M.\ Takamoto et al., ``PDEBench,'' \textit{NeurIPS}, 2022.
+\end{thebibliography}
+
+\end{document}

@@ -56,7 +56,9 @@ AE646-PINNacles/
 |   |-- evaluate.py          # test-set evaluation + visualization
 |   |-- superres_eval.py     # zero-shot super-resolution at native 128x128
 |   |-- benchmark_speed.py   # real FNO vs MLP vs FDM-solver timing
-|   `-- compare_comprehensive.py
+|   |-- compare_comprehensive.py
+|   |-- benchmark_components.py  # per-layer FNO timing with GPU sync
+|   `-- generate_figures.py      # all report figures from stored JSON results
 |-- tests/                   # pytest suite for models/metrics/data
 |-- scripts/                 # md->pdf, pptx build, remote-GPU run helper
 |-- results/                 # metrics (JSON) + figures for the 3 runs (checkpoints not tracked)
@@ -104,14 +106,20 @@ account/login is needed to reproduce results)
 
 ### 5. Evaluate, super-resolution, speed benchmark
 ```bash
-python src/evaluate.py --config configs/fno.yaml --checkpoint results/run_001/best_model.pt
-python src/evaluate.py --config configs/mlp.yaml --checkpoint results/run_002/best_model.pt
-python src/evaluate.py --config configs/fno_improved.yaml --checkpoint results/run_003_fno_improved/best_model.pt
+python3 src/evaluate.py --config configs/fno.yaml --checkpoint results/run_001/best_model.pt
+python3 src/evaluate.py --config configs/mlp.yaml --checkpoint results/run_002/best_model.pt
+python3 src/evaluate.py --config configs/fno_improved.yaml --checkpoint results/run_003_fno_improved/best_model.pt
 
-python src/superres_eval.py --config configs/fno.yaml --checkpoint results/run_001/best_model.pt
-python src/benchmark_speed.py
+python3 src/superres_eval.py --config configs/fno.yaml --checkpoint results/run_001/best_model.pt
+python3 src/superres_eval.py --config configs/fno_improved.yaml --checkpoint results/run_003_fno_improved/best_model.pt
+python3 src/benchmark_speed.py
+python3 src/benchmark_components.py   # per-layer FNO profiling
+python3 src/compare_comprehensive.py
+```
 
-python src/compare_comprehensive.py
+### 6. Generate report figures
+```bash
+python3 src/generate_figures.py       # outputs to results/figures/
 ```
 
 ## Model Details
@@ -159,21 +167,24 @@ actually *faster* per-sample than FNO here despite having 9× more parameters.
 - Run the tests with `pytest` from the repo root
 
 ## Documents (in `docs/`)
-The stage reports are written in Markdown (`.md`, source of truth) and rendered to PDF for
-submission.
+Reports are written in LaTeX (`.tex`). Compile with tectonic (recommended) or any TeX distribution:
 
-Regenerate the PDFs after editing any report `.md`:
 ```bash
-pip install markdown xhtml2pdf
-python scripts/md_to_pdf.py           # docs/*.md -> docs/*.pdf
+# Install tectonic once
+brew install tectonic
+
+# Compile reports
+cd docs
+tectonic INTERIM_REPORT.tex          # -> INTERIM_REPORT.pdf
+tectonic FINAL_REPORT.tex            # -> FINAL_REPORT.pdf
+tectonic CONTRIBUTION_STATEMENT.tex  # -> CONTRIBUTION_STATEMENT.pdf
 ```
 
-Rebuild the slide deck after editing its content in `scripts/build_presentation.js`:
+Rebuild the slide deck:
 ```bash
-npm install pptxgenjs
-node scripts/build_presentation.js    # -> docs/PRESENTATION.pptx
+cd docs
+python3 build_presentation.py        # -> docs/PINNacles_Stage1_Presentation.pptx
 ```
-(Both scripts resolve paths relative to the repo, so they run from anywhere after cloning.)
 
 ## Optional: synthetic fallback
 `src/generate_data.py` self-generates a Darcy dataset (piecewise-constant permeability,
