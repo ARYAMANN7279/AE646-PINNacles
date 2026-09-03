@@ -592,6 +592,8 @@ tx(sl, "Thank you  -  Questions welcome",
    sz=Pt(19), color=WHITE, align=PP_ALIGN.CENTER)
 
 # ── save ──────────────────────────────────────────────────────────────────────
-OUT = "/Users/aryamannsrivastava/Desktop/sem7/ae646/docs/PINNacles_Stage1_Presentation.pptx"
+import os
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                   "PINNacles_Stage1_Presentation.pptx")
 prs.save(OUT)
 print(f"Saved → {OUT}")

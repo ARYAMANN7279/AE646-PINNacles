@@ -26,7 +26,7 @@ Fourier Neural Operator vs.\ MLP Baseline with Physical Interpretation}
 \maketitle
 
 \begin{abstract}
-We compare Fourier Neural Operator (FNO) and a fully-connected MLP baseline as surrogate solvers for the 2D parametric Darcy flow equation $-\nabla\cdot(\kappa\nabla u)=f$, trained on 8\,000 samples from the PDEBench benchmark at $64\times64$ resolution. FNO (4.7\,M parameters) achieves a mean relative $L_2$ error of $0.052$ on 200 held-out test samples, $37\%$ lower than the MLP (0.082, 42\,M parameters) at $9\times$ lower parameter count. A scaled FNO (78.8\,M parameters) further reduces error to $0.046$. Both models infer in $<1$\,ms per sample, orders of magnitude faster than the FDM reference (1030\,ms). FNO's spectral weights enable zero-shot super-resolution: the same trained model evaluated at $128\times128$ attains mean error $0.059$ without retraining. Component profiling reveals that spectral operations (FFT, complex multiply, IFFT) account for 68.4\% of FNO's compute time, with complex multiplication alone at 41\%.
+We compare Fourier Neural Operator (FNO) and a fully-connected MLP baseline as surrogate solvers for the 2D parametric Darcy flow equation $-\nabla\cdot(\kappa\nabla u)=f$, trained on 900 samples from the PDEBench benchmark at $64\times64$ resolution. FNO (4.7\,M parameters) achieves a mean relative $L_2$ error of $0.052$ on 200 held-out test samples, $37\%$ lower than the MLP (0.082, 42\,M parameters) at $9\times$ lower parameter count. A scaled FNO (78.8\,M parameters) further reduces error to $0.046$. Both models infer in $<1$\,ms per sample, orders of magnitude faster than the FDM reference (1030\,ms). FNO's spectral weights enable zero-shot super-resolution: the same trained model evaluated at $128\times128$ attains mean error $0.059$ without retraining. Component profiling reveals that spectral operations (FFT, complex multiply, IFFT) account for 68.4\% of FNO's compute time, with complex multiplication alone at 41\%.
 \end{abstract}
 
 \tableofcontents
@@ -79,10 +79,10 @@ We use the 2D Darcy flow split of PDEBench \cite{takamoto2022pdebench} (DOI: \te
 
 \subsection{Preprocessing Pipeline}
 \begin{enumerate}[nosep]
-  \item Bilinear downsampling of $\kappa$ and $u$ from $128\times128$ to $64\times64$ (training resolution).
+  \item Subsample $\kappa$ and $u$ from $128\times128$ to $64\times64$ by taking every second grid point (training resolution).
   \item Concatenate spatially-uniform coordinate grids $(x,y)\in[0,1]^2$ as additional channels to give input shape $64\times64\times3$.
-  \item Normalise each channel with training-set mean and standard deviation.
-  \item Split: 8\,000 train / 900 validation / 200 test (fixed, no shuffling after split).
+  \item Normalise $\kappa$ and $u$ with training-set mean and standard deviation.
+  \item Split: a reproducible (seed 42), non-overlapping subset of the 10\,000-sample archive --- 900 train / 100 validation / 200 test, matching the sample counts used by Li et al.\ (2021). The 200 test samples are held out entirely during training.
 \end{enumerate}
 
 \subsection{Why Downsample?}
@@ -97,19 +97,19 @@ Working at $64\times64$ reduces memory and compute by $4\times$ while preserving
   \xrightarrow{2048,\text{GELU}} \xrightarrow{2048,\text{GELU}} \xrightarrow{2048,\text{GELU}}
   \mathbb{R}^{4096} \xrightarrow{\rm reshape} \mathbb{R}^{64\times64}
 \]
-Parameters: $12288\times2048 + 2048\times2048 + 2048\times2048 + 2048\times4096 \approx 42$\,M. The MLP treats every spatial location independently in its first layer, discarding spatial coherence. It is resolution-locked: the input linear layer has exactly 12\,288 neurons.
+Parameters: $12288{\times}2048 + 2{\times}(2048{\times}2048) + 2048{\times}4096 \approx 42$\,M. The MLP treats every spatial location independently in its first layer, discarding spatial coherence. It is resolution-locked: the input linear layer has exactly 12\,288 neurons.
 
 \subsection{FNO Architecture}
 \begin{enumerate}[nosep]
-  \item \textbf{Lifting} (\texttt{fc0}): $3\to64$ channels pointwise ($3\times64 = 192$ parameters).
+  \item \textbf{Lifting} (\texttt{fc0}): $3\to64$ channels pointwise ($3\times64 + 64 = 256$ parameters).
   \item \textbf{4$\times$ Fourier Blocks}: each block contains
     \begin{itemize}[nosep]
-      \item \texttt{SpectralConv2d}($64\to64$, modes=12): learnable complex weights $R\in\mathbb{C}^{64\times64\times12\times12}$; $\approx 1.18$\,M real parameters per block.
-      \item Local bypass: $1\times1$ convolution ($64\to64$), Instance Normalisation, GELU.
+      \item \texttt{SpectralConv2d}($64\to64$, modes=12): two learnable complex weight tensors $R_1,R_2\in\mathbb{C}^{64\times64\times12\times12}$ (low- and high-frequency bands), $\approx 1.18$\,M complex entries per block.
+      \item Local bypass: $1\times1$ convolution ($64\to64$), Layer Normalisation, GELU.
     \end{itemize}
-  \item \textbf{Projection}: $64\to128\to1$ pointwise ($128\times65 + 1\times129 \approx 8.5$\,K parameters).
+  \item \textbf{Projection}: $64\to128\to1$ pointwise ($64\times128 + 128\times1$, plus biases, $\approx 8.4$\,K parameters).
 \end{enumerate}
-Total: $\approx 4.7$\,M parameters. The FNO improved variant uses width=128, modes=24: $\approx78.8$\,M parameters.
+Total: $\approx 4.7$\,M parameters. The FNO improved variant uses width=128, modes=20, and 6 Fourier blocks: $\approx78.8$\,M parameters.
 
 \subsection{Key Architectural Differences}
 \begin{center}
@@ -132,12 +132,12 @@ All models were trained with:
 \begin{itemize}[nosep]
   \item \textbf{Loss}: $\mathcal{L} = \frac{1}{B}\sum_{i=1}^B \frac{\|\hat{u}_i - u_i\|_2}{\|u_i\|_2}$
   \item \textbf{Optimiser}: Adam, $\eta_0 = 10^{-3}$, cosine annealing to $\eta_{\min}=10^{-5}$
-  \item \textbf{Batch size}: 16; maximum 200 epochs, early stopping with patience 25
+  \item \textbf{Batch size}: 16; 100 epochs (200 for FNO improved). No early stopping --- each run completes its full epoch budget and the checkpoint with the lowest validation relative-$L_2$ error is retained.
   \item \textbf{Regularisation}: $L_2$ weight decay $10^{-4}$
-  \item \textbf{Hardware}: NVIDIA GPU, PyTorch 2.x with \texttt{torch.compile}
+  \item \textbf{Hardware}: NVIDIA RTX PRO 6000 (CUDA), PyTorch 2.x
 \end{itemize}
 
-Best validation epochs: FNO original at epoch 92, MLP at epoch 99, FNO improved at epoch 198 (required more epochs to converge due to larger model).
+Best validation epochs: FNO original at epoch 92, MLP at epoch 99, FNO improved at epoch 198 (the larger model keeps improving for longer, hence its 200-epoch budget).
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Results}
@@ -152,9 +152,9 @@ Best validation epochs: FNO original at epoch 92, MLP at epoch 99, FNO improved 
 \toprule
 Model & Params & Mean & Median & Std & Min & Max \\
 \midrule
-MLP baseline & 42.0\,M & 0.0820 & 0.0737 & 0.0456 & 0.0325 & 0.3367 \\
-FNO original &  4.7\,M & 0.0521 & 0.0418 & 0.0451 & 0.0155 & 0.3467 \\
-FNO improved & 78.8\,M & \textbf{0.0456} & \textbf{0.0354} & 0.0487 & \textbf{0.0106} & 0.3535 \\
+MLP baseline & 42.0\,M & 0.0820 & 0.0695 & 0.0456 & 0.0325 & 0.3367 \\
+FNO original &  4.7\,M & 0.0521 & 0.0398 & 0.0451 & 0.0155 & 0.3467 \\
+FNO improved & 78.8\,M & \textbf{0.0456} & \textbf{0.0307} & 0.0487 & \textbf{0.0106} & 0.3535 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -184,7 +184,7 @@ FNO improved & 78.8\,M & \textbf{0.0456} & \textbf{0.0354} & 0.0487 & \textbf{0.
 \section{Zero-Shot Super-Resolution}
 \label{sec:superres}
 
-We evaluate FNO variants on the full $128\times128$ PDEBench grid, using $\kappa$ bilinearly upsampled from $64\times64$ as input. No retraining is performed.
+We evaluate the FNO variants on the full $128\times128$ PDEBench grid, using the native-resolution $\kappa$ fields held out during preprocessing (\texttt{data/processed/test\_hires.npz} --- genuine PDEBench ground truth that was never downsampled). No retraining or fine-tuning is performed; only the normalisation constants from the $64\times64$ training set are reused.
 
 \begin{table}[H]
 \centering
@@ -207,10 +207,11 @@ FNO improved  & $0.0456 \pm 0.0487$ & $0.0563 \pm 0.0467$ \\
 \end{figure}
 
 \paragraph{Physical Interpretation.}
-At $128\times128$, the FNO output contains $64^2 = 4096$ frequency components, but only the lowest $12\times12 = 144$ are modelled by the trained weights. The remaining modes are implicitly set to zero. For Darcy flow, the dominant frequency content of $u$ is low (smooth solutions), so the missing high-frequency modes contribute little energy --- explaining why the error increase ($+14\%$ for FNO original) is moderate rather than catastrophic.
+At $128\times128$ the input carries roughly $4\times$ as many resolvable Fourier modes as at $64\times64$, but the trained \texttt{SpectralConv2d} weights still parameterise only the lowest $12\times12$ modes per block (20 for the improved variant); the additional high-frequency band is left unmodelled. For Darcy flow the dominant frequency content of $u$ is low (smooth solutions), so those missing high-frequency modes carry little energy --- explaining why the error increase ($+14\%$ for FNO original) is moderate rather than catastrophic.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Inference Speed and Component Profiling}
+\label{sec:speed}
 
 \subsection{End-to-End Inference Speed}
 
@@ -238,7 +239,7 @@ MLP is $5.4\times$ faster than FNO per sample despite inferior accuracy, because
 
 \subsection{FNO Layer-wise Profiling}
 
-We profiled each sub-operation of FNO's forward pass using GPU-synchronised timers (wall-clock measured \emph{after} \texttt{torch.cuda.synchronize()} at each step boundary, so all times reflect true GPU execution rather than dispatch latency).
+We profiled each sub-operation of FNO's forward pass by forcing a device synchronisation before every timer read (\texttt{torch.cuda.synchronize} on CUDA, \texttt{torch.mps.synchronize} on Apple Silicon), so each interval reflects true execution time rather than dispatch latency. This particular run was collected on Apple Silicon (MPS) over 500 iterations. Synchronising at every step boundary serialises the pipeline and inflates the \emph{absolute} times far above the fused end-to-end latency of Section~\ref{sec:speed} (component sum $\approx$19.6\,ms here vs.\ 0.71\,ms on the RTX PRO 6000); the \emph{relative} split below is the portable, hardware-independent result and is what we rely on.
 
 \begin{figure}[H]
 \centering
@@ -248,19 +249,20 @@ We profiled each sub-operation of FNO's forward pass using GPU-synchronised time
 
 \begin{table}[H]
 \centering
-\caption{FNO per-sample component times (4 spectral blocks, aggregated).}
+\caption{FNO per-sample component times (width 64, 12 modes, 4 spectral blocks aggregated). Measured on Apple Silicon (MPS), 500 iterations, sync before every timer read; see \texttt{results/benchmark\_components.json}.}
 \begin{tabular}{lrr}
 \toprule
 Component & Time (ms) & \% of total \\
 \midrule
-Lifting (\texttt{fc0})            & see JSON & 2.7\% \\
-FFT ($\times$4 layers)            &          & 12.4\% \\
-Complex Multiply ($\times$4)      &          & 41.0\% \\
-IFFT ($\times$4 layers)           &          & 15.0\% \\
-Local Conv + Norm + GELU ($\times$4) &       & 24.5\% \\
-Projection (\texttt{fc1+fc2})     &          & 4.4\% \\
+Lifting (\texttt{fc0})               & 0.53 & 2.7\% \\
+FFT ($\times$4 layers)               & 2.44 & 12.4\% \\
+Complex Multiply ($\times$4)         & 8.04 & 41.0\% \\
+IFFT ($\times$4 layers)              & 2.94 & 15.0\% \\
+Local Conv + Norm + GELU ($\times$4) & 4.80 & 24.5\% \\
+Projection (\texttt{fc1+fc2})        & 0.87 & 4.4\% \\
 \midrule
-Spectral ops total                &          & 68.4\% \\
+Spectral ops total (FFT + Mul + IFFT) & 13.42 & 68.4\% \\
+Component sum                          & 19.61 & 100\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -277,7 +279,7 @@ The Darcy pressure field $u$ is the solution of an elliptic PDE: it is globally 
 The MLP, by flattening the spatial field, loses locality information in its first layer. It can in principle learn any mapping from $\kappa$ to $u$, but the 42\,M-parameter space is not well-regularised for this specific task: the network must discover spatial correlations by brute force, leading to higher error.
 
 \subsection{High-Error Cases}
-Samples with relative $L_2 > 0.2$ (approximately the top 5\% of test errors) share a common feature: the $\kappa$ field has a large number of distinct connected regions with sharp interfaces, creating rapid spatial transitions in $\nabla u$. These transitions require high-frequency Fourier modes to represent accurately --- exactly the modes discarded by the 12-mode FNO. Increasing the mode count (as in FNO improved with modes=24) partially mitigates this: the maximum error drops from 0.347 to 0.354, while minimum error drops from 0.0155 to 0.0106 (the easy cases improve more).
+Samples with relative $L_2 > 0.2$ (approximately the top 5\% of test errors) share a common feature: the $\kappa$ field has a large number of distinct connected regions with sharp interfaces, creating rapid spatial transitions in $\nabla u$. These transitions require high-frequency Fourier modes to represent accurately --- exactly the modes discarded by the 12-mode FNO. Increasing the mode count and depth (FNO improved: modes=20, 6 blocks) helps most on the easy and typical cases --- the minimum error falls from 0.0155 to 0.0106 and the median from 0.0398 to 0.0307 --- but barely moves the worst case (max error 0.347 vs.\ 0.354), confirming that the hardest multi-region fields are limited by something other than raw mode count.
 
 \subsection{Zero-Shot Generalisation}
 The $14\%$ error increase from $64\times64$ to $128\times128$ is physically interpretable: at finer resolution, the $\kappa$ interfaces are represented with more spatial detail, introducing higher-frequency content in $u$ that the 12-mode operator cannot represent. The increase being only $14\%$ (rather than catastrophic) reflects that Darcy flow is dominated by low-frequency modes --- the trained 12-mode FNO captures the essential physics.
