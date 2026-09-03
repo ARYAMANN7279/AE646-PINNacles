@@ -7,3 +7,7 @@ tqdm==4.66.4
 pyyaml==6.0.1
 wandb==0.17.3
 requests==2.32.3
+
+# Optional - only needed to rebuild the Stage 1 slide deck (docs/build_presentation.py).
+# The reports and the Stage 3 deck compile with tectonic and need nothing from pip.
+python-pptx==1.0.2

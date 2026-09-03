@@ -60,14 +60,16 @@ AE646-PINNacles/
 |   |-- benchmark_components.py  # per-layer FNO timing with GPU sync
 |   `-- generate_figures.py      # all report figures from stored JSON results
 |-- tests/                   # pytest suite for models/metrics/data
-|-- scripts/                 # md->pdf, pptx build, remote-GPU run helper
+|-- scripts/                 # md->pdf helper, remote-GPU run helper
 |-- results/                 # metrics (JSON) + figures for the 3 runs (checkpoints not tracked)
-|-- docs/                    # stage deliverables
-|   |-- ae646_handout.pdf    # course project spec
-|   |-- PROPOSAL.md / .pdf
-|   |-- INTERIM_REPORT.md / .pdf
-|   |-- FINAL_REPORT.md / .pdf
-|   `-- PRESENTATION.md / .pptx
+|-- docs/                    # stage deliverables (LaTeX source + compiled PDF)
+|   |-- ae646_handout.pdf                     # course project spec
+|   |-- PROPOSAL.tex         -> PINNacles_Stage1_Proposal.pdf
+|   |-- build_presentation.py -> PINNacles_Stage1_Presentation.pptx / .pdf
+|   |-- INTERIM_REPORT.tex   -> PINNacles_Stage2_InterimReport.pdf
+|   |-- FINAL_REPORT.tex     -> PINNacles_Stage3_FinalReport.pdf
+|   |-- FINAL_PRESENTATION.tex -> PINNacles_Stage3_FinalPresentation.pdf   (Beamer)
+|   `-- CONTRIBUTION_STATEMENT.tex -> PINNacles_Stage3_ContributionStatement.pdf
 `-- data/                    # NOT tracked - regenerate with the download + preprocess steps
     |-- raw_pdebench/        # downloaded PDEBench HDF5
     `-- processed/           # train/val/test .npz + test_hires.npz + norm_stats.json
@@ -151,7 +153,7 @@ Zero-shot at native 128×128 (real PDEBench ground truth, no retraining): FNO (o
 
 Measured inference speed (`results/benchmark_speed.json`): FNO 0.71 ms/sample and MLP
 0.13 ms/sample on GPU vs 1030 ms/sample for a scipy sparse FDM solve on CPU. See
-[`docs/FINAL_REPORT.md`](docs/FINAL_REPORT.md) for full discussion, including why MLP is
+[`docs/FINAL_REPORT.pdf`](docs/FINAL_REPORT.pdf) for full discussion, including why MLP is
 actually *faster* per-sample than FNO here despite having 9× more parameters.
 
 ## Reproducibility
@@ -173,18 +175,25 @@ Reports are written in LaTeX (`.tex`). Compile with tectonic (recommended) or an
 # Install tectonic once
 brew install tectonic
 
-# Compile reports
+# Compile reports (from the docs/ directory)
 cd docs
 tectonic INTERIM_REPORT.tex          # -> INTERIM_REPORT.pdf
 tectonic FINAL_REPORT.tex            # -> FINAL_REPORT.pdf
 tectonic CONTRIBUTION_STATEMENT.tex  # -> CONTRIBUTION_STATEMENT.pdf
 ```
 
-Rebuild the slide deck:
+The `PINNacles_StageN_*.pdf` files in `docs/` are the exact copies submitted for each
+stage; regenerate them by re-running the `tectonic` commands above and copying the output.
+
+Slide decks:
 ```bash
 cd docs
-python3 build_presentation.py        # -> docs/PINNacles_Stage1_Presentation.pptx
+python3 build_presentation.py           # Stage 1 -> PINNacles_Stage1_Presentation.pptx
+                                        #   (pip install python-pptx)
+tectonic FINAL_PRESENTATION.tex         # Stage 3 -> PINNacles_Stage3_FinalPresentation.pdf
 ```
+The Stage 3 deck is a Beamer PDF so it builds with the same `tectonic` as the reports,
+with no extra tooling.
 
 ## Optional: synthetic fallback
 `src/generate_data.py` self-generates a Darcy dataset (piecewise-constant permeability,

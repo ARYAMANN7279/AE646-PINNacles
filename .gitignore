@@ -13,10 +13,6 @@ __pycache__/
 .venv/
 venv/
 
-# Node (for scripts/build_presentation.js)
-node_modules/
-package-lock.json
-
 # Weights & Biases
 wandb/
 

@@ -22,8 +22,6 @@
 
 \begin{document}
 \maketitle
-\tableofcontents
-\newpage
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Introduction and Motivation}
@@ -52,15 +50,15 @@ We use the PDEBench dataset \cite{takamoto2022pdebench} (DOI: \texttt{10.18419/d
 \subsection{Preprocessing}
 Each sample consists of:
 \begin{itemize}[nosep]
-  \item \textbf{Input}: $\kappa(x,y)$ at $128\times128$ bilinearly downsampled to $64\times64$ (training resolution).
+  \item \textbf{Input}: $\kappa(x,y)$ subsampled from $128\times128$ to $64\times64$ by taking every second grid point (literature-standard subsampling; PDEBench's own loaders do the same).
   \item \textbf{Grid coordinates}: $(x,y)\in[0,1]^2$ concatenated channel-wise to give a 3-channel input tensor of shape $64\times64\times3$.
   \item \textbf{Target}: pressure $u(x,y)$ at $64\times64$.
 \end{itemize}
 
-We split 10\,000 samples into 8\,000 train / 900 validation / 200 test. The train/val split (8.9K combined) covers the bulk of the dataset; the 200-sample test set is held out entirely throughout training and used only for final evaluation. Data are loaded in mini-batches of 16 and normalised per-channel with training-set statistics.
+From the 10\,000-sample archive we draw a reproducible (seed 42), non-overlapping subset: a 1\,000-sample train/val pool --- split 900 train / 100 validation --- and 200 further samples held out entirely throughout training and used only for final evaluation. These counts match those used in the original FNO work (Li et al.\ 2021), so our numbers are directly comparable to the literature. Data are loaded in mini-batches of 16 and normalised with training-set statistics only.
 
-\subsection{Why Only 900 Validation and 200 Test?}
-The model sees 8\,000 training samples; 900 validation samples provide stable loss estimates during early-stopping without reducing the training budget significantly. The 200-sample test set is sufficient for computing statistics that reflect true generalisation (standard error $\lesssim 0.003$).
+\subsection{Why Only a 1\,000-Sample Training Pool?}
+The original FNO Darcy experiments use $\sim$1\,000 training samples; matching this keeps the comparison with published numbers clean and the training cost modest. 100 validation samples give a stable loss estimate for checkpoint selection, and the 200-sample test set is large enough for generalisation statistics with standard error $\lesssim 0.003$.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Model Architectures}
@@ -88,12 +86,12 @@ Both models are trained with:
 \begin{itemize}[nosep]
   \item \textbf{Loss}: Relative $L_2$ error $\|{\hat{u} - u}\|_2 / \|{u}\|_2$ per sample, averaged over the batch.
   \item \textbf{Optimiser}: Adam, learning rate $10^{-3}$, cosine annealing schedule (min LR $10^{-5}$).
-  \item \textbf{Batch size}: 16; up to 200 epochs with early stopping (patience 25 epochs on validation loss).
-  \item \textbf{Hardware}: NVIDIA GPU (CUDA), PyTorch 2.x with \texttt{torch.compile}.
+  \item \textbf{Batch size}: 16; up to 100 epochs (200 for the larger FNO-improved configuration). No early stopping --- every run completes its full epoch budget and the checkpoint with the lowest validation relative-$L_2$ error is retained.
+  \item \textbf{Hardware}: NVIDIA RTX PRO 6000 (CUDA), PyTorch 2.x.
 \end{itemize}
 
 \subsection{FNO Improved Configuration}
-An extended FNO configuration (\texttt{fno\_improved}) was also trained with doubled width (128 channels) and more Fourier modes (24 per direction), totalling $\approx78.8$\,M parameters. This represents a scaling experiment to probe the accuracy--parameter trade-off.
+An extended FNO configuration (\texttt{fno\_improved}) was also trained with doubled width (128 channels), more Fourier modes (20 per direction, up from 12), and 6 spectral blocks (up from 4), totalling $\approx78.8$\,M parameters. This represents a scaling experiment to probe the accuracy--parameter trade-off.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Preliminary Quantitative Results}
@@ -108,23 +106,23 @@ All metrics are computed on the held-out 200-sample test set. Error is relative 
 \toprule
 Model & Params & Mean & Median & Std & Min & Max \\
 \midrule
-MLP baseline   & 42.0\,M & 0.0820 & 0.0737 & 0.0456 & 0.0325 & 0.3367 \\
-FNO original   &  4.7\,M & 0.0521 & 0.0418 & 0.0451 & 0.0155 & 0.3467 \\
-FNO improved   & 78.8\,M & \textbf{0.0456} & \textbf{0.0354} & 0.0487 & \textbf{0.0106} & 0.3535 \\
+MLP baseline   & 42.0\,M & 0.0820 & 0.0695 & 0.0456 & 0.0325 & 0.3367 \\
+FNO original   &  4.7\,M & 0.0521 & 0.0398 & 0.0451 & 0.0155 & 0.3467 \\
+FNO improved   & 78.8\,M & \textbf{0.0456} & \textbf{0.0307} & 0.0487 & \textbf{0.0106} & 0.3535 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Key observations:
 \begin{enumerate}[nosep]
-  \item The FNO original achieves $36\%$ lower mean error than the MLP while using $9\times$ fewer parameters, demonstrating the advantage of spectral inductive biases for smooth PDE solutions.
+  \item The FNO original achieves $37\%$ lower mean error than the MLP while using $9\times$ fewer parameters, demonstrating the advantage of spectral inductive biases for smooth PDE solutions.
   \item FNO improved reduces mean error a further $12\%$ over FNO original, at the cost of a $17\times$ parameter increase --- indicating diminishing returns in the scaling regime tested.
   \item All models exhibit right-skewed distributions: most samples have errors well below 0.1, but a small fraction ($\lesssim5\%$) with highly heterogeneous $\kappa$ fields drive errors toward 0.3 (see Figure~\ref{fig:hist}).
 \end{enumerate}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../results/figures/fig1_error_histogram.pdf}
+\includegraphics[width=0.62\textwidth]{../results/figures/fig1_error_histogram.pdf}
 \caption{Error distribution across 200 test samples. Dashed vertical lines indicate per-model means. FNO errors are concentrated at lower values; MLP's distribution is shifted right.}
 \label{fig:hist}
 \end{figure}
@@ -140,7 +138,7 @@ Key observations:
 \section{Zero-Shot Super-Resolution}
 \label{sec:superres}
 
-Because FNO's spectral weights are resolution-agnostic, the same trained model can be queried on a finer grid without retraining. We evaluated both FNO variants at $128\times128$ (the native PDEBench resolution), using $\kappa$ fields bilinearly upsampled from $64\times64$ as input.
+Because FNO's spectral weights are resolution-agnostic, the same trained model can be queried on a finer grid without retraining. We evaluated both FNO variants at $128\times128$ (the native PDEBench resolution), using the native-resolution $\kappa$ fields set aside during preprocessing (\texttt{data/processed/test\_hires.npz} --- genuine PDEBench ground truth, never downsampled) as input.
 
 \begin{table}[H]
 \centering
@@ -156,18 +154,18 @@ FNO improved  & 0.0456 & 0.0563 \\
 \end{tabular}
 \end{table}
 
-The MLP cannot be evaluated at $128\times128$ as its input layer is fixed at $64\times64\times3 = 12\,288$ neurons. FNO's error increases moderately ($+14\%$ and $+23\%$ respectively) at $2\times$ resolution, which is expected since the model was trained with only $12\times12$ retained modes --- a limitation relative to the richer spatial structure available at $128\times128$.
+The MLP cannot be evaluated at $128\times128$ as its input layer is fixed at $64\times64\times3 = 12\,288$ neurons. FNO's error increases moderately ($+14\%$ for the original, $+23\%$ for the improved variant) at $2\times$ resolution, which is expected since the models were trained with only $12$ and $20$ retained modes respectively --- a limitation relative to the richer spatial structure available at $128\times128$.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.70\textwidth]{../results/figures/fig3_superres.pdf}
+\includegraphics[width=0.58\textwidth]{../results/figures/fig3_superres.pdf}
 \caption{Zero-shot super-resolution performance. Error bars show one standard deviation. The dashed line is the MLP baseline at its maximum resolution ($64\times64$).}
 \end{figure}
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Inference Speed}
 
-We benchmarked inference speed on the training hardware (NVIDIA GPU) with batch size 1 over 1\,000 iterations after a 100-iteration warm-up:
+We benchmarked inference speed on the training hardware (NVIDIA RTX PRO 6000) with batch size 1, reporting the median of 50 timed forward passes after 5 warm-up iterations. The FDM reference is the median of 20 SciPy sparse direct solves on CPU:
 
 \begin{table}[H]
 \centering
@@ -188,35 +186,19 @@ Both neural models are several orders of magnitude faster than the FDM reference
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Code Quality and Reproducibility}
 
-The codebase is structured as:
+The codebase is organised into four directories:
+\begin{itemize}[nosep]
+  \item \texttt{src/} --- \texttt{models.py} (\texttt{MLPBaseline}, \texttt{SpectralConv2d}, \texttt{FNO2d}), \texttt{train.py} (training loop; keeps the best-validation checkpoint), \texttt{evaluate.py}, \texttt{superres\_eval.py}, \texttt{benchmark\_speed.py}, \texttt{benchmark\_components.py}, \texttt{generate\_figures.py}.
+  \item \texttt{configs/} --- \texttt{fno.yaml}, \texttt{fno\_improved.yaml}, \texttt{mlp.yaml}.
+  \item \texttt{results/} --- one \texttt{run\_00x/} per model with its \texttt{eval\_metrics.json} (best epochs 92 / 99 / 198), plus \texttt{benchmark\_*.json} and \texttt{figures/}.
+  \item \texttt{docs/} --- proposal, interim, and final reports.
+\end{itemize}
+A \texttt{pytest} suite covers model shapes, the relative-$L_2$ metric, and data loading; all results are committed. Training and evaluation reproduce with:
 \begin{verbatim}
-ae646/
-  src/
-    models.py              -- MLPBaseline, SpectralConv2d, FNO2d
-    train.py               -- training loop with early stopping
-    evaluate.py            -- test-set evaluation, saves eval_metrics.json
-    superres_eval.py       -- zero-shot super-resolution at 128x128
-    benchmark_speed.py     -- FNO / MLP / FDM inference speed
-    benchmark_components.py-- per-layer profiling with GPU sync
-    generate_figures.py    -- all report figures from stored JSON results
-  configs/
-    fno.yaml, fno_improved.yaml, mlp.yaml
-  results/
-    run_001/               -- FNO original (best_epoch=92)
-    run_002/               -- MLP baseline (best_epoch=99)
-    run_003_fno_improved/  -- FNO improved (best_epoch=198)
-    benchmark_speed.json
-    benchmark_components.json
-    figures/               -- all PDF/PNG figures
-  docs/
-    PROPOSAL.tex, INTERIM_REPORT.tex, FINAL_REPORT.tex
-\end{verbatim}
-
-All results are committed to the repository. Training is fully reproducible via:
-\begin{verbatim}
-  python3 src/train.py --config configs/fno.yaml
-  python3 src/evaluate.py --run results/run_001
-  python3 src/generate_figures.py
+python3 src/train.py    --config configs/fno.yaml
+python3 src/evaluate.py --config configs/fno.yaml \
+    --checkpoint results/run_001/best_model.pt
+python3 src/generate_figures.py
 \end{verbatim}
 
 % ─────────────────────────────────────────────────────────────────────────────
@@ -224,8 +206,8 @@ All results are committed to the repository. Training is fully reproducible via:
 
 \subsection{Issues During Stage 1--2}
 \begin{enumerate}[nosep]
-  \item \textbf{GPU async timing}: Initial component profiling used \texttt{time.perf\_counter()} inside the GPU forward pass, measuring dispatch time rather than execution time. Fixed by calling \texttt{torch.cuda.synchronize()} before every timer call (implemented in \texttt{benchmark\_components.py}).
-  \item \textbf{Resolution mismatch at $128\times128$}: FNO retains only 12 Fourier modes; querying at $128\times128$ means half the frequency content (modes 13--64) is discarded, contributing to the $\sim14\%$ error increase in zero-shot evaluation.
+  \item \textbf{GPU async timing}: Initial component profiling used \texttt{time.perf\_counter()} inside the GPU forward pass, measuring dispatch time rather than execution time. Fixed by calling a device-synchronisation primitive (\texttt{torch.cuda.synchronize()} on CUDA, \texttt{torch.mps.synchronize()} on Apple Silicon) before every timer read (implemented in \texttt{benchmark\_components.py}). The full layer-wise breakdown is deferred to the Stage 3 report.
+  \item \textbf{Resolution mismatch at $128\times128$}: FNO retains only 12 Fourier modes; querying at $128\times128$ means every Fourier mode above the 12th is discarded, contributing to the $\sim14\%$ error increase in zero-shot evaluation.
   \item \textbf{MLP overfitting}: Despite GELU activations and weight decay, the MLP training curve showed larger train/val gap than FNO, suggesting the fixed-resolution architecture is less sample-efficient for this task.
 \end{enumerate}
 
