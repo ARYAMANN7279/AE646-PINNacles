@@ -156,6 +156,18 @@ Measured inference speed (`results/benchmark_speed.json`): FNO 0.71 ms/sample an
 [`docs/FINAL_REPORT.pdf`](docs/FINAL_REPORT.pdf) for full discussion, including why MLP is
 actually *faster* per-sample than FNO here despite having 9× more parameters.
 
+## Computational Environment
+No notebook service (Colab/Kaggle) was used. All code was run as plain Python scripts from
+the command line, on two machines:
+- **Local development**: macOS, Apple Silicon (MPS backend), Python 3.11/3.14, PyTorch 2.3+.
+  Used for coding, the pytest suite, and cross-checking numbers.
+- **Training/benchmarking**: a remote Linux workstation (4×NVIDIA RTX PRO 6000, CUDA 12.x),
+  accessed via SSH, running the identical `src/` scripts against a shared conda environment
+  (Python 3.11, PyTorch 2.3, CUDA-enabled). This machine produced the FNO/MLP training runs,
+  the GPU inference-speed benchmark, and (for the layer-profiling numbers specifically) an
+  MPS run on the local Mac — both are noted explicitly wherever they're reported.
+- No GPU/cloud credits or paid services were used.
+
 ## Reproducibility
 - Seed: 42 everywhere (data subset selection, train/val split, model init)
 - Normalization stats computed from the training split only, saved to `norm_stats.json`
