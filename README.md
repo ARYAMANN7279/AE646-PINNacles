@@ -60,6 +60,7 @@ AE646-PINNacles/
 |   |-- benchmark_components.py  # per-layer FNO timing with GPU sync
 |   |-- eda.py                   # dataset EDA + kappa-heterogeneity vs error correlation
 |   |-- ablation_mlp.py          # real MLP depth/optimizer ablation (retrains from scratch)
+|   |-- ablation_preprocess.py   # real MLP preprocessing ablation (3 seeds/variant)
 |   `-- generate_figures.py      # all report figures from stored JSON results
 |-- tests/                   # pytest suite for models/metrics/data
 |-- scripts/                 # remote-GPU run helper
@@ -117,6 +118,7 @@ python3 src/benchmark_components.py   # per-layer FNO profiling
 python3 src/compare_comprehensive.py
 python3 src/eda.py                    # dataset EDA + error-vs-heterogeneity correlation
 python3 src/ablation_mlp.py --config configs/mlp.yaml   # real depth/optimizer ablation
+python3 src/ablation_preprocess.py                      # real preprocessing ablation (needs raw HDF5)
 ```
 
 ### 6. Generate report figures
@@ -170,6 +172,17 @@ discussion (this revises an earlier, untested "many regions → high error" clai
 re-trained runs, not asserted: 1-layer 0.1008, 2-layer 0.0796, 3-layer/AdamW (reported
 baseline) 0.0857, 3-layer/SGD+momentum 0.1209. SGD is clearly worse (justifies AdamW);
 depth beyond 2 layers shows diminishing/non-monotonic returns.
+
+**MLP preprocessing ablation** (`results/ablation_preprocess.json`, 3 seeds per variant,
+identical split/target): reference 0.0842 ± 0.0002, no coordinate channels 0.0843 ± 0.0011,
+no input normalisation 0.0864 ± 0.0018, no target normalisation 0.0917 ± 0.0012 —
+normalising the target matters (+9% error without it); coordinates don't matter for the MLP.
+
+**Training-loss / schedule note:** `train.py` optimises MSE on standardised pressure (the
+relative-L2 error is the *reported metric*, computed in physical units), and steps
+`CosineAnnealingLR(T_max=epochs)` once per mini-batch, so the LR cycles between 1e-3 and 0
+every 2·T_max steps (~28 cycles per 100-epoch run) rather than decaying once. Kept as-is so
+the committed results reproduce; a per-epoch schedule is listed as future work.
 
 ## Computational Environment
 No notebook service (Colab/Kaggle) was used. All code was run as plain Python scripts from

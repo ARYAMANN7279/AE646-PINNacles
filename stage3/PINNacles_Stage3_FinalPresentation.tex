@@ -69,7 +69,7 @@
 \end{column}
 \end{columns}
 \vfill
-\footnotesize Training: Adam ($10^{-3}$, cosine to $10^{-5}$), batch 16, weight decay $10^{-4}$, relative-$L_2$ loss. 100 epochs (200 for FNO improved); the lowest-validation-error checkpoint is kept (no early stopping). Metric reported in physical (denormalised) units.
+\footnotesize Training: AdamW (peak $10^{-3}$, per-step cosine cycling to 0), batch 16, weight decay $10^{-4}$, MSE loss on standardised pressure. 100 epochs (200 for FNO improved); the lowest-validation-error checkpoint is kept (no early stopping). Metric reported in physical (denormalised) units.
 \end{frame}
 
 \begin{frame}{Test-set accuracy ($64\times64$, 200 held-out samples)}

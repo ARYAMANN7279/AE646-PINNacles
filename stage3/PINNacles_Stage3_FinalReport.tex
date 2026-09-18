@@ -141,11 +141,12 @@ Parameter efficiency & Low & High \\
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Training}
+\label{sec:training}
 
 All models were trained with:
 \begin{itemize}[nosep]
-  \item \textbf{Loss}: $\mathcal{L} = \frac{1}{B}\sum_{i=1}^B \frac{\|\hat{u}_i - u_i\|_2}{\|u_i\|_2}$
-  \item \textbf{Optimiser}: AdamW (decoupled weight decay), $\eta_0 = 10^{-3}$, cosine annealing to $\eta_{\min}=10^{-5}$
+  \item \textbf{Loss}: mean-squared error between predicted and true \emph{standardised} pressure fields. The reported metric is the per-sample relative $L_2$ error $\|\hat{u}_i - u_i\|_2/\|u_i\|_2$, computed in physical units after de-normalising.
+  \item \textbf{Optimiser}: AdamW (decoupled weight decay), peak $\eta_0 = 10^{-3}$, with \texttt{CosineAnnealingLR} ($T_{\max}=$ number of epochs, $\eta_{\min}=0$) advanced once per mini-batch, so the learning rate cycles between $10^{-3}$ and $0$ every $2T_{\max}$ optimiser steps ($\sim$28 cycles per 100-epoch run) --- a warm-restart-like schedule, identical for all models and ablations
   \item \textbf{Batch size}: 16; 100 epochs (200 for FNO improved). No early stopping --- each run completes its full epoch budget and the checkpoint with the lowest validation relative-$L_2$ error is retained.
   \item \textbf{Regularisation}: $L_2$ weight decay $10^{-4}$
   \item \textbf{Hardware}: NVIDIA RTX PRO 6000 (CUDA), PyTorch 2.x
@@ -351,7 +352,7 @@ We have demonstrated that the Fourier Neural Operator substantially outperforms 
 
 The spectral inductive bias of FNO --- encoding the fact that elliptic PDE solutions are smooth, low-frequency dominated functions --- is the key architectural advantage. For the Darcy flow problem, this prior is nearly exact, explaining the large accuracy gap with the unbiased MLP at a fraction of the parameter count.
 
-\textbf{Future directions}: (1) mode-count ablation to trace the accuracy--resolution trade-off; (2) Tucker-decomposed spectral weights for memory reduction; (3) extension to time-dependent PDEs (Navier--Stokes) where FNO's time-stepping formulation applies.
+\textbf{Future directions}: (1) mode-count ablation to trace the accuracy--resolution trade-off; (2) Tucker-decomposed spectral weights for memory reduction; (3) extension to time-dependent PDEs (Navier--Stokes) where FNO's time-stepping formulation applies; (4) re-training with a standard per-epoch cosine schedule, since the per-step cycling used here (Section~\ref{sec:training}) may leave some optimisation headroom.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \begin{thebibliography}{9}

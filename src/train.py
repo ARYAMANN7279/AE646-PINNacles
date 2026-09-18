@@ -220,6 +220,9 @@ def main():
     )
     
     # Scheduler
+    # NOTE: train_epoch() steps the scheduler once per batch, so a 'cosine' T_max of
+    # `epochs` is a period of that many STEPS (LR cycles 1e-3 -> 0 every 2*T_max steps).
+    # Kept as-is so the committed results stay reproducible.
     scheduler = None
     if config["training"].get("scheduler") == "cosine":
         scheduler = optim.lr_scheduler.CosineAnnealingLR(

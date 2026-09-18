@@ -1,0 +1,78 @@
+[
+  {
+    "name": "reference (standardised, +coords)",
+    "coords": true,
+    "norm_in": true,
+    "norm_out": true,
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "test_mean_rel_l2_per_seed": [
+      0.08398060500621796,
+      0.08441884815692902,
+      0.08423599600791931
+    ],
+    "test_mean_rel_l2_avg": 0.08421181639035542,
+    "test_mean_rel_l2_std_over_seeds": 0.00017972711762640023,
+    "test_median_rel_l2_avg": 0.07042703529198964
+  },
+  {
+    "name": "no coordinate channels",
+    "coords": false,
+    "norm_in": true,
+    "norm_out": true,
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "test_mean_rel_l2_per_seed": [
+      0.08329419046640396,
+      0.08574357628822327,
+      0.0837678536772728
+    ],
+    "test_mean_rel_l2_avg": 0.08426854014396667,
+    "test_mean_rel_l2_std_over_seeds": 0.0010607820792478723,
+    "test_median_rel_l2_avg": 0.06784020115931828
+  },
+  {
+    "name": "no input normalisation",
+    "coords": true,
+    "norm_in": false,
+    "norm_out": true,
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "test_mean_rel_l2_per_seed": [
+      0.08483579009771347,
+      0.08554252982139587,
+      0.08886750042438507
+    ],
+    "test_mean_rel_l2_avg": 0.08641527344783147,
+    "test_mean_rel_l2_std_over_seeds": 0.0017578269004010936,
+    "test_median_rel_l2_avg": 0.07382830729087193
+  },
+  {
+    "name": "no target normalisation",
+    "coords": true,
+    "norm_in": true,
+    "norm_out": false,
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "test_mean_rel_l2_per_seed": [
+      0.09084317833185196,
+      0.09344080090522766,
+      0.09095584601163864
+    ],
+    "test_mean_rel_l2_avg": 0.09174660841623943,
+    "test_mean_rel_l2_std_over_seeds": 0.0011988576906998474,
+    "test_median_rel_l2_avg": 0.07852481305599213
+  }
+]
