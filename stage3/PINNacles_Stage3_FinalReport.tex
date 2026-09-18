@@ -95,7 +95,7 @@ Before modelling, we characterised the 1\,200 real PDEBench samples used across 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.54\textwidth]{../results/figures/fig8_eda_dataset.pdf}
+\includegraphics[width=0.54\textwidth]{figures/fig8_eda_dataset.pdf}
 \caption{Dataset characterisation. $\kappa$ is exactly bimodal at $\{0.1,1.0\}$; high-permeability area fraction varies widely (mean $0.48\pm0.21$); peak pressure mean $0.34\pm0.19$ (physical units). At native $128\times128$, 180/200 test samples have exactly one connected high-$\kappa$ region, 18/200 have two, 2/200 are degenerate (zero regions) --- PDEBench's generator almost always produces a single blob, not a fragmented multi-region field.}
 \label{fig:eda}
 \end{figure}
@@ -175,14 +175,14 @@ FNO improved & 78.8\,M & \textbf{0.0456} & \textbf{0.0307} & 0.0487 & \textbf{0.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../results/figures/fig1_error_histogram.pdf}
+\includegraphics[width=0.85\textwidth]{figures/fig1_error_histogram.pdf}
 \caption{Error distribution across 200 test samples. Dashed lines: per-model means. The long right tail ($\epsilon > 0.2$) is driven mainly by near-degenerate, almost-uniform $\kappa$ fields, not by multi-region complexity --- see the quantified check in Section~\ref{sec:higherror}.}
 \label{fig:hist}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.55\textwidth]{../results/figures/fig2_efficiency_scatter.pdf}
+\includegraphics[width=0.55\textwidth]{figures/fig2_efficiency_scatter.pdf}
 \caption{Accuracy--parameter efficiency. FNO original occupies the optimal region: 9$\times$ fewer parameters than MLP at 37\% lower error. Scaling FNO to 78.8\,M yields only 12\% further improvement.}
 \label{fig:scatter}
 \end{figure}
@@ -215,7 +215,7 @@ Configuration & Params & Test Mean Rel.\ $L_2$ & Best Epoch \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.52\textwidth]{../results/figures/fig7_mlp_ablation.pdf}
+\includegraphics[width=0.52\textwidth]{figures/fig7_mlp_ablation.pdf}
 \caption{MLP ablation, real re-trained runs (1 std over 200 test samples).}
 \end{figure}
 
@@ -245,7 +245,7 @@ FNO improved  & $0.0456 \pm 0.0487$ & $0.0563 \pm 0.0467$ \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.68\textwidth]{../results/figures/fig3_superres.pdf}
+\includegraphics[width=0.68\textwidth]{figures/fig3_superres.pdf}
 \caption{Zero-shot super-resolution. Error bars: one standard deviation. FNO generalises to $2\times$ resolution without retraining; MLP is resolution-locked.}
 \end{figure}
 
@@ -260,7 +260,7 @@ At $128\times128$ the input carries roughly $4\times$ as many resolvable Fourier
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.62\textwidth]{../results/figures/fig4_speed.pdf}
+\includegraphics[width=0.62\textwidth]{figures/fig4_speed.pdf}
 \caption{Inference speed (log scale). Both neural models are 3--4 orders of magnitude faster than the FDM reference solver.}
 \end{figure}
 
@@ -286,7 +286,7 @@ We profiled each sub-operation of FNO's forward pass by forcing a device synchro
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.90\textwidth]{../results/figures/fig5_components.pdf}
+\includegraphics[width=0.90\textwidth]{figures/fig5_components.pdf}
 \caption{FNO component time breakdown. Left: absolute percentages per component. Right: pie chart grouping spectral (FFT+Mul+IFFT) and non-spectral operations. Spectral operations account for 68.4\% of component time, with complex multiplication alone at 41.0\%.}
 \end{figure}
 
@@ -327,7 +327,7 @@ We had hypothesised, from visual inspection alone, that high-error samples would
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.58\textwidth]{../results/figures/fig9_error_vs_heterogeneity.pdf}
+\includegraphics[width=0.58\textwidth]{figures/fig9_error_vs_heterogeneity.pdf}
 \caption{FNO (original) error vs.\ $\kappa$-heterogeneity, 200 test samples. Region count: $r=0.24$ (weak). Interface perimeter: $r=-0.17$ (weak, wrong sign for "more interface = harder").}
 \label{fig:errvshet}
 \end{figure}

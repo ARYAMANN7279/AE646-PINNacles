@@ -202,6 +202,10 @@ the command line, on two machines:
 ## Documents (in `stage1/`, `stage2/`, `stage3/`)
 Each stage folder holds the submitted files. Every report/deck is written in LaTeX and the
 `.tex` has the same basename as its PDF, so compiling it regenerates the submitted file.
+Each stage folder is self-contained: the figures its LaTeX uses are copied into
+`stage2/figures/` and `stage3/figures/` (copies of `results/figures/*.pdf`; edit the LaTeX
+freely without touching the results). If you re-run `src/generate_figures.py`, copy the
+updated PDFs over.
 Compile with tectonic (recommended) or any TeX distribution:
 
 ```bash
