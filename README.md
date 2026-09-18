@@ -8,7 +8,7 @@ bias, on the real **PDEBench 2D Darcy Flow (β=1.0)** dataset.
 
 > **Team repo.** Reports, code, results, and the presentation all live here so the team can
 > work from one place. Stage deliverables (proposal, interim, final report, slides) are in
-> [`docs/`](docs/).
+> [`stage1/`](stage1/), [`stage2/`](stage2/), [`stage3/`](stage3/).
 
 ## Problem
 
@@ -62,16 +62,12 @@ AE646-PINNacles/
 |   |-- ablation_mlp.py          # real MLP depth/optimizer ablation (retrains from scratch)
 |   `-- generate_figures.py      # all report figures from stored JSON results
 |-- tests/                   # pytest suite for models/metrics/data
-|-- scripts/                 # md->pdf helper, remote-GPU run helper
+|-- scripts/                 # remote-GPU run helper
 |-- results/                 # metrics (JSON) + figures for the 3 runs, ablation, EDA (checkpoints not tracked)
-|-- docs/                    # stage deliverables (LaTeX source + compiled PDF)
-|   |-- ae646_handout.pdf                     # course project spec
-|   |-- PROPOSAL.tex         -> PINNacles_Stage1_Proposal.pdf
-|   |-- build_presentation.py -> PINNacles_Stage1_Presentation.pptx / .pdf
-|   |-- INTERIM_REPORT.tex   -> PINNacles_Stage2_InterimReport.pdf
-|   |-- FINAL_REPORT.tex     -> PINNacles_Stage3_FinalReport.pdf
-|   |-- FINAL_PRESENTATION.tex -> PINNacles_Stage3_FinalPresentation.pdf   (Beamer)
-|   `-- CONTRIBUTION_STATEMENT.tex -> PINNacles_Stage3_ContributionStatement.pdf
+|-- ae646_handout.pdf        # course project spec
+|-- stage1/                  # Stage 1: proposal (LaTeX + PDF) and proposal deck (pptx/pdf + builder)
+|-- stage2/                  # Stage 2: interim report, 8-slide deck, code ZIP submitted
+|-- stage3/                  # Stage 3: final report, contribution statement/AI declaration, Beamer deck
 `-- data/                    # NOT tracked - regenerate with the download + preprocess steps
     |-- raw_pdebench/        # downloaded PDEBench HDF5
     `-- processed/           # train/val/test .npz + test_hires.npz + norm_stats.json
@@ -157,7 +153,7 @@ Zero-shot at native 128×128 (real PDEBench ground truth, no retraining): FNO (o
 
 Measured inference speed (`results/benchmark_speed.json`): FNO 0.71 ms/sample and MLP
 0.13 ms/sample on GPU vs 1030 ms/sample for a scipy sparse FDM solve on CPU. See
-[`docs/FINAL_REPORT.pdf`](docs/FINAL_REPORT.pdf) for full discussion, including why MLP is
+[`stage3/PINNacles_Stage3_FinalReport.pdf`](stage3/PINNacles_Stage3_FinalReport.pdf) for full discussion, including why MLP is
 actually *faster* per-sample than FNO here despite having 9× more parameters.
 
 **Dataset EDA** (`results/eda_metrics.json`, `src/eda.py`): κ is exactly bimodal at
@@ -167,7 +163,7 @@ actually *faster* per-sample than FNO here despite having 9× more parameters.
 heterogeneity gives only a weak relationship (region count r=0.24, interface perimeter
 r=−0.17, wrong sign) — the single worst test sample instead has *zero* connected
 regions (a near-degenerate, almost-uniform field). See
-[`docs/FINAL_REPORT.pdf`](docs/FINAL_REPORT.pdf) §3.4/§9.2 for the full, corrected
+[`stage3/PINNacles_Stage3_FinalReport.pdf`](stage3/PINNacles_Stage3_FinalReport.pdf) §3.4/§9.2 for the full, corrected
 discussion (this revises an earlier, untested "many regions → high error" claim).
 
 **MLP baseline ablation** (`results/ablation_mlp.json`, `src/ablation_mlp.py`) — real
@@ -192,7 +188,7 @@ the command line, on two machines:
   Model-init/batch-order seeding was added to `train.py` after the officially-reported
   `run_001`/`run_002`/`run_003_fno_improved` checkpoints were trained; re-running training
   now reproduces those numbers closely but not bit-for-bit (see the MLP ablation's own
-  reproducibility note in `docs/FINAL_REPORT.pdf` §6.3 for a measured example of the gap).
+  reproducibility note in `stage3/PINNacles_Stage3_FinalReport.pdf` §6.3 for a measured example of the gap).
 - Normalization stats computed from the training split only, saved to `norm_stats.json`
 - Relative-L2 metric is computed in physical (denormalized) units, matching the
   literature-standard convention — see the docstring of `physical_rel_l2` in `src/train.py`
@@ -203,32 +199,27 @@ the command line, on two machines:
   across hardware
 - Run the tests with `pytest` from the repo root
 
-## Documents (in `docs/`)
-Reports are written in LaTeX (`.tex`). Compile with tectonic (recommended) or any TeX distribution:
+## Documents (in `stage1/`, `stage2/`, `stage3/`)
+Each stage folder holds the submitted files. Every report/deck is written in LaTeX and the
+`.tex` has the same basename as its PDF, so compiling it regenerates the submitted file.
+Compile with tectonic (recommended) or any TeX distribution:
 
 ```bash
-# Install tectonic once
-brew install tectonic
-
-# Compile reports (from the docs/ directory)
-cd docs
-tectonic INTERIM_REPORT.tex          # -> INTERIM_REPORT.pdf
-tectonic FINAL_REPORT.tex            # -> FINAL_REPORT.pdf
-tectonic CONTRIBUTION_STATEMENT.tex  # -> CONTRIBUTION_STATEMENT.pdf
+brew install tectonic                                   # once
+cd stage2 && tectonic PINNacles_Stage2_InterimReport.tex
+cd stage3 && tectonic PINNacles_Stage3_FinalReport.tex
+cd stage3 && tectonic PINNacles_Stage3_ContributionStatement.tex
+cd stage3 && tectonic PINNacles_Stage3_FinalPresentation.tex   # Beamer deck
 ```
 
-The `PINNacles_StageN_*.pdf` files in `docs/` are the exact copies submitted for each
-stage; regenerate them by re-running the `tectonic` commands above and copying the output.
-
-Slide decks:
+The Stage 1 and Stage 2 decks are `.pptx` files built with `python-pptx`
+(`pip install python-pptx`):
 ```bash
-cd docs
-python3 build_presentation.py           # Stage 1 -> PINNacles_Stage1_Presentation.pptx
-                                        #   (pip install python-pptx)
-tectonic FINAL_PRESENTATION.tex         # Stage 3 -> PINNacles_Stage3_FinalPresentation.pdf
+python3 stage1/build_stage1_presentation.py
+python3 stage2/build_stage2_presentation.py
 ```
-The Stage 3 deck is a Beamer PDF so it builds with the same `tectonic` as the reports,
-with no extra tooling.
+`stage2/PINNacles_Stage2_Code.zip` is the code archive submitted for Stage 2 (a snapshot;
+this repo root is the live code).
 
 ## Optional: synthetic fallback
 `src/generate_data.py` self-generates a Darcy dataset (piecewise-constant permeability,
