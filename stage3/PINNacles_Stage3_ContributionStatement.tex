@@ -23,7 +23,7 @@
 
   \item \textbf{Model implementation}: Implemented \texttt{MLPBaseline}, \texttt{SpectralConv2d}, and \texttt{FNO2d} in \texttt{src/models.py}; verified correctness against the reference FNO codebase.
 
-  \item \textbf{Training}: Implemented \texttt{src/train.py} with AdamW and cosine LR annealing, retaining the checkpoint with the lowest validation relative-$L_2$ error; ran all three training runs (FNO original, MLP, FNO improved) on the lab GPU VM.
+  \item \textbf{Training}: Implemented \texttt{src/train.py} with AdamW and a cosine learning-rate schedule, retaining the checkpoint with the lowest validation relative-$L_2$ error; ran all three training runs (FNO original, MLP, FNO improved) on the lab GPU VM.
 
   \item \textbf{Evaluation}: Implemented \texttt{src/evaluate.py}, \texttt{src/superres\_eval.py}, and \texttt{src/benchmark\_speed.py}; collected all quantitative results.
 
