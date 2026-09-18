@@ -1,0 +1,67 @@
+[
+  {
+    "name": "1-layer (2048)",
+    "hidden_dims": [
+      2048
+    ],
+    "optimizer": "adamw",
+    "lr": 0.001,
+    "params": 33560576,
+    "best_epoch": 61,
+    "test_rel_l2_mean": 0.10080704092979431,
+    "test_rel_l2_median": 0.08924803137779236,
+    "test_rel_l2_std": 0.046996451914310455,
+    "test_rel_l2_min": 0.04291388392448425,
+    "test_rel_l2_max": 0.3413408100605011
+  },
+  {
+    "name": "2-layer (2048x2)",
+    "hidden_dims": [
+      2048,
+      2048
+    ],
+    "optimizer": "adamw",
+    "lr": 0.001,
+    "params": 37756928,
+    "best_epoch": 96,
+    "test_rel_l2_mean": 0.07955148071050644,
+    "test_rel_l2_median": 0.06485646963119507,
+    "test_rel_l2_std": 0.050505779683589935,
+    "test_rel_l2_min": 0.029796423390507698,
+    "test_rel_l2_max": 0.34652239084243774
+  },
+  {
+    "name": "3-layer (2048x3, final)",
+    "hidden_dims": [
+      2048,
+      2048,
+      2048
+    ],
+    "optimizer": "adamw",
+    "lr": 0.001,
+    "params": 41953280,
+    "best_epoch": 96,
+    "test_rel_l2_mean": 0.0856638252735138,
+    "test_rel_l2_median": 0.07002318650484085,
+    "test_rel_l2_std": 0.050654828548431396,
+    "test_rel_l2_min": 0.03602709248661995,
+    "test_rel_l2_max": 0.36079859733581543
+  },
+  {
+    "name": "3-layer, SGD+momentum",
+    "hidden_dims": [
+      2048,
+      2048,
+      2048
+    ],
+    "optimizer": "sgd",
+    "lr": 0.01,
+    "params": 41953280,
+    "best_epoch": 97,
+    "test_rel_l2_mean": 0.12092123925685883,
+    "test_rel_l2_median": 0.10906697064638138,
+    "test_rel_l2_std": 0.04452366754412651,
+    "test_rel_l2_min": 0.06550036370754242,
+    "test_rel_l2_max": 0.3468410074710846
+  }
+]

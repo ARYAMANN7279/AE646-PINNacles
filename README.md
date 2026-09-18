@@ -58,10 +58,12 @@ AE646-PINNacles/
 |   |-- benchmark_speed.py   # real FNO vs MLP vs FDM-solver timing
 |   |-- compare_comprehensive.py
 |   |-- benchmark_components.py  # per-layer FNO timing with GPU sync
+|   |-- eda.py                   # dataset EDA + kappa-heterogeneity vs error correlation
+|   |-- ablation_mlp.py          # real MLP depth/optimizer ablation (retrains from scratch)
 |   `-- generate_figures.py      # all report figures from stored JSON results
 |-- tests/                   # pytest suite for models/metrics/data
 |-- scripts/                 # md->pdf helper, remote-GPU run helper
-|-- results/                 # metrics (JSON) + figures for the 3 runs (checkpoints not tracked)
+|-- results/                 # metrics (JSON) + figures for the 3 runs, ablation, EDA (checkpoints not tracked)
 |-- docs/                    # stage deliverables (LaTeX source + compiled PDF)
 |   |-- ae646_handout.pdf                     # course project spec
 |   |-- PROPOSAL.tex         -> PINNacles_Stage1_Proposal.pdf
@@ -117,6 +119,8 @@ python3 src/superres_eval.py --config configs/fno_improved.yaml --checkpoint res
 python3 src/benchmark_speed.py
 python3 src/benchmark_components.py   # per-layer FNO profiling
 python3 src/compare_comprehensive.py
+python3 src/eda.py                    # dataset EDA + error-vs-heterogeneity correlation
+python3 src/ablation_mlp.py --config configs/mlp.yaml   # real depth/optimizer ablation
 ```
 
 ### 6. Generate report figures
@@ -156,6 +160,21 @@ Measured inference speed (`results/benchmark_speed.json`): FNO 0.71 ms/sample an
 [`docs/FINAL_REPORT.pdf`](docs/FINAL_REPORT.pdf) for full discussion, including why MLP is
 actually *faster* per-sample than FNO here despite having 9× more parameters.
 
+**Dataset EDA** (`results/eda_metrics.json`, `src/eda.py`): κ is exactly bimodal at
+{0.1, 1.0}; high-permeability area fraction varies widely across samples (mean 0.48 ±
+0.21); 180/200 native-resolution test samples have exactly one connected high-κ region
+(multi-region samples are rare). Correlating FNO's per-sample test error against κ
+heterogeneity gives only a weak relationship (region count r=0.24, interface perimeter
+r=−0.17, wrong sign) — the single worst test sample instead has *zero* connected
+regions (a near-degenerate, almost-uniform field). See
+[`docs/FINAL_REPORT.pdf`](docs/FINAL_REPORT.pdf) §3.4/§9.2 for the full, corrected
+discussion (this revises an earlier, untested "many regions → high error" claim).
+
+**MLP baseline ablation** (`results/ablation_mlp.json`, `src/ablation_mlp.py`) — real
+re-trained runs, not asserted: 1-layer 0.1008, 2-layer 0.0796, 3-layer/AdamW (reported
+baseline) 0.0857, 3-layer/SGD+momentum 0.1209. SGD is clearly worse (justifies AdamW);
+depth beyond 2 layers shows diminishing/non-monotonic returns.
+
 ## Computational Environment
 No notebook service (Colab/Kaggle) was used. All code was run as plain Python scripts from
 the command line, on two machines:
@@ -169,7 +188,11 @@ the command line, on two machines:
 - No GPU/cloud credits or paid services were used.
 
 ## Reproducibility
-- Seed: 42 everywhere (data subset selection, train/val split, model init)
+- Seed: 42 everywhere (data subset selection, train/val split, model init, batch order).
+  Model-init/batch-order seeding was added to `train.py` after the officially-reported
+  `run_001`/`run_002`/`run_003_fno_improved` checkpoints were trained; re-running training
+  now reproduces those numbers closely but not bit-for-bit (see the MLP ablation's own
+  reproducibility note in `docs/FINAL_REPORT.pdf` §6.3 for a measured example of the gap).
 - Normalization stats computed from the training split only, saved to `norm_stats.json`
 - Relative-L2 metric is computed in physical (denormalized) units, matching the
   literature-standard convention — see the docstring of `physical_rel_l2` in `src/train.py`
