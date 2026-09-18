@@ -67,7 +67,7 @@ AE646-PINNacles/
 |-- results/                 # metrics (JSON) + figures for the 3 runs, ablation, EDA (checkpoints not tracked)
 |-- ae646_handout.pdf        # course project spec
 |-- stage1/                  # Stage 1: proposal (LaTeX + PDF) and proposal deck (pptx/pdf + builder)
-|-- stage2/                  # Stage 2: interim report, 8-slide deck, code ZIP submitted
+|-- stage2/                  # Stage 2: interim report (.tex), 10-slide deck, Stage 2 README + code ZIP
 |-- stage3/                  # Stage 3: final report, contribution statement/AI declaration, Beamer deck
 `-- data/                    # NOT tracked - regenerate with the download + preprocess steps
     |-- raw_pdebench/        # downloaded PDEBench HDF5
@@ -235,8 +235,9 @@ The Stage 1 and Stage 2 decks are `.pptx` files built with `python-pptx`
 python3 stage1/build_stage1_presentation.py
 python3 stage2/build_stage2_presentation.py
 ```
-`stage2/PINNacles_Stage2_Code.zip` is the code archive submitted for Stage 2 (a snapshot;
-this repo root is the live code).
+`stage2/` also holds the Stage 2 submission code archive `PINNacles_Stage2_Code.zip` and its
+Stage 2 `README.md` (both scoped to Stage 2; rebuild with `python3 stage2/build_stage2_code_zip.py`).
+This repo root is the live, full code.
 
 ## Optional: synthetic fallback
 `src/generate_data.py` self-generates a Darcy dataset (piecewise-constant permeability,

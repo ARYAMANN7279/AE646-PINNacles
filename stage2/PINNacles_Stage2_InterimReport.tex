@@ -213,7 +213,7 @@ The codebase is organised into four directories:
   \item \texttt{src/} - \texttt{download\_data.py} and \texttt{preprocess.py} (checksum-verified download, split and normalisation), \texttt{models.py} (\texttt{MLPBaseline}, \texttt{SpectralConv2d}, \texttt{FNO2d}), \texttt{train.py} (training loop; keeps the best-validation checkpoint), \texttt{evaluate.py} (test metrics and sample plots), \texttt{eda.py}, \texttt{ablation\_mlp.py}, \texttt{ablation\_preprocess.py}.
   \item \texttt{configs/} - \texttt{fno.yaml}, \texttt{mlp.yaml}.
   \item \texttt{results/} - one \texttt{run\_00x/} per model with its \texttt{eval\_metrics.json}, plus the ablation and EDA outputs and \texttt{figures/}.
-  \item \texttt{stage1/}, \texttt{stage2/} - the deliverables for each project stage.
+  \item \texttt{tests/} - the \texttt{pytest} suite.
 \end{itemize}
 A \texttt{pytest} suite covers model shapes, the relative-$L_2$ metric, and data loading; all results are committed. Training and evaluation reproduce with:
 \begin{verbatim}
