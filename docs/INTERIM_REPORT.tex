@@ -85,7 +85,7 @@ Because the learned weights operate in frequency space (not on a fixed grid), th
 Both models are trained with:
 \begin{itemize}[nosep]
   \item \textbf{Loss}: Relative $L_2$ error $\|{\hat{u} - u}\|_2 / \|{u}\|_2$ per sample, averaged over the batch.
-  \item \textbf{Optimiser}: Adam, learning rate $10^{-3}$, cosine annealing schedule (min LR $10^{-5}$).
+  \item \textbf{Optimiser}: AdamW (decoupled weight decay), learning rate $10^{-3}$, cosine annealing schedule (min LR $10^{-5}$).
   \item \textbf{Batch size}: 16; up to 100 epochs (200 for the larger FNO-improved configuration). No early stopping --- every run completes its full epoch budget and the checkpoint with the lowest validation relative-$L_2$ error is retained.
   \item \textbf{Hardware}: NVIDIA RTX PRO 6000 (CUDA), PyTorch 2.x.
 \end{itemize}

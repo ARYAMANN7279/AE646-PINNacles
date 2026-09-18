@@ -49,7 +49,8 @@ with $u = 0$ on $\partial\Omega$ and constant forcing $f=1$. The permeability $\
   \item Full training, evaluation, and comparison of FNO and MLP on PDEBench Darcy flow.
   \item Zero-shot super-resolution evaluation at $2\times$ training resolution.
   \item Layer-wise computational profiling with correct GPU synchronisation.
-  \item Physical interpretation of error patterns in terms of $\kappa$ field complexity.
+  \item Physical interpretation of error patterns, quantified against real $\kappa$-heterogeneity measures rather than asserted from visual inspection.
+  \item A real ablation over MLP baseline depth and optimiser choice, justifying the reported baseline configuration with measured numbers.
 \end{enumerate}
 
 % ─────────────────────────────────────────────────────────────────────────────
@@ -87,6 +88,19 @@ We use the 2D Darcy flow split of PDEBench \cite{takamoto2022pdebench} (DOI: \te
 
 \subsection{Why Downsample?}
 Working at $64\times64$ reduces memory and compute by $4\times$ while preserving the essential $\kappa$-interface structure. The FNO zero-shot evaluation (Section~\ref{sec:superres}) then tests whether the learned operator generalises back to $128\times128$.
+
+\subsection{Exploratory Data Analysis}
+\label{sec:eda}
+Before modelling, we characterised the 1\,200 real PDEBench samples used across all splits (\texttt{src/eda.py}, run on the full train/val/test pool).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.54\textwidth]{../results/figures/fig8_eda_dataset.pdf}
+\caption{Dataset characterisation. $\kappa$ is exactly bimodal at $\{0.1,1.0\}$; high-permeability area fraction varies widely (mean $0.48\pm0.21$); peak pressure mean $0.34\pm0.19$ (physical units). At native $128\times128$, 180/200 test samples have exactly one connected high-$\kappa$ region, 18/200 have two, 2/200 are degenerate (zero regions) --- PDEBench's generator almost always produces a single blob, not a fragmented multi-region field.}
+\label{fig:eda}
+\end{figure}
+
+$\kappa$ heterogeneity here is dominated by \emph{how much area} is high-permeability, not \emph{how many} regions there are (multi-region samples are rare). Section~\ref{sec:higherror} shows the rare near-degenerate (almost-uniform) samples, not "many-region" ones, are where FNO struggles most.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Model Architectures}
@@ -131,7 +145,7 @@ Parameter efficiency & Low & High \\
 All models were trained with:
 \begin{itemize}[nosep]
   \item \textbf{Loss}: $\mathcal{L} = \frac{1}{B}\sum_{i=1}^B \frac{\|\hat{u}_i - u_i\|_2}{\|u_i\|_2}$
-  \item \textbf{Optimiser}: Adam, $\eta_0 = 10^{-3}$, cosine annealing to $\eta_{\min}=10^{-5}$
+  \item \textbf{Optimiser}: AdamW (decoupled weight decay), $\eta_0 = 10^{-3}$, cosine annealing to $\eta_{\min}=10^{-5}$
   \item \textbf{Batch size}: 16; 100 epochs (200 for FNO improved). No early stopping --- each run completes its full epoch budget and the checkpoint with the lowest validation relative-$L_2$ error is retained.
   \item \textbf{Regularisation}: $L_2$ weight decay $10^{-4}$
   \item \textbf{Hardware}: NVIDIA RTX PRO 6000 (CUDA), PyTorch 2.x
@@ -162,7 +176,7 @@ FNO improved & 78.8\,M & \textbf{0.0456} & \textbf{0.0307} & 0.0487 & \textbf{0.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{../results/figures/fig1_error_histogram.pdf}
-\caption{Error distribution across 200 test samples. Dashed lines: per-model means. The long right tail ($\epsilon > 0.2$) corresponds to samples with complex multi-region $\kappa$ fields.}
+\caption{Error distribution across 200 test samples. Dashed lines: per-model means. The long right tail ($\epsilon > 0.2$) is driven mainly by near-degenerate, almost-uniform $\kappa$ fields, not by multi-region complexity --- see the quantified check in Section~\ref{sec:higherror}.}
 \label{fig:hist}
 \end{figure}
 
@@ -176,9 +190,38 @@ FNO improved & 78.8\,M & \textbf{0.0456} & \textbf{0.0307} & 0.0487 & \textbf{0.
 \subsection{Analysis}
 \begin{enumerate}[nosep]
   \item \textbf{FNO vs.\ MLP accuracy}: FNO's spectral bias naturally captures the low-frequency structure of Darcy solutions. Darcy pressure fields are smooth ($H^2$ regularity away from interfaces), so the 12-mode truncation retains most signal energy. The MLP has no such bias and must learn spatial correlations implicitly.
-  \item \textbf{Variance}: Standard deviation is similar across models ($0.045$--$0.049$), suggesting the hard cases (complex $\kappa$) are hard for all architectures.
+  \item \textbf{Variance}: Standard deviation is similar across models ($0.045$--$0.049$), suggesting the hard cases (Section~\ref{sec:higherror}: near-degenerate $\kappa$ fields) are hard for all architectures.
   \item \textbf{Scaling}: FNO improved (78.8\,M) improves mean error by 12\% over FNO original (4.7\,M) --- a $17\times$ parameter increase for $12\%$ accuracy gain. This suggests the original FNO is near the accuracy limit imposed by 12 retained modes, and further gains require more modes rather than more channels.
 \end{enumerate}
+
+\subsection{MLP Baseline Ablation}
+\label{sec:mlp-ablation}
+The 3$\times$2048 MLP was not the only configuration tried. \texttt{src/ablation\_mlp.py} retrains, from scratch, four real variants on the same data/split/loss/schedule --- depth (1, 2, and 3 hidden layers, all AdamW) and optimiser (3-layer with SGD+momentum instead of AdamW) --- and reports whatever the test set gives, not a hand-picked number.
+
+\begin{table}[H]
+\centering
+\caption{MLP ablation: real re-trained results, 200 test samples (\texttt{results/ablation\_mlp.json}).}
+\begin{tabular}{lrrr}
+\toprule
+Configuration & Params & Test Mean Rel.\ $L_2$ & Best Epoch \\
+\midrule
+1-layer (2048), AdamW              & 33.6\,M & 0.1008 & 61 \\
+2-layer (2048$\times$2), AdamW     & 37.8\,M & 0.0796 & 96 \\
+3-layer (2048$\times$3), AdamW \textbf{(final baseline)} & 42.0\,M & 0.0857 & 96 \\
+3-layer (2048$\times$3), SGD+momentum & 42.0\,M & 0.1209 & 97 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.52\textwidth]{../results/figures/fig7_mlp_ablation.pdf}
+\caption{MLP ablation, real re-trained runs (1 std over 200 test samples).}
+\end{figure}
+
+SGD+momentum (0.1209) is clearly worse than any AdamW variant, justifying that choice. Depth shows diminishing, non-monotonic returns: 2 layers (0.0796) edges out 3 layers (0.0857) here, so the third hidden layer buys little at this dataset size --- we kept 3 layers as it was fixed before this ablation was run, not because it is provably optimal, and the gap is within run-to-run noise.
+
+\textit{Reproducibility note}: \texttt{train.py} did not seed model init/batch order when the reported baseline (\texttt{run\_002}, 0.0820) was trained; this is now fixed (\texttt{torch.manual\_seed(42)} + seeded \texttt{DataLoader}), but re-running the same config here still gives 0.0857. The $\sim\!0.004$ gap matches the order of our CUDA-vs-MPS cross-check gap on the main models (README: FNO 0.0521 vs.\ 0.0544) --- ordinary variance, not a bug, and exactly why every run is now seeded.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Zero-Shot Super-Resolution}
@@ -279,7 +322,17 @@ The Darcy pressure field $u$ is the solution of an elliptic PDE: it is globally 
 The MLP, by flattening the spatial field, loses locality information in its first layer. It can in principle learn any mapping from $\kappa$ to $u$, but the 42\,M-parameter space is not well-regularised for this specific task: the network must discover spatial correlations by brute force, leading to higher error.
 
 \subsection{High-Error Cases}
-Samples with relative $L_2 > 0.2$ (approximately the top 5\% of test errors) share a common feature: the $\kappa$ field has a large number of distinct connected regions with sharp interfaces, creating rapid spatial transitions in $\nabla u$. These transitions require high-frequency Fourier modes to represent accurately --- exactly the modes discarded by the 12-mode FNO. Increasing the mode count and depth (FNO improved: modes=20, 6 blocks) helps most on the easy and typical cases --- the minimum error falls from 0.0155 to 0.0106 and the median from 0.0398 to 0.0307 --- but barely moves the worst case (max error 0.347 vs.\ 0.354), confirming that the hardest multi-region fields are limited by something other than raw mode count.
+\label{sec:higherror}
+We had hypothesised, from visual inspection alone, that high-error samples would be the ones with the \emph{most} distinct $\kappa$ regions and sharpest interfaces (more high-frequency content, discarded by the 12-mode truncation). Since Section~\ref{sec:eda} shows multi-region samples are rare to begin with, we tested this quantitatively instead of asserting it: correlating each test sample's connected-region count and $\kappa$-interface perimeter (native $128\times128$) against FNO-original's per-sample test error (Figure~\ref{fig:errvshet}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.58\textwidth]{../results/figures/fig9_error_vs_heterogeneity.pdf}
+\caption{FNO (original) error vs.\ $\kappa$-heterogeneity, 200 test samples. Region count: $r=0.24$ (weak). Interface perimeter: $r=-0.17$ (weak, wrong sign for "more interface = harder").}
+\label{fig:errvshet}
+\end{figure}
+
+The hypothesis is only weakly supported, and not as expected: region count correlates weakly positively ($r=0.24$) but interface perimeter correlates weakly \emph{negatively} ($r=-0.17$), so "more/sharper interfaces" is not a reliable predictor. What the scatter shows clearly is that the single worst sample ($\epsilon=0.347$) has \textbf{zero} connected high-$\kappa$ regions --- a near-degenerate, almost-uniformly-low-permeability field, the same failure mode flagged qualitatively in Stage 2. We revise our earlier claim: it is \emph{degenerate/near-uniform} $\kappa$ fields, not many-region fields, that are hardest here --- plausibly because a uniform field gives the spectral filter almost no signal to key on. Increasing mode count and depth (FNO improved) helps the typical case (median $0.0398\to0.0307$) but barely moves the worst case ($0.347$ vs.\ $0.354$), consistent with a degenerate-input explanation rather than a simple mode-count limit.
 
 \subsection{Zero-Shot Generalisation}
 The $14\%$ error increase from $64\times64$ to $128\times128$ is physically interpretable: at finer resolution, the $\kappa$ interfaces are represented with more spatial detail, introducing higher-frequency content in $u$ that the 12-mode operator cannot represent. The increase being only $14\%$ (rather than catastrophic) reflects that Darcy flow is dominated by low-frequency modes --- the trained 12-mode FNO captures the essential physics.

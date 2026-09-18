@@ -4,6 +4,7 @@ Supports config files, wandb logging, checkpointing, and evaluation.
 """
 import os
 import json
+import random
 import argparse
 import yaml
 import torch
@@ -16,6 +17,19 @@ from tqdm import tqdm
 import wandb
 
 from models import get_model, count_parameters
+
+SEED = 42
+
+
+def set_seed(seed=SEED):
+    """Seed every source of randomness in the training pipeline (Python,
+    NumPy, PyTorch CPU/CUDA) so model init and batch order are reproducible
+    across runs, not just the data subset selection in preprocess.py."""
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
 
 
 def load_config(config_path):
@@ -33,11 +47,11 @@ def load_norm_stats(data_dir):
 def load_data(data_dir, batch_size, num_workers=0):
     """Load preprocessed .npz files."""
     data_dir = Path(data_dir)
-    
+
     train_data = np.load(data_dir / "train.npz")
     val_data = np.load(data_dir / "val.npz")
     test_data = np.load(data_dir / "test.npz")
-    
+
     train_dataset = TensorDataset(
         torch.from_numpy(train_data["inputs"]).float(),
         torch.from_numpy(train_data["targets"]).float()
@@ -50,8 +64,10 @@ def load_data(data_dir, batch_size, num_workers=0):
         torch.from_numpy(test_data["inputs"]).float(),
         torch.from_numpy(test_data["targets"]).float()
     )
-    
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, 
+
+    shuffle_generator = torch.Generator().manual_seed(SEED)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True,
+                              generator=shuffle_generator,
                               num_workers=num_workers, pin_memory=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False,
                             num_workers=num_workers, pin_memory=True)
@@ -173,7 +189,8 @@ def main():
     args = parser.parse_args()
     
     config = load_config(args.config)
-    
+    set_seed()
+
     # Setup
     if torch.backends.mps.is_available():
         device = torch.device("mps")
