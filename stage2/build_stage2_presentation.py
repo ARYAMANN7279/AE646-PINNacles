@@ -237,7 +237,7 @@ card(sl, CL, CT + Inches(1.6), Inches(6.6), Inches(3.85))
 pic(sl, "fig1_error_histogram.png", CL + Inches(0.1), CT + Inches(1.7), Inches(6.4), Inches(3.65))
 card(sl, CL + Inches(6.75), CT + Inches(1.6), CW - Inches(6.75), Inches(3.85), "Observations", GREEN)
 bullets(sl, [
-    "FNO: 37% lower mean error with 9× fewer parameters",
+    "FNO: 36% lower mean error with 9× fewer parameters",
     "Both error distributions are right-skewed: most samples < 0.1, a small tail up to ~0.35",
     "FNO's gain is in the bulk of the distribution; the worst-case errors of the two models are similar",
 ], CL + Inches(6.95), CT + Inches(2.3), CW - Inches(7.15), Inches(3.0), sz=Pt(15), gap=Pt(8))
@@ -286,7 +286,7 @@ tx(sl, "Summary", Inches(0.6), Inches(0.18), W - Inches(1.2), Inches(0.85), sz=P
 summary = [
     ("Data",     "Real PDEBench pipeline complete: 900 / 100 / 200 split at 64×64; EDA and preprocessing ablation done"),
     ("Baseline", "MLP (42 M) implemented and tuned by depth / optimiser / preprocessing ablations: mean rel. L2 0.082"),
-    ("SciML",    "FNO (4.7 M) implemented and trained: mean rel. L2 0.052, 37% lower with 9× fewer parameters"),
+    ("SciML",    "FNO (4.7 M) implemented and trained: mean rel. L2 0.052, 36% lower with 9× fewer parameters"),
     ("Insight",  "Worst FNO case is a degenerate uniform-κ field, not a complex one"),
     ("Next",     "Scaling study, resolution generalisation, cost analysis, physical interpretation"),
 ]
