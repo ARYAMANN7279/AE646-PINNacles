@@ -8,6 +8,10 @@ pyyaml==6.0.1
 wandb==0.17.3
 requests==2.32.3
 
-# Optional - only needed to rebuild the Stage 1 slide deck (docs/build_presentation.py).
+pytest
+
+# Optional - only needed to rebuild the Stage 1 / Stage 2 .pptx decks
+# (stage1/build_stage1_presentation.py, stage2/build_stage2_presentation.py).
 # The reports and the Stage 3 deck compile with tectonic and need nothing from pip.
 python-pptx==1.0.2
+Pillow

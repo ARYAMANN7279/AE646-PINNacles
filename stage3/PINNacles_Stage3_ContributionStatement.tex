@@ -29,9 +29,11 @@
 
   \item \textbf{Component profiling}: Designed and implemented \texttt{src/benchmark\_components.py} with correct GPU synchronisation to measure per-layer execution time.
 
-  \item \textbf{Figure generation}: Implemented \texttt{src/generate\_figures.py}; produced all six report figures from stored JSON results.
+  \item \textbf{Analysis and ablations}: Implemented \texttt{src/eda.py} (dataset analysis and the error-vs-geometry study), \texttt{src/ablation\_mlp.py} (depth/optimiser) and \texttt{src/ablation\_preprocess.py} (preprocessing, 3 seeds); ran them on the lab GPU workstation.
 
-  \item \textbf{Reports and presentations}: Wrote Stage 1 proposal (\texttt{stage1/PINNacles\_Stage1\_Proposal.tex}), Stage 1 presentation (10 slides), Stage 2 interim report (\texttt{stage2/PINNacles\_Stage2\_InterimReport.tex}), the Stage 3 final presentation (\texttt{PINNacles\_Stage3\_FinalPresentation}), and this final report (\texttt{stage3/PINNacles\_Stage3\_FinalReport.tex}).
+  \item \textbf{Figure generation}: Implemented \texttt{src/generate\_figures.py}; produced the report figures from stored JSON results.
+
+  \item \textbf{Reports and presentations}: Wrote Stage 1 proposal (\texttt{stage1/PINNacles\_Stage1\_Proposal.tex}), Stage 1 presentation (10 slides), Stage 2 interim report, presentation and code package (\texttt{stage2/}, including a single notebook that combines the pipeline scripts), the Stage 3 final presentation (\texttt{PINNacles\_Stage3\_FinalPresentation}), and this final report (\texttt{stage3/PINNacles\_Stage3\_FinalReport.tex}).
 \end{itemize}
 
 Team PINNacles was formed with four members at the proposal stage (Aryamann Srivastava, Varun Sathaye, Atishay Jain, Vedant Shekhar Tiwari). The implementation, experiments, figures, and reports contained in this repository were carried out by Aryamann Srivastava, whose individual contributions are listed above.
@@ -42,13 +44,13 @@ Team PINNacles was formed with four members at the proposal stage (Aryamann Sriv
 In accordance with the AE646 course policy on generative AI tools, I declare the following use of AI assistance during this project:
 
 \begin{enumerate}
-  \item \textbf{Code debugging}: Claude Code (Anthropic) was used to identify and fix a GPU timing bug in the component profiling script. The issue was that \texttt{time.perf\_counter()} measured dispatch time rather than execution time for asynchronous GPU operations; the fix (a device-synchronisation call before every timer read --- \texttt{torch.cuda.synchronize} on CUDA, \texttt{torch.mps.synchronize} on Apple Silicon) was suggested by the AI assistant. All code was reviewed, understood, and accepted by me before being committed.
+  \item \textbf{Coding assistance and debugging}: Claude Code (Anthropic) assisted with writing and debugging project code, including the data, training and evaluation scripts, the analysis and ablation scripts, and the notebook that combines them. One example is the GPU timing fix in the component profiling script: \texttt{time.perf\_counter()} measured dispatch time rather than execution time for asynchronous GPU operations, and the fix (a device-synchronisation call before every timer read --- \texttt{torch.cuda.synchronize} on CUDA, \texttt{torch.mps.synchronize} on Apple Silicon) was suggested by the AI assistant. All code was reviewed and accepted by me before being committed.
 
-  \item \textbf{Report drafting and consistency checking}: Claude Code assisted with LaTeX structure and table formatting, with drafting and editing report prose, and with cross-checking the numbers quoted in the reports against the stored results files (\texttt{results/*/eval\_metrics.json}, \texttt{benchmark\_*.json}) and the training configs. Every number originates from my own experiments; all scientific claims and their interpretation are my own and were verified by me.
+  \item \textbf{Running experiments and checking results}: At my direction, Claude Code executed the scripts on the lab GPU workstation (training, ablations, the notebook run) and cross-checked every number quoted in the reports, slides and README against the stored results files and training configs. This surfaced several documentation errors that were then corrected (for example the training-loss and learning-rate-schedule descriptions, the dataset split, and rounded percentage figures).
 
-  \item \textbf{Presentation slides}: Claude Code assisted with Python code to programmatically build the Stage 1 PPTX presentation using \texttt{python-pptx}. The technical content of every slide was written by me.
+  \item \textbf{Report and slide drafting}: Claude Code assisted with LaTeX structure and table formatting, with drafting and editing report text, and with Python (\texttt{python-pptx}) and Beamer code to build the Stage 1, Stage 2 and Stage 3 presentations. The technical content, numbers and interpretation were reviewed and verified by me.
 
-  \item \textbf{No AI-generated results}: All numerical results in this report are from experiments I ran on real hardware. No results were generated or hallucinated by AI tools.
+  \item \textbf{No AI-generated results}: All numerical results in this report come from real experiments run on real data and hardware. No results were generated or invented by AI tools.
 \end{enumerate}
 
 \bigskip

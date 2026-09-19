@@ -16,6 +16,7 @@ dependencies:
   - pip:
     - wandb==0.17.3
     - requests==2.32.3
+    - pytest
 
 # Note: no CUDA/platform-specific pin here on purpose - conda selects the
 # right pytorch build for whatever machine this is installed on (CPU, Apple
