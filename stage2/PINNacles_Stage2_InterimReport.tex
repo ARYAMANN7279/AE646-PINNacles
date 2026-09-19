@@ -68,7 +68,7 @@ Before modelling we characterised the 1,200 real samples used across the three s
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.55\textwidth]{figures/fig8_eda_dataset.pdf}
+\includegraphics[width=0.5\textwidth]{figures/fig8_eda_dataset.pdf}
 \caption{Dataset characterisation. $\kappa$ is exactly bimodal at $\{0.1,1.0\}$; the high-permeability area fraction varies widely (mean $0.48\pm0.21$); peak pressure has mean $0.34\pm0.19$ (physical units). At native $128\times128$, 180/200 test samples contain exactly one connected high-$\kappa$ region, 18/200 contain two, and 2/200 are exactly uniform ($\kappa\equiv0.1$, zero regions).}
 \label{fig:eda}
 \end{figure}
@@ -97,7 +97,7 @@ No target normalisation (raw pressure)                      & $0.0917 \pm 0.0012
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.46\textwidth]{figures/fig10_preprocess_ablation.pdf}
+\includegraphics[width=0.42\textwidth]{figures/fig10_preprocess_ablation.pdf}
 \caption{MLP preprocessing ablation (mean $\pm$ std over 3 seeds).}
 \label{fig:preabl}
 \end{figure}
@@ -157,7 +157,7 @@ Configuration & Params & Mean rel.\ $L_2$ & Median \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.46\textwidth]{figures/fig7_mlp_ablation.pdf}
+\includegraphics[width=0.42\textwidth]{figures/fig7_mlp_ablation.pdf}
 \caption{MLP baseline ablation (error bars: one standard deviation across the 200 test samples).}
 \label{fig:mlpabl}
 \end{figure}
@@ -193,14 +193,14 @@ Key observations:
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.5\textwidth]{figures/fig1_error_histogram.pdf}
+\includegraphics[width=0.46\textwidth]{figures/fig1_error_histogram.pdf}
 \caption{Error distribution across 200 test samples. Dashed vertical lines indicate per-model means. FNO errors are concentrated at lower values; the MLP's distribution is shifted right.}
 \label{fig:hist}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.78\textwidth]{figures/fig_sample_predictions.png}
+\includegraphics[width=0.66\textwidth]{figures/fig_sample_predictions.png}
 \caption{FNO predictions for the best (sample 17, error 0.016), a median-error (sample 191, error 0.040) and the worst (sample 95, error 0.347) test sample. Columns: input $\kappa$, target pressure, predicted pressure, absolute error. The worst case has exactly uniform $\kappa\equiv0.1$: the true pressure is a smooth bump, but the FNO over-predicts its amplitude (the prediction saturates the colour scale of the target) --- a failure mode specific to this degenerate input.}
 \label{fig:samples}
 \end{figure}
@@ -223,17 +223,17 @@ python3 src/train.py    --config configs/fno.yaml
 python3 src/evaluate.py --config configs/fno.yaml \
     --checkpoint results/run_001/best_model.pt
 \end{verbatim}
-\textbf{Platform.} Everything is run as plain Python scripts (no Colab/Kaggle notebooks): code development and checks on a local macOS (Apple Silicon, MPS) machine, and training on a remote Linux workstation with an NVIDIA RTX PRO 6000 GPU (CUDA) accessed over SSH. The random seed is fixed to 42 for the data split, and, in the current code, for model initialisation and batch order as well.
+\textbf{Platform and notebook.} During development each step (data preparation, training, evaluation, dataset analysis, ablations) was a separate Python script. We later combined them into one Jupyter notebook, \texttt{PINNacles\_Stage2\_Notebook.ipynb}, included in the code archive, which runs the whole pipeline and shows the results inline. Development and unit tests ran on a MacBook (macOS, Apple Silicon); training, the ablations and the full notebook run on a GPU workstation (NVIDIA RTX PRO 6000, CUDA). The notebook reproduces the reported results closely (FNO 0.0528, MLP 0.0840, against 0.0521 and 0.0820 above) and all 16 unit tests pass.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Issues Encountered}
 \label{sec:issues}
 
 \begin{enumerate}[nosep]
-  \item \textbf{Metric convention.} Relative $L_2$ must be computed in physical units. Computed on standardised fields, the subtracted mean changes $\|u\|_2$ (but not $\|\hat u-u\|_2$), so the number is not comparable with the literature. All reported errors are computed after de-normalising, and the metric is unit-tested.
+  \item \textbf{Metric convention.} Relative $L_2$ must be computed in physical units: on standardised fields the subtracted mean changes $\|u\|_2$, so the number is not comparable with the literature. All reported errors are de-normalised, and the metric is unit-tested.
   \item \textbf{Uniform-permeability samples.} Exactly uniform $\kappa$ fields (2 of the 200 test samples) are a degenerate input on which the FNO over-predicts the pressure amplitude; one of them is the worst test sample (error 0.347, Figure~\ref{fig:samples}). We report this failure openly rather than excluding those samples.
-  \item \textbf{Compute constraints.} The raw PDEBench file is 1.3\,GB; loading it and training the 42\,M-parameter MLP and the FNO for 100 epochs (plus the ablations) was moved to the lab GPU workstation, while code development and unit tests stayed on the local machine.
-  \item \textbf{Run-to-run variance.} The first training runs (the reported \texttt{run\_001}/\texttt{run\_002}) did not fix the model-initialisation seed. Re-training the identical MLP configuration gives errors differing by $\sim0.004$ (e.g.\ $0.0820$ reported vs.\ $0.0857$ in Section~\ref{sec:mlpabl}), which we treat as the noise floor: only gaps larger than this are interpreted. The training code now seeds Python, NumPy and PyTorch, and the preprocessing ablation above uses 3 fixed seeds per variant.
+  \item \textbf{Compute constraints.} Loading the 1.3\,GB raw file and training the MLP and the FNO (plus the ablations) was moved to the lab GPU machine.
+  \item \textbf{Run-to-run variance.} The first training runs (the reported \texttt{run\_001}/\texttt{run\_002}) did not fix the model-initialisation seed; re-training the identical MLP gives errors differing by $\sim0.004$ (0.0820 reported vs.\ 0.0857 in Section~\ref{sec:mlpabl}), which we treat as the noise floor: only larger gaps are interpreted. Training now seeds Python, NumPy and PyTorch, and the preprocessing ablation uses 3 fixed seeds per variant.
 \end{enumerate}
 
 % ─────────────────────────────────────────────────────────────────────────────
