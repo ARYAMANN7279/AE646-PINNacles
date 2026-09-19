@@ -223,7 +223,7 @@ with tempfile.TemporaryDirectory() as tmp:
     copy(ROOT / "tests" / "test_models.py", out / "tests" / "test_models.py")
     for f in RESULT_FILES:
         copy(ROOT / "results" / f, out / "results" / f)
-    copy(HERE / "data" / "eda_metrics.json", out / "results" / "eda_metrics.json")
+    copy(HERE / "eda_metrics_stage2.json", out / "results" / "eda_metrics.json")
     for f in (HERE / "figures").iterdir():                                    # Stage 2 figures only
         if f.suffix == ".png":                                                # PNG only (PDFs are for LaTeX)
             copy(f, out / "results" / "figures" / f.name)
