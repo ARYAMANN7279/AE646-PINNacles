@@ -81,7 +81,7 @@ To check that the preprocessing choices are sensible rather than assumed, we var
 
 \begin{table}[H]
 \centering
-\caption{MLP preprocessing ablation: test mean relative $L_2$ (200 samples), mean $\pm$ std over 3 seeds (\texttt{results/ablation\_preprocess.json}).}
+\caption{MLP preprocessing ablation: test mean relative $L_2$ (200 samples), mean $\pm$ std over 3 seeds.}
 \label{tab:preabl}
 \begin{tabular}{lr}
 \toprule
@@ -247,7 +247,7 @@ The following are planned for the final stage:
   \item \textbf{Computational cost.} Benchmark inference time of both models against the finite-difference reference solver, and profile the cost of the individual FNO operations (FFT, spectral multiplication, local convolution).
   \item \textbf{Physical interpretation.} Quantify how the per-sample error relates to the geometry of the permeability field (number of regions, interface length, area fraction), including the uniform-$\kappa$ failure cases identified above.
   \item \textbf{Learning-rate schedule.} Compare the current per-step cosine cycling with standard per-epoch cosine annealing, to check how much of the remaining error is optimisation rather than model capacity.
-  \item \textbf{Final deliverables.} Final report, contribution statement and AI-tool-use declaration, final presentation, and viva.
+  \item \textbf{Final deliverables.} Final report, final presentation, and viva.
 \end{enumerate}
 
 % ─────────────────────────────────────────────────────────────────────────────
