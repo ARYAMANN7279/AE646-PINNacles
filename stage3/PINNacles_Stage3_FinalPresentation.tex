@@ -87,7 +87,7 @@ FNO improved & 78.8\,M & \textbf{0.0456} & \textbf{0.0307} & 0.0487 & \textbf{0.
 \end{table}
 \vfill
 \begin{itemize}\footnotesize
-  \item FNO original: \textbf{37\% lower mean error than MLP with $9\times$ fewer parameters}.
+  \item FNO original: \textbf{36\% lower mean error than MLP with $9\times$ fewer parameters}.
   \item Scaling to 78.8\,M ($17\times$) buys only a further 12\% --- the 12-mode truncation, not channel count, is the limit.
   \item Similar std across models ($0.045$--$0.049$): the hard cases (complex multi-region $\kappa$) are hard for every architecture.
 \end{itemize}
@@ -180,7 +180,7 @@ Sync-per-timer inflates absolute times ($\approx$19.6\,ms) far above the fused 0
 
 \begin{frame}{Conclusion and reproducibility}
 \begin{itemize}
-  \item FNO beats the MLP baseline: \textbf{37\% lower error, $9\times$ fewer parameters}, zero-shot to $2\times$ resolution ($+14\%$), $>1000\times$ faster than FDM.
+  \item FNO beats the MLP baseline: \textbf{36\% lower error, $9\times$ fewer parameters}, zero-shot to $2\times$ resolution ($+14\%$), $>1000\times$ faster than FDM.
   \item The spectral inductive bias --- ``elliptic PDE solutions are smooth'' --- is nearly exact for Darcy flow, which explains the gap with the unbiased MLP.
   \item Reproducible: seed 42 throughout; \texttt{pytest} suite (16 tests); metrics/figures regenerate from committed JSON; MPS re-run of the pipeline matched the GPU numbers (FNO 0.0521 vs.\ 0.0544).
 \end{itemize}

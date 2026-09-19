@@ -14,8 +14,8 @@ where kappa is a piecewise-constant permeability field (values 0.1 or 1.0), i.e.
 Baseline: fully-connected MLP. SciML model: FNO.
 
 ## Computational environment
-Plain Python scripts (no notebooks). Code development and unit tests were run on a MacBook (macOS, Apple Silicon);
-model training and the ablations were run on a GPU workstation (NVIDIA RTX PRO 6000, CUDA). Python 3.11, PyTorch 2.x.
+Code development and unit tests were run on a MacBook (macOS, Apple Silicon); model training and the ablations were
+run on a GPU workstation (NVIDIA RTX PRO 6000, CUDA). Python 3.11, PyTorch 2.x.
 
 ## Dataset
 Real PDEBench 2D Darcy Flow (beta = 1.0), DOI 10.18419/darus-2986: 10,000 samples at 128x128 (about 1.3 GB).
@@ -24,7 +24,14 @@ test samples. Fields are subsampled to 64x64 (every second grid point), standard
 only, and (x, y) coordinate channels are added, giving inputs of shape 64x64x3 = [kappa, x, y].
 
 ## Setup and how to run
-Unzip the code archive and run everything from the extracted folder.
+Unzip the code archive and work from the extracted folder. There are two equivalent ways to run the project.
+
+**Option A - single notebook (whole pipeline in one go).** Open `PINNacles_Stage2_Notebook.ipynb` in Jupyter and
+*Run All*. It writes the source files, downloads and preprocesses the data, trains and evaluates both models, runs the
+dataset analysis and the ablations, and runs the unit tests, showing the results inline. A GPU is needed for training
+in reasonable time.
+
+**Option B - scripts (same code, step by step):**
 
 ```bash
 # 1. install dependencies
@@ -59,7 +66,7 @@ so they can be checked without retraining (trained checkpoints are not included 
 | MLP baseline (3 x 2048) | 42.0 M | 0.0820 | 0.0695 | 0.0456 | 0.0325 | 0.3367 |
 | FNO (width 64, 12 modes, 4 blocks) | 4.7 M | 0.0521 | 0.0398 | 0.0451 | 0.0155 | 0.3467 |
 
-The FNO reaches 37% lower mean error with 9x fewer parameters.
+The FNO reaches 36% lower mean error with 9x fewer parameters.
 
 - **MLP depth / optimiser ablation** (one run each): 1 layer 0.1008, 2 layers 0.0796, 3 layers (final baseline) 0.0857,
   3 layers with SGD+momentum 0.1209.

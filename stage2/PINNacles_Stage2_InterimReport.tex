@@ -186,7 +186,7 @@ FNO            &  4.7\,M & \textbf{0.0521} & \textbf{0.0398} & 0.0451 & \textbf{
 
 Key observations:
 \begin{enumerate}[nosep]
-  \item The FNO achieves $37\%$ lower mean error than the MLP while using $9\times$ fewer parameters, demonstrating the advantage of spectral inductive biases for smooth PDE solutions.
+  \item The FNO achieves $36\%$ lower mean error than the MLP while using $9\times$ fewer parameters, demonstrating the advantage of spectral inductive biases for smooth PDE solutions.
   \item Both models have right-skewed error distributions: most samples have errors well below 0.1, while a small fraction ($\lesssim5\%$) pushes the error toward 0.3 (Figure~\ref{fig:hist}). The maximum error is similar for the two models, so the FNO's advantage is in the bulk of the distribution rather than the tail.
   \item The single worst FNO test sample is not a complex field but the opposite: a perfectly uniform permeability field (Figure~\ref{fig:samples}, bottom row).
 \end{enumerate}

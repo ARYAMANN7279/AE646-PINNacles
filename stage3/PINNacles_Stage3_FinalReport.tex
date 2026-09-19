@@ -26,7 +26,7 @@ Fourier Neural Operator vs.\ MLP Baseline with Physical Interpretation}
 \maketitle
 
 \begin{abstract}
-We compare Fourier Neural Operator (FNO) and a fully-connected MLP baseline as surrogate solvers for the 2D parametric Darcy flow equation $-\nabla\cdot(\kappa\nabla u)=f$, trained on 900 samples from the PDEBench benchmark at $64\times64$ resolution. FNO (4.7\,M parameters) achieves a mean relative $L_2$ error of $0.052$ on 200 held-out test samples, $37\%$ lower than the MLP (0.082, 42\,M parameters) at $9\times$ lower parameter count. A scaled FNO (78.8\,M parameters) further reduces error to $0.046$. Both models infer in $<1$\,ms per sample, orders of magnitude faster than the FDM reference (1030\,ms). FNO's spectral weights enable zero-shot super-resolution: the same trained model evaluated at $128\times128$ attains mean error $0.059$ without retraining. Component profiling reveals that spectral operations (FFT, complex multiply, IFFT) account for 68.4\% of FNO's compute time, with complex multiplication alone at 41\%.
+We compare Fourier Neural Operator (FNO) and a fully-connected MLP baseline as surrogate solvers for the 2D parametric Darcy flow equation $-\nabla\cdot(\kappa\nabla u)=f$, trained on 900 samples from the PDEBench benchmark at $64\times64$ resolution. FNO (4.7\,M parameters) achieves a mean relative $L_2$ error of $0.052$ on 200 held-out test samples, $36\%$ lower than the MLP (0.082, 42\,M parameters) at $9\times$ lower parameter count. A scaled FNO (78.8\,M parameters) further reduces error to $0.046$. Both models infer in $<1$\,ms per sample, orders of magnitude faster than the FDM reference (1030\,ms). FNO's spectral weights enable zero-shot super-resolution: the same trained model evaluated at $128\times128$ attains mean error $0.059$ without retraining. Component profiling reveals that spectral operations (FFT, complex multiply, IFFT) account for 68.4\% of FNO's compute time, with complex multiplication alone at 41\%.
 \end{abstract}
 
 \tableofcontents
@@ -184,7 +184,7 @@ FNO improved & 78.8\,M & \textbf{0.0456} & \textbf{0.0307} & 0.0487 & \textbf{0.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.55\textwidth]{figures/fig2_efficiency_scatter.pdf}
-\caption{Accuracy--parameter efficiency. FNO original occupies the optimal region: 9$\times$ fewer parameters than MLP at 37\% lower error. Scaling FNO to 78.8\,M yields only 12\% further improvement.}
+\caption{Accuracy--parameter efficiency. FNO original occupies the optimal region: 9$\times$ fewer parameters than MLP at 36\% lower error. Scaling FNO to 78.8\,M yields only 12\% further improvement.}
 \label{fig:scatter}
 \end{figure}
 
@@ -344,7 +344,7 @@ The $14\%$ error increase from $64\times64$ to $128\times128$ is physically inte
 We have demonstrated that the Fourier Neural Operator substantially outperforms an MLP baseline for the 2D parametric Darcy flow problem:
 
 \begin{itemize}[nosep]
-  \item \textbf{Accuracy}: FNO achieves 37\% lower mean relative $L_2$ error with 9$\times$ fewer parameters.
+  \item \textbf{Accuracy}: FNO achieves 36\% lower mean relative $L_2$ error with 9$\times$ fewer parameters.
   \item \textbf{Resolution invariance}: FNO generalises zero-shot to $2\times$ training resolution with only 14\% accuracy degradation; MLP cannot.
   \item \textbf{Speed}: Both models are $>1000\times$ faster than FDM; FNO at 0.71\,ms/sample is fully viable for real-time applications.
   \item \textbf{Compute profile}: 68.4\% of FNO's compute is spectral (FFT/multiply/IFFT), with complex multiplication (41\%) as the primary target for future optimisation.
