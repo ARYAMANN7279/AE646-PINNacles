@@ -67,7 +67,7 @@ AE646-PINNacles/
 |-- results/                 # metrics (JSON) + figures for the 3 runs, ablation, EDA (checkpoints not tracked)
 |-- ae646_handout.pdf        # course project spec
 |-- stage1/                  # Stage 1: proposal (LaTeX + PDF) and proposal deck (pptx/pdf + builder)
-|-- stage2/                  # Stage 2: interim report (.tex), 10-slide deck, Stage 2 README + code ZIP
+|-- stage2/                  # Stage 2: interim report (.tex/.pdf), 10-slide deck, Stage 2 README, code ZIP + single notebook
 |-- stage3/                  # Stage 3: final report, contribution statement/AI declaration, Beamer deck
 `-- data/                    # NOT tracked - regenerate with the download + preprocess steps
     |-- raw_pdebench/        # downloaded PDEBench HDF5
@@ -185,8 +185,11 @@ every 2·T_max steps (~28 cycles per 100-epoch run) rather than decaying once. K
 the committed results reproduce; a per-epoch schedule is listed as future work.
 
 ## Computational Environment
-No notebook service (Colab/Kaggle) was used. All code was run as plain Python scripts from
-the command line, on two machines:
+The pipeline is a set of Python scripts (`src/`), run from the command line. The Stage 2 archive
+additionally ships `stage2/PINNacles_Stage2_Notebook.ipynb`, one notebook that combines the Stage 2
+scripts (data -> train -> evaluate -> EDA -> ablations -> tests); it was executed end to end on the GPU
+workstation below (0 errors; fresh seeded run: FNO 0.0528, MLP 0.0840 mean rel L2). No Colab/Kaggle
+service was used. Two machines were involved:
 - **Local development**: macOS, Apple Silicon (MPS backend), Python 3.11/3.14, PyTorch 2.3+.
   Used for coding, the pytest suite, and cross-checking numbers.
 - **Training/benchmarking**: a remote Linux workstation (4×NVIDIA RTX PRO 6000, CUDA 12.x),
@@ -208,8 +211,8 @@ the command line, on two machines:
   for why this matters
 - Training was run on an NVIDIA RTX PRO 6000 (CUDA); results were cross-checked against an
   independent run on Apple Silicon (MPS) and matched closely (FNO 0.0521 vs 0.0544, MLP
-  0.0820 vs 0.0840 mean rel L2), confirming the pipeline is deterministic/reproducible
-  across hardware
+  0.0820 vs 0.0840 mean rel L2); a later seeded CUDA re-run (the Stage 2 notebook) gave FNO 0.0528
+  and MLP 0.0840. Differences of a few 1e-3 in mean error are the run-to-run / cross-hardware noise floor
 - Run the tests with `pytest` from the repo root
 
 ## Documents (in `stage1/`, `stage2/`, `stage3/`)
@@ -246,7 +249,7 @@ is unavailable. It is explicitly permitted by the course handout but is **not** 
 of any number reported in this repo.
 
 ## References
-- Li et al., "Fourier Neural Operator for Parametric PDEs", ICML 2021
+- Li et al., "Fourier Neural Operator for Parametric Partial Differential Equations", ICLR 2021
 - Takamoto et al., "PDEBench: An Extensive Benchmark for Scientific Machine Learning", NeurIPS 2022
 - PDEBench data: https://darus.uni-stuttgart.de/dataset.xhtml?persistentId=doi:10.18419/darus-2986
 - NeuralOperator: https://github.com/neuraloperator/neuraloperator

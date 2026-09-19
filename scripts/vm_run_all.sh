@@ -35,4 +35,16 @@ $PY src/benchmark_speed.py --fno-config configs/fno.yaml --fno-checkpoint result
 echo "=== Comparison plots ==="
 $PY src/compare_comprehensive.py
 
+echo "=== Dataset EDA (needs results/run_001/evaluation from above) ==="
+$PY src/eda.py
+
+echo "=== MLP ablations (depth/optimiser, then preprocessing x 3 seeds) ==="
+$PY src/ablation_mlp.py --config configs/mlp.yaml
+$PY src/ablation_preprocess.py
+
+echo "=== Report figures from stored JSON ==="
+$PY src/generate_figures.py
+# Note: src/benchmark_components.py is intentionally not run here - the committed
+# layer-profiling numbers come from an Apple-Silicon (MPS) run; re-running on CUDA would change them.
+
 echo "VM_PIPELINE_COMPLETE"

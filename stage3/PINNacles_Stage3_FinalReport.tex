@@ -50,7 +50,7 @@ with $u = 0$ on $\partial\Omega$ and constant forcing $f=1$. The permeability $\
   \item Zero-shot super-resolution evaluation at $2\times$ training resolution.
   \item Layer-wise computational profiling with correct GPU synchronisation.
   \item Physical interpretation of error patterns, quantified against real $\kappa$-heterogeneity measures rather than asserted from visual inspection.
-  \item A real ablation over MLP baseline depth and optimiser choice, justifying the reported baseline configuration with measured numbers.
+  \item Real ablations over the MLP baseline's depth, optimiser and preprocessing, justifying the reported baseline configuration and data pipeline with measured numbers.
 \end{enumerate}
 
 % ─────────────────────────────────────────────────────────────────────────────
@@ -195,7 +195,7 @@ FNO improved & 78.8\,M & \textbf{0.0456} & \textbf{0.0307} & 0.0487 & \textbf{0.
   \item \textbf{Scaling}: FNO improved (78.8\,M) improves mean error by 12\% over FNO original (4.7\,M) --- a $17\times$ parameter increase for $12\%$ accuracy gain. This suggests the original FNO is near the accuracy limit imposed by 12 retained modes, and further gains require more modes rather than more channels.
 \end{enumerate}
 
-\subsection{MLP Baseline Ablation}
+\subsection{MLP Baseline Ablations}
 \label{sec:mlp-ablation}
 The 3$\times$2048 MLP was not the only configuration tried. \texttt{src/ablation\_mlp.py} retrains, from scratch, four real variants on the same data/split/loss/schedule --- depth (1, 2, and 3 hidden layers, all AdamW) and optimiser (3-layer with SGD+momentum instead of AdamW) --- and reports whatever the test set gives, not a hand-picked number.
 
@@ -223,6 +223,8 @@ Configuration & Params & Test Mean Rel.\ $L_2$ & Best Epoch \\
 SGD+momentum (0.1209) is clearly worse than any AdamW variant, justifying that choice. Depth shows diminishing, non-monotonic returns: 2 layers (0.0796) edges out 3 layers (0.0857) here, so the third hidden layer buys little at this dataset size --- we kept 3 layers as it was fixed before this ablation was run, not because it is provably optimal, and the gap is within run-to-run noise.
 
 \textit{Reproducibility note}: \texttt{train.py} did not seed model init/batch order when the reported baseline (\texttt{run\_002}, 0.0820) was trained; this is now fixed (\texttt{torch.manual\_seed(42)} + seeded \texttt{DataLoader}), but re-running the same config here still gives 0.0857. The $\sim\!0.004$ gap matches the order of our CUDA-vs-MPS cross-check gap on the main models (README: FNO 0.0521 vs.\ 0.0544) --- ordinary variance, not a bug, and exactly why every run is now seeded.
+
+\paragraph{Preprocessing ablation.} With the same split and target, one preprocessing choice at a time was varied and the 3-layer MLP retrained with three fixed seeds each (\texttt{src/ablation\_preprocess.py}). Mean relative $L_2$ ($\pm$ std over seeds): reference (standardised inputs and targets, $+$ coordinate channels) $0.0842\pm0.0002$; no coordinate channels $0.0843\pm0.0011$; no input normalisation $0.0864\pm0.0018$; no target normalisation $0.0917\pm0.0012$. Normalising the target is the choice that matters ($+9\%$ error without it, well outside seed noise); coordinates make no difference for the MLP (its flattened input already fixes each pixel's position) and are kept as the standard FNO input convention.
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Zero-Shot Super-Resolution}
