@@ -1,0 +1,25 @@
+{
+  "dataset_summary": {
+    "n_samples_total": 1200,
+    "n_train": 900,
+    "n_val": 100,
+    "n_test": 200,
+    "kappa_unique_values_approx": [
+      0.1,
+      1.0
+    ],
+    "kappa_mean": 0.5324535965919495,
+    "kappa_std": 0.44965773820877075,
+    "high_kappa_fraction_mean": 0.4805043538411458,
+    "high_kappa_fraction_std": 0.20757148666486774,
+    "pressure_mean": 0.16441652178764343,
+    "pressure_std": 0.14354749023914337,
+    "pressure_max_mean": 0.33897116780281067,
+    "pressure_max_std": 0.1920132040977478,
+    "test_region_count_histogram_native_128": {
+      "0": 2,
+      "1": 180,
+      "2": 18
+    }
+  }
+}
