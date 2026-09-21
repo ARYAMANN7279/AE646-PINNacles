@@ -1,0 +1,34 @@
+--name e3_fno_n100_s0 --model fno --n-train 100 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n100_s0 --model mlp --n-train 100 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n100_s1 --model fno --n-train 100 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n100_s1 --model mlp --n-train 100 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n200_s0 --model fno --n-train 200 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n200_s0 --model mlp --n-train 200 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n200_s1 --model fno --n-train 200 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n200_s1 --model mlp --n-train 200 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n400_s0 --model fno --n-train 400 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n400_s0 --model mlp --n-train 400 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n400_s1 --model fno --n-train 400 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n400_s1 --model mlp --n-train 400 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n900_s0 --model fno --n-train 900 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n900_s0 --model mlp --n-train 900 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n900_s1 --model fno --n-train 900 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n900_s1 --model mlp --n-train 900 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n2000_s0 --model fno --n-train 2000 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n2000_s0 --model mlp --n-train 2000 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n2000_s1 --model fno --n-train 2000 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n2000_s1 --model mlp --n-train 2000 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n5000_s0 --model fno --n-train 5000 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n5000_s0 --model mlp --n-train 5000 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n5000_s1 --model fno --n-train 5000 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n5000_s1 --model mlp --n-train 5000 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n9700_s0 --model fno --n-train 9700 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n9700_s0 --model mlp --n-train 9700 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_fno_n9700_s1 --model fno --n-train 9700 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e3_mlp_n9700_s1 --model mlp --n-train 9700 --steps 20000 --seed 1 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e4_fno_res32_s0 --model fno --res 32 --steps 20000 --seed 0 --eval-res 32 64 128 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e4_fno_res32_s1 --model fno --res 32 --steps 20000 --seed 1 --eval-res 32 64 128 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e4_fno_res64_s0 --model fno --res 64 --steps 20000 --seed 0 --eval-res 32 64 128 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e4_fno_res64_s1 --model fno --res 64 --steps 20000 --seed 1 --eval-res 32 64 128 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e4_fno_res128_s0 --model fno --res 128 --steps 20000 --seed 0 --eval-res 32 64 128 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e4_fno_res128_s1 --model fno --res 128 --steps 20000 --seed 1 --eval-res 32 64 128 --sched cosine --loss rel_l2 --aug d4 --tta

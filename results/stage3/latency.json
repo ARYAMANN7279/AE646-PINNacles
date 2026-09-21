@@ -1,0 +1,1214 @@
+{
+ "gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+ "torch": "2.12.0.dev20260408+cu128",
+ "rows": [
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 1.4438560009002686,
+   "ms_per_sample": 1.4438560009002686,
+   "samples_per_s": 692.5898423225607
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 8,
+   "ms_batch": 1.559711992740631,
+   "ms_per_sample": 0.1949639990925789,
+   "samples_per_s": 5129.152072455945
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 4.11352014541626,
+   "ms_per_sample": 0.12854750454425812,
+   "samples_per_s": 7779.225303091793
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 128,
+   "ms_batch": 25.693408012390137,
+   "ms_per_sample": 0.20072975009679794,
+   "samples_per_s": 4981.822572477522
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 1,
+   "ms_batch": 1.4693439602851868,
+   "ms_per_sample": 1.4693439602851868,
+   "samples_per_s": 680.5758399863765
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 8,
+   "ms_batch": 1.5490559935569763,
+   "ms_per_sample": 0.19363199919462204,
+   "samples_per_s": 5164.4356519548555
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 32,
+   "ms_batch": 3.7421599626541138,
+   "ms_per_sample": 0.11694249883294106,
+   "samples_per_s": 8551.211150606216
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 128,
+   "ms_batch": 25.17294406890869,
+   "ms_per_sample": 0.19666362553834915,
+   "samples_per_s": 5084.824391203961
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 1,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 8,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 32,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 128,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 0.2718240022659302,
+   "ms_per_sample": 0.2718240022659302,
+   "samples_per_s": 3678.8509905820697
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 8,
+   "ms_batch": 0.3442080020904541,
+   "ms_per_sample": 0.04302600026130676,
+   "samples_per_s": 23241.76065464535
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 0.3781919926404953,
+   "ms_per_sample": 0.011818499770015478,
+   "samples_per_s": 84613.10821675384
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 128,
+   "ms_batch": 0.7462719976902008,
+   "ms_per_sample": 0.005830249981954694,
+   "samples_per_s": 171519.23212471456
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 1,
+   "ms_batch": 0.29947198927402496,
+   "ms_per_sample": 0.29947198927402496,
+   "samples_per_s": 3339.21046313608
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 8,
+   "ms_batch": 0.3298719972372055,
+   "ms_per_sample": 0.04123399965465069,
+   "samples_per_s": 24251.83121635915
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 32,
+   "ms_batch": 0.3324640095233917,
+   "ms_per_sample": 0.010389500297605991,
+   "samples_per_s": 96251.01991001682
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 128,
+   "ms_batch": 0.33294400572776794,
+   "ms_per_sample": 0.002601125044748187,
+   "samples_per_s": 384449.0298607729
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 1,
+   "ms_batch": 0.45182399451732635,
+   "ms_per_sample": 0.45182399451732635,
+   "samples_per_s": 2213.251204306398
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 8,
+   "ms_batch": 0.5055360198020935,
+   "ms_per_sample": 0.06319200247526169,
+   "samples_per_s": 15824.787327976805
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 32,
+   "ms_batch": 0.48902399837970734,
+   "ms_per_sample": 0.015281999949365854,
+   "samples_per_s": 65436.4614129904
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 128,
+   "ms_batch": 0.5026400089263916,
+   "ms_per_sample": 0.003926875069737434,
+   "samples_per_s": 254655.4148632143
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 0.7859040200710297,
+   "ms_per_sample": 0.7859040200710297,
+   "samples_per_s": 1272.4200086285605
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 8,
+   "ms_batch": 0.8513759970664978,
+   "ms_per_sample": 0.10642199963331223,
+   "samples_per_s": 9396.55337661011
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 2.1569759845733643,
+   "ms_per_sample": 0.06740549951791763,
+   "samples_per_s": 14835.584739405149
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 128,
+   "ms_batch": 13.51855993270874,
+   "ms_per_sample": 0.10561374947428703,
+   "samples_per_s": 9468.464143898824
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 1,
+   "ms_batch": 0.7937919795513153,
+   "ms_per_sample": 0.7937919795513153,
+   "samples_per_s": 1259.7758931316516
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 8,
+   "ms_batch": 0.8437120020389557,
+   "ms_per_sample": 0.10546400025486946,
+   "samples_per_s": 9481.90849563217
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 32,
+   "ms_batch": 1.9648000001907349,
+   "ms_per_sample": 0.061400000005960464,
+   "samples_per_s": 16286.644949559024
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 128,
+   "ms_batch": 13.24718427658081,
+   "ms_per_sample": 0.10349362716078758,
+   "samples_per_s": 9662.430696784848
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 1,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 8,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 32,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 128,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 0.7840159833431244,
+   "ms_per_sample": 0.7840159833431244,
+   "samples_per_s": 1275.4842008907747
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 8,
+   "ms_batch": 2.139296054840088,
+   "ms_per_sample": 0.267412006855011,
+   "samples_per_s": 3739.547867580207
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 13.080784320831299,
+   "ms_per_sample": 0.4087745100259781,
+   "samples_per_s": 2446.3364898570826
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 128,
+   "ms_batch": 53.50022315979004,
+   "ms_per_sample": 0.4179704934358597,
+   "samples_per_s": 2392.513384807764
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 1,
+   "ms_batch": 0.7987679839134216,
+   "ms_per_sample": 0.7987679839134216,
+   "samples_per_s": 1251.9279942852465
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 8,
+   "ms_batch": 1.9420959949493408,
+   "ms_per_sample": 0.2427619993686676,
+   "samples_per_s": 4119.260850547544
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 32,
+   "ms_batch": 12.867504119873047,
+   "ms_per_sample": 0.4021095037460327,
+   "samples_per_s": 2486.884768164016
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 128,
+   "ms_batch": 52.61734390258789,
+   "ms_per_sample": 0.4110729992389679,
+   "samples_per_s": 2432.6579509024696
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 1,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 8,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 32,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 128,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 0.7924160063266754,
+   "ms_per_sample": 0.7924160063266754,
+   "samples_per_s": 1261.9634030811685
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 8,
+   "ms_batch": 0.8128480017185211,
+   "ms_per_sample": 0.10160600021481514,
+   "samples_per_s": 9841.938447392897
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 0.865231990814209,
+   "ms_per_sample": 0.02703849971294403,
+   "samples_per_s": 36984.300557226336
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 128,
+   "ms_batch": 2.388271927833557,
+   "ms_per_sample": 0.018658374436199665,
+   "samples_per_s": 53595.2370030623
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 1,
+   "ms_batch": 0.798911988735199,
+   "ms_per_sample": 0.798911988735199,
+   "samples_per_s": 1251.7023327978272
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 8,
+   "ms_batch": 0.8137440085411072,
+   "ms_per_sample": 0.1017180010676384,
+   "samples_per_s": 9831.101570065657
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 32,
+   "ms_batch": 0.8501920104026794,
+   "ms_per_sample": 0.026568500325083733,
+   "samples_per_s": 37638.556477193575
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 128,
+   "ms_batch": 2.171471953392029,
+   "ms_per_sample": 0.016964624635875225,
+   "samples_per_s": 58946.19076247005
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 1,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 8,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 32,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 128,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 0.7972320020198822,
+   "ms_per_sample": 0.7972320020198822,
+   "samples_per_s": 1254.3400132789213
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 8,
+   "ms_batch": 0.8229280114173889,
+   "ms_per_sample": 0.10286600142717361,
+   "samples_per_s": 9721.384968073959
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 1.4464799761772156,
+   "ms_per_sample": 0.04520249925553799,
+   "samples_per_s": 22122.67057064295
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 128,
+   "ms_batch": 5.7977118492126465,
+   "ms_per_sample": 0.0452946238219738,
+   "samples_per_s": 22077.675353490176
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 1,
+   "ms_batch": 0.807919979095459,
+   "ms_per_sample": 0.807919979095459,
+   "samples_per_s": 1237.7463435420823
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 8,
+   "ms_batch": 0.8261759877204895,
+   "ms_per_sample": 0.10327199846506119,
+   "samples_per_s": 9683.166926786242
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 32,
+   "ms_batch": 1.364575982093811,
+   "ms_per_sample": 0.042642999440431595,
+   "samples_per_s": 23450.508011213173
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 128,
+   "ms_batch": 5.520768165588379,
+   "ms_per_sample": 0.04313100129365921,
+   "samples_per_s": 23185.17933751314
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 1,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 8,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 32,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 128,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 0.9932000041007996,
+   "ms_per_sample": 0.9932000041007996,
+   "samples_per_s": 1006.846552427632
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 8,
+   "ms_batch": 1.8296639919281006,
+   "ms_per_sample": 0.22870799899101257,
+   "samples_per_s": 4372.387517759256
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 4.176927804946899,
+   "ms_per_sample": 0.1305289939045906,
+   "samples_per_s": 7661.133132849734
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 128,
+   "ms_batch": 22.78105640411377,
+   "ms_per_sample": 0.17797700315713882,
+   "samples_per_s": 5618.703440674768
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 1,
+   "ms_batch": 0.9503679871559143,
+   "ms_per_sample": 0.9503679871559143,
+   "samples_per_s": 1052.2239948260624
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 8,
+   "ms_batch": 1.5755040049552917,
+   "ms_per_sample": 0.19693800061941147,
+   "samples_per_s": 5077.740186529717
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 32,
+   "ms_batch": 3.7280319929122925,
+   "ms_per_sample": 0.11650099977850914,
+   "samples_per_s": 8583.61732432505
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 128,
+   "ms_batch": 21.806560516357422,
+   "ms_per_sample": 0.17036375403404236,
+   "samples_per_s": 5869.793170912273
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 1,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 8,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 32,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 128,
+   "error": "Unsupported dtype BFloat16"
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 0.15516799688339233,
+   "ms_per_sample": 0.15516799688339233,
+   "samples_per_s": 6444.627887743457
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 8,
+   "ms_batch": 0.2277120053768158,
+   "ms_per_sample": 0.028464000672101974,
+   "samples_per_s": 35132.09585397867
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 0.20881599932909012,
+   "ms_per_sample": 0.006525499979034066,
+   "samples_per_s": 153244.96256423625
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "fp32",
+   "batch": 128,
+   "ms_batch": 0.42257601022720337,
+   "ms_per_sample": 0.0033013750799000263,
+   "samples_per_s": 302904.08566065825
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 1,
+   "ms_batch": 0.15459199994802475,
+   "ms_per_sample": 0.15459199994802475,
+   "samples_per_s": 6468.640035294253
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 8,
+   "ms_batch": 0.17001599818468094,
+   "ms_per_sample": 0.021251999773085117,
+   "samples_per_s": 47054.39538289773
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 32,
+   "ms_batch": 0.17136000096797943,
+   "ms_per_sample": 0.005355000030249357,
+   "samples_per_s": 186741.36215708568
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "tf32",
+   "batch": 128,
+   "ms_batch": 0.18721599876880646,
+   "ms_per_sample": 0.0014626249903813004,
+   "samples_per_s": 683702.2521673884
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 1,
+   "ms_batch": 0.22521600127220154,
+   "ms_per_sample": 0.22521600127220154,
+   "samples_per_s": 4440.181844767662
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 8,
+   "ms_batch": 0.27006399631500244,
+   "ms_per_sample": 0.033757999539375305,
+   "samples_per_s": 29622.608378603738
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 32,
+   "ms_batch": 0.2412799969315529,
+   "ms_per_sample": 0.007539999904111028,
+   "samples_per_s": 132625.99638161412
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "gpu",
+   "precision": "bf16",
+   "batch": 128,
+   "ms_batch": 0.26742400228977203,
+   "ms_per_sample": 0.002089250017888844,
+   "samples_per_s": 478640.6564258332
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 36.90272197127342,
+   "ms_per_sample": 36.90272197127342,
+   "samples_per_s": 27.098272067259444
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 1554.1475508362055,
+   "ms_per_sample": 48.56711096363142,
+   "samples_per_s": 20.590065584688194
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 23.033581906929612,
+   "ms_per_sample": 23.033581906929612,
+   "samples_per_s": 43.4148715575649
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 65.12977089732885,
+   "ms_per_sample": 2.0353053405415267,
+   "samples_per_s": 491.326770524728
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 18.40807613916695,
+   "ms_per_sample": 18.40807613916695,
+   "samples_per_s": 54.3239821717325
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 719.148017000407,
+   "ms_per_sample": 22.473375531262718,
+   "samples_per_s": 44.4970982934406
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 74.94628708809614,
+   "ms_per_sample": 74.94628708809614,
+   "samples_per_s": 13.342889139051584
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 4009.498334955424,
+   "ms_per_sample": 125.296822967357,
+   "samples_per_s": 7.9810483324108334
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 12.011762941256166,
+   "ms_per_sample": 12.011762941256166,
+   "samples_per_s": 83.25172623623406
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 131.79640495218337,
+   "ms_per_sample": 4.11863765475573,
+   "samples_per_s": 242.79873196548735
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 6.22118404135108,
+   "ms_per_sample": 6.22118404135108,
+   "samples_per_s": 160.74110544764176
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 235.96315109170973,
+   "ms_per_sample": 7.373848471615929,
+   "samples_per_s": 135.61439509494787
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 219.35549890622497,
+   "ms_per_sample": 219.35549890622497,
+   "samples_per_s": 4.558809808672736
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 1547.5836051627994,
+   "ms_per_sample": 48.36198766133748,
+   "samples_per_s": 20.677396615760692
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 9.353147121146321,
+   "ms_per_sample": 9.353147121146321,
+   "samples_per_s": 106.91588478696356
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "cpu1",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 27.43242704309523,
+   "ms_per_sample": 0.857263345096726,
+   "samples_per_s": 1166.50269222367
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 26.228863978758454,
+   "ms_per_sample": 26.228863978758454,
+   "samples_per_s": 38.12593640387376
+  },
+  {
+   "model": "FNO-final (m12,w64,L8)@64",
+   "params": 9480193,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 528.1769870780408,
+   "ms_per_sample": 16.505530846188776,
+   "samples_per_s": 60.58575209236035
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 8.51132208481431,
+   "ms_per_sample": 8.51132208481431,
+   "samples_per_s": 117.49056022497084
+  },
+  {
+   "model": "MLP-final (3x4096)@64",
+   "params": 100679680,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 18.32201285287738,
+   "ms_per_sample": 0.5725629016524181,
+   "samples_per_s": 1746.5329959625349
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 13.02541303448379,
+   "ms_per_sample": 13.02541303448379,
+   "samples_per_s": 76.77299732089693
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@64",
+   "params": 4744449,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 252.7360280510038,
+   "ms_per_sample": 7.898000876593869,
+   "samples_per_s": 126.61431868962579
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 25.307829026132822,
+   "ms_per_sample": 25.307829026132822,
+   "samples_per_s": 39.51346435000022
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@128",
+   "params": 4744449,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 1246.4927129913121,
+   "ms_per_sample": 38.952897280978505,
+   "samples_per_s": 25.672031345620095
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 11.269312119111419,
+   "ms_per_sample": 11.269312119111419,
+   "samples_per_s": 88.73656079718641
+  },
+  {
+   "model": "FNO-base (m12,w64,L4)@32",
+   "params": 4744449,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 46.62856599316001,
+   "ms_per_sample": 1.4571426872862503,
+   "samples_per_s": 686.2745898017561
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 7.499228930100799,
+   "ms_per_sample": 7.499228930100799,
+   "samples_per_s": 133.3470426520982
+  },
+  {
+   "model": "FNO-small (m8,w32,L4)@64",
+   "params": 533249,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 85.69828001782298,
+   "ms_per_sample": 2.678071250556968,
+   "samples_per_s": 373.40306005377056
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 217.1990240458399,
+   "ms_per_sample": 217.1990240458399,
+   "samples_per_s": 4.604072253054644
+  },
+  {
+   "model": "FNO-large (m24,w96,L4)@64",
+   "params": 42518273,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 658.8273798115551,
+   "ms_per_sample": 20.5883556191111,
+   "samples_per_s": 48.57114470432753
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 1,
+   "ms_batch": 3.694749902933836,
+   "ms_per_sample": 3.694749902933836,
+   "samples_per_s": 270.6543138971178
+  },
+  {
+   "model": "MLP (3x2048)@64",
+   "params": 41953280,
+   "device": "cpu8",
+   "precision": "fp32",
+   "batch": 32,
+   "ms_batch": 11.419073212891817,
+   "ms_per_sample": 0.3568460379028693,
+   "samples_per_s": 2802.328998457851
+  }
+ ]
+}

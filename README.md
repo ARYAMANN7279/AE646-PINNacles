@@ -68,7 +68,8 @@ AE646-PINNacles/
 |-- ae646_handout.pdf        # course project spec
 |-- stage1/                  # Stage 1: proposal (LaTeX + PDF) and proposal deck (pptx/pdf + builder)
 |-- stage2/                  # Stage 2: interim report (.tex/.pdf), 10-slide deck, Stage 2 README, code ZIP + single notebook
-|-- stage3/                  # Stage 3: final report, contribution statement/AI declaration, Beamer deck
+|-- stage3/                  # Stage 3: final report (.tex/.pdf), 13-slide deck (.pptx/.pdf + builder), contribution statement/AI declaration, README
+|   (Stage 3 code: src/stage3_*.py, src/solvers.py, src/solver_vs_fno.py, src/run_jobs.py, src/data_cache.py; job lists in scripts/stage3_jobs/)
 `-- data/                    # NOT tracked - regenerate with the download + preprocess steps
     |-- raw_pdebench/        # downloaded PDEBench HDF5
     `-- processed/           # train/val/test .npz + test_hires.npz + norm_stats.json
@@ -142,7 +143,25 @@ python3 src/generate_figures.py       # outputs to results/figures/
 - Flatten (64×64×3) → 3×2048 hidden (GELU) → Flatten output (64×64) — 42.0M parameters
 - No spatial inductive bias — treats the field as a dense vector mapping
 
-## Results (real PDEBench test set, 200 samples, relative L2 in physical units)
+## Stage 3 results (final) — optimised FNO, all real runs in `results/stage3/`
+
+Test set of 200 fields, 5 seeds, 60,000 steps, relative L2 in physical units
+(details, all studies and caveats: [`stage3/PINNacles_Stage3_FinalReport.pdf`](stage3/PINNacles_Stage3_FinalReport.pdf)):
+
+| Model | Params | Mean rel. L2 | Median |
+|---|---|---|---|
+| Final FNO (12 modes, width 64, 8 layers) | 9.5M | **0.0202 ± 0.0004** | 0.0070 |
+| Final MLP (3×4096, tuned on validation) | 100.7M | 0.0415 ± 0.0009 | 0.0272 |
+
+- **Recipe (`E1`)**: at the Stage 2 step budget, relative-L2 loss + one cosine decay + D4 augmentation halve the FNO error (0.052 → 0.025) and cut the MLP's by 43%; the Stage 2 recipe (MSE, LR restarting every 200 steps) was sub-optimal for both models.
+- **Architecture (`E2`)**: modes 4–32, width ≥32, learning rate, weight decay and batch size barely matter; depth and training length help slowly. Selection on validation only.
+- **Data / resolution (`E3`, `E4`)**: FNO saturates near 0.0195 beyond ≈5,000 samples; zero-shot resolution transfer 64→128 gives 0.038 (native 0.021).
+- **Finite-volume solver (`src/solvers.py`, `src/solver_vs_fno.py`)**: calibrated to the PDEBench arrays: 0.044 error at 64², 0.024 at 128² (7.1 / 37 ms, one CPU thread). FNO at 64²: 0.020, 1.4 ms (batch 1, GPU) / 0.20 ms per sample (batch 128); on one CPU core it is *not* faster. **The Stage 2 speed-up claims (1443×/7740× vs 1030 ms) used an inefficient reference solver and are withdrawn.**
+- **Physics (`src/stage3_diagnostics.py`)**: boundary values, positivity, discrete-PDE residual and mean pressure are respected; the residual error sits in uniform/low-contrast, high-amplitude fields.
+
+Reproduce: `bash scripts/stage3_run_all.sh` (see `stage3/README.md`).
+
+## Stage 2 results (submitted; superseded by Stage 3 above) — relative L2 in physical units
 
 | Model | Mean Rel L2 | Median | Std | Params |
 |-------|------------|--------|-----|--------|
@@ -155,8 +174,7 @@ Zero-shot at native 128×128 (real PDEBench ground truth, no retraining): FNO (o
 
 Measured inference speed (`results/benchmark_speed.json`): FNO 0.71 ms/sample and MLP
 0.13 ms/sample on GPU vs 1030 ms/sample for a scipy sparse FDM solve on CPU. See
-[`stage3/PINNacles_Stage3_FinalReport.pdf`](stage3/PINNacles_Stage3_FinalReport.pdf) for full discussion, including why MLP is
-actually *faster* per-sample than FNO here despite having 9× more parameters.
+the Stage 2 report; the Stage 3 report supersedes the speed claims (fair solver comparison).
 
 **Dataset EDA** (`results/eda_metrics.json`, `src/eda.py`): κ is exactly bimodal at
 {0.1, 1.0}; high-permeability area fraction varies widely across samples (mean 0.48 ±
@@ -165,8 +183,7 @@ actually *faster* per-sample than FNO here despite having 9× more parameters.
 heterogeneity gives only a weak relationship (region count r=0.24, interface perimeter
 r=−0.17, wrong sign) — the single worst test sample instead has *zero* connected
 regions (a near-degenerate, almost-uniform field). See
-[`stage3/PINNacles_Stage3_FinalReport.pdf`](stage3/PINNacles_Stage3_FinalReport.pdf) §3.4/§9.2 for the full, corrected
-discussion (this revises an earlier, untested "many regions → high error" claim).
+[`stage3/PINNacles_Stage3_FinalReport.pdf`](stage3/PINNacles_Stage3_FinalReport.pdf) §8 for the Stage 3 physical analysis.
 
 **MLP baseline ablation** (`results/ablation_mlp.json`, `src/ablation_mlp.py`) — real
 re-trained runs, not asserted: 1-layer 0.1008, 2-layer 0.0796, 3-layer/AdamW (reported
@@ -182,7 +199,7 @@ normalising the target matters (+9% error without it); coordinates don't matter 
 relative-L2 error is the *reported metric*, computed in physical units), and steps
 `CosineAnnealingLR(T_max=epochs)` once per mini-batch, so the LR cycles between 1e-3 and 0
 every 2·T_max steps (~28 cycles per 100-epoch run) rather than decaying once. Kept as-is so
-the committed results reproduce; a per-epoch schedule is listed as future work.
+the Stage 2 results reproduce. **Stage 3 (`src/stage3_train.py`) evaluates this recipe against a relative-L2 loss, a single cosine decay and D4 augmentation** — see above.
 
 ## Computational Environment
 The pipeline is a set of Python scripts (`src/`), run from the command line. The Stage 2 archive
@@ -203,8 +220,7 @@ service was used. Two machines were involved:
 - Seed: 42 everywhere (data subset selection, train/val split, model init, batch order).
   Model-init/batch-order seeding was added to `train.py` after the officially-reported
   `run_001`/`run_002`/`run_003_fno_improved` checkpoints were trained; re-running training
-  now reproduces those numbers closely but not bit-for-bit (see the MLP ablation's own
-  reproducibility note in `stage3/PINNacles_Stage3_FinalReport.pdf` §6.3 for a measured example of the gap).
+  now reproduces those numbers closely but not bit-for-bit.
 - Normalization stats computed from the training split only, saved to `norm_stats.json`
 - Relative-L2 metric is computed in physical (denormalized) units, matching the
   literature-standard convention — see the docstring of `physical_rel_l2` in `src/train.py`
@@ -216,8 +232,7 @@ service was used. Two machines were involved:
 - Run the tests with `pytest` from the repo root
 
 ## Documents (in `stage1/`, `stage2/`, `stage3/`)
-Each stage folder holds the submitted files. Every report/deck is written in LaTeX and the
-`.tex` has the same basename as its PDF, so compiling it regenerates the submitted file.
+Each stage folder holds the submitted files. The reports are written in LaTeX (the `.tex` has the same basename as its PDF, so compiling it regenerates the submitted file); the decks are `.pptx` built with python-pptx.
 Each stage folder is self-contained: the figures its LaTeX uses are copied into
 `stage2/figures/` and `stage3/figures/` (copies of `results/figures/*.pdf`; edit the LaTeX
 freely without touching the results). If you re-run `src/generate_figures.py`, copy the
@@ -229,14 +244,14 @@ brew install tectonic                                   # once
 cd stage2 && tectonic PINNacles_Stage2_InterimReport.tex
 cd stage3 && tectonic PINNacles_Stage3_FinalReport.tex
 cd stage3 && tectonic PINNacles_Stage3_ContributionStatement.tex
-cd stage3 && tectonic PINNacles_Stage3_FinalPresentation.tex   # Beamer deck
 ```
 
-The Stage 1 and Stage 2 decks are `.pptx` files built with `python-pptx`
+The Stage 1, Stage 2 and Stage 3 decks are `.pptx` files built with `python-pptx`
 (`pip install python-pptx`):
 ```bash
 python3 stage1/build_stage1_presentation.py
 python3 stage2/build_stage2_presentation.py
+python3 stage3/build_stage3_presentation.py
 ```
 `stage2/` also holds the Stage 2 submission code archive `PINNacles_Stage2_Code.zip` and its
 Stage 2 `README.md` (both scoped to Stage 2; rebuild with `python3 stage2/build_stage2_code_zip.py`).

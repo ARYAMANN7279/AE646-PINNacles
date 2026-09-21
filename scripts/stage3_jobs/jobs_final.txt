@@ -1,0 +1,10 @@
+--name final_fno_s0 --model fno --modes 12 --width 64 --layers 8 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 0 --eval-res 32 128 --save-model
+--name final_mlp_s0 --model mlp --hidden 4096 4096 4096 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 0 --save-model
+--name final_fno_s1 --model fno --modes 12 --width 64 --layers 8 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 1 --eval-res 32 128 --save-model
+--name final_mlp_s1 --model mlp --hidden 4096 4096 4096 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 1 --save-model
+--name final_fno_s2 --model fno --modes 12 --width 64 --layers 8 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 2 --eval-res 32 128 --save-model
+--name final_mlp_s2 --model mlp --hidden 4096 4096 4096 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 2 --save-model
+--name final_fno_s3 --model fno --modes 12 --width 64 --layers 8 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 3 --eval-res 32 128 --save-model
+--name final_mlp_s3 --model mlp --hidden 4096 4096 4096 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 3 --save-model
+--name final_fno_s4 --model fno --modes 12 --width 64 --layers 8 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 4 --eval-res 32 128 --save-model
+--name final_mlp_s4 --model mlp --hidden 4096 4096 4096 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 4 --save-model

@@ -1,0 +1,82 @@
+[
+ {
+  "label": "FV solver, direct (1 CPU thread)",
+  "ms": 1.7651764210313559,
+  "err": 0.09386871010065079,
+  "color": "#7f8c8d",
+  "marker": "o",
+  "note": "N=32"
+ },
+ {
+  "label": "FV solver, direct (1 CPU thread)",
+  "ms": 7.0810881443321705,
+  "err": 0.043835945427417755,
+  "color": "#7f8c8d",
+  "marker": "o",
+  "note": "N=64"
+ },
+ {
+  "label": "FV solver, direct (1 CPU thread)",
+  "ms": 37.39330999087542,
+  "err": 0.024138193577528,
+  "color": "#7f8c8d",
+  "marker": "o",
+  "note": "N=128"
+ },
+ {
+  "label": "FV solver, AMG-CG (1 CPU thread)",
+  "ms": 30.7295355014503,
+  "err": 0.024138193577528,
+  "color": "#7f8c8d",
+  "marker": "^",
+  "note": "N=128"
+ },
+ {
+  "label": "FNO, GPU",
+  "ms": 1.4438560009002686,
+  "err": 0.02016448453068733,
+  "color": "#1e8b4c",
+  "marker": "s",
+  "note": "batch 1"
+ },
+ {
+  "label": "FNO, GPU",
+  "ms": 0.20072975009679794,
+  "err": 0.02016448453068733,
+  "color": "#1e8b4c",
+  "marker": "s",
+  "note": "batch 128 (per sample)"
+ },
+ {
+  "label": "FNO, CPU (8 threads)",
+  "ms": 16.505530846188776,
+  "err": 0.02016448453068733,
+  "color": "#1e8b4c",
+  "marker": "D",
+  "note": "batch 32 (per sample)"
+ },
+ {
+  "label": "MLP, GPU",
+  "ms": 0.2718240022659302,
+  "err": 0.041542360186576845,
+  "color": "#ca6f1e",
+  "marker": "s",
+  "note": "batch 1"
+ },
+ {
+  "label": "MLP, GPU",
+  "ms": 0.005830249981954694,
+  "err": 0.041542360186576845,
+  "color": "#ca6f1e",
+  "marker": "s",
+  "note": "batch 128 (per sample)"
+ },
+ {
+  "label": "MLP, CPU (8 threads)",
+  "ms": 0.5725629016524181,
+  "err": 0.041542360186576845,
+  "color": "#ca6f1e",
+  "marker": "D",
+  "note": "batch 32 (per sample)"
+ }
+]

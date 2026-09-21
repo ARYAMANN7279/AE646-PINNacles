@@ -1,0 +1,4 @@
+/SML_DISK_24TB/rajeshr/Aryamann/ae646_final/src/stage3_train.py:194: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:838.)
+  run_loss += float(loss); n_loss += 1
+[e2_mlp_h1024x3] params 18.88M | 90.8 steps/s | val 0.0469 @ 19000 | test 0.0412 | tta 0.0390
