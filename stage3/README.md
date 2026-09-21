@@ -1,7 +1,7 @@
 # Stage 3 — Final report, deck, code map
 
 Deliverables: `PINNacles_Stage3_FinalReport.pdf` (8 pages), `PINNacles_Stage3_FinalPresentation.pptx/.pdf` (13 slides),
-`PINNacles_Stage3_ContributionStatement.pdf` (contribution statement + AI-tool-use declaration), code in `../src`.
+code in `../src`. (Contribution statement / AI-tool-use declaration: to be added.)
 
 Reproduce everything: `bash scripts/stage3_run_all.sh` (from the repo root; see the script header).
 Compile: `tectonic PINNacles_Stage3_FinalReport.tex`; rebuild the deck: `python3 build_stage3_presentation.py`.
