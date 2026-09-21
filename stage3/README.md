@@ -1,7 +1,7 @@
 # Stage 3 — Final report, deck, code map
 
 Deliverables: `PINNacles_Stage3_FinalReport.pdf` (8 pages), `PINNacles_Stage3_FinalPresentation.pptx/.pdf` (13 slides),
-code in `../src`. (Contribution statement / AI-tool-use declaration: to be added.)
+`PINNacles_Stage3_ContributionStatement.pdf` (one page: contribution statement + AI-tool-use declaration), code in `../src`.
 
 Reproduce everything: `bash scripts/stage3_run_all.sh` (from the repo root; see the script header).
 Compile: `tectonic PINNacles_Stage3_FinalReport.tex`; rebuild the deck: `python3 build_stage3_presentation.py`.
@@ -22,7 +22,6 @@ Selection of all hyper-parameters used validation data only; the test set was ev
 `stage1/` and `stage2/` are the submitted earlier stages and are unchanged.
 
 ## Pending before the Nov 13 submission
-- Individual contribution statement (all four members) — removed for now, to be written once each member's actual contribution is confirmed.
-- AI-tool-use declaration (required by the handout) — earlier draft is in git history (commit `66f0f1e`); to be re-added.
-- Viva / code-walkthrough preparation (each member should be able to explain the part they own).
-- Optional: trained checkpoints live only on the lab VM (not tracked); re-run `scripts/stage3_run_all.sh` end to end once on a clean machine.
+- Each member must confirm their entry in the contribution statement is accurate (edit the `.tex` if not) and sign it.
+- Viva / code-walkthrough preparation: each member should be able to explain the parts listed against their name.
+- Trained checkpoints are not tracked (git-ignored); the final FNO (seed 0, 73 MB) is kept locally in `results/stage3/checkpoints/`, all others on the lab VM.

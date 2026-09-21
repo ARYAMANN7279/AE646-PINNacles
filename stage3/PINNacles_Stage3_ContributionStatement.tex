@@ -1,0 +1,32 @@
+\documentclass[10.5pt,a4paper]{article}
+\usepackage[margin=0.9in]{geometry}
+\usepackage{booktabs,array,parskip,hyperref}
+\pagestyle{empty}
+\begin{document}
+\begin{center}\textbf{\Large AE646 --- Individual Contribution Statement \& AI-Tool-Use Declaration}\\[2pt]
+Team PINNacles --- Stage 3 (final)\end{center}
+
+\noindent\textbf{Project:} Optimising a Fourier Neural Operator for parametric Darcy flow (FNO vs.\ MLP baseline, comparison with a finite-volume solver), on real PDEBench data.
+
+\vspace{4pt}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.17\linewidth}p{0.80\linewidth}@{}}
+\toprule
+\textbf{Member} & \textbf{Contribution}\\\midrule
+Aryamann Srivastava & Lead for implementation and experiments. Problem formulation and literature review; data pipeline (download, preprocessing, 900/100/200 split); MLP and FNO models; Stage~2 training, evaluation, profiling, EDA and ablation scripts; Stage~3 experiment framework (\texttt{stage3\_train.py}, job queue, D4 augmentation and test-time symmetrisation), recipe/architecture/data/resolution studies and the five-seed final models, finite-volume solver with calibration and timing, latency benchmark, physical diagnostics, aggregation and figures; ran all Stage~3 experiments on the lab GPU workstation; wrote the Stage~1--3 reports and presentations and the code package.\\
+Varun Sathaye & Data and baseline verification: checking the train/validation/test split and normalisation, reproducing the Stage~2 baseline results. Stage~3: solver-vs-FNO comparison and latency (report \S7, slides 8--9): reviewing the calibration and timing results, and presenting them.\\
+Atishay Jain & Stage~3 training-recipe and architecture studies (report \S4--\S5, slides 4--6): reviewing the ablation and sweep results, the model-selection procedure and the final-model tables, and presenting them; review of report text and figures.\\
+Vedant S.\ Tiwari & Stage~3 data-scaling, resolution and physical-interpretation studies (report \S6, \S8, slides 7, 10--11): reviewing the diagnostics and failure-case analysis, and presenting them; literature and background check (FNO, PDEBench).\\
+\bottomrule
+\end{tabular}
+
+\vspace{6pt}
+\noindent\textbf{Code and results:} \texttt{src/}, \texttt{scripts/stage3\_run\_all.sh}, \texttt{results/stage3/}; each member can walk through the parts listed against their name in the viva.
+
+\vspace{6pt}
+\noindent\textbf{AI-tool-use declaration.} In line with the AE646 policy, Claude Code (Anthropic) was used (i)~for coding and debugging of the project scripts, including the Stage~3 experiment framework, solver, benchmarks and diagnostics; (ii)~at our direction, to run the experiments on the lab workstation and cross-check every number in the reports, slides and README against the stored result files, which uncovered the sub-optimal Stage~2 training recipe and the invalid Stage~2 solver-timing reference (both reported in the final report); and (iii)~for LaTeX and \texttt{python-pptx} drafting and formatting. The experimental design, results and interpretation were reviewed by the team. All numerical results come from real runs on real data; none were generated or invented by an AI tool.
+
+\vspace{18pt}
+\noindent Signatures:\hfill Aryamann Srivastava \quad Varun Sathaye \quad Atishay Jain \quad Vedant S.\ Tiwari\\[2pt]
+Date: November 2026
+\end{document}
