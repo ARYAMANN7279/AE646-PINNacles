@@ -20,3 +20,9 @@ Notes: `results/stage3/runs/*/metrics.json` hold the per-sample test errors and 
 (regenerate with `jobs_final.txt`). Timing numbers come from a shared 16-core host with an idle RTX PRO 6000; CPU timings are indicative.
 Selection of all hyper-parameters used validation data only; the test set was evaluated once per run.
 `stage1/` and `stage2/` are the submitted earlier stages and are unchanged.
+
+## Pending before the Nov 13 submission
+- Individual contribution statement (all four members) — removed for now, to be written once each member's actual contribution is confirmed.
+- AI-tool-use declaration (required by the handout) — earlier draft is in git history (commit `66f0f1e`); to be re-added.
+- Viva / code-walkthrough preparation (each member should be able to explain the part they own).
+- Optional: trained checkpoints live only on the lab VM (not tracked); re-run `scripts/stage3_run_all.sh` end to end once on a clean machine.
