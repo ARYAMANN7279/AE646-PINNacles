@@ -1,6 +1,6 @@
 #!/bin/bash
 # Reproduces every Stage 3 result. Needs the PDEBench file (python src/download_data.py) and a CUDA GPU.
-# ~200 runs; with 3 GPUs x 4 concurrent jobs the whole matrix takes a few hours.
+# 142 runs; with 3 GPUs x 4 concurrent jobs the whole matrix takes about 1.5 hours.
 set -e
 cd "$(dirname "$0")/.."
 PY=${PY:-python3}
