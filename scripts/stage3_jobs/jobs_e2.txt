@@ -1,0 +1,43 @@
+--name e2_modes4 --model fno --width 64 --modes 4 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_modes6 --model fno --width 64 --modes 6 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_modes8 --model fno --width 64 --modes 8 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_modes12 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_modes16 --model fno --width 64 --modes 16 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_modes20 --model fno --width 64 --modes 20 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_modes24 --model fno --width 64 --modes 24 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_modes32 --model fno --width 64 --modes 32 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_width16 --model fno --width 16 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_width32 --model fno --width 32 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_width48 --model fno --width 48 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_width64 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_width96 --model fno --width 96 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_width128 --model fno --width 128 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_layers2 --model fno --width 64 --modes 12 --layers 2 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_layers3 --model fno --width 64 --modes 12 --layers 3 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_layers4 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_layers6 --model fno --width 64 --modes 12 --layers 6 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_layers8 --model fno --width 64 --modes 12 --layers 8 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_steps5700 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 5700 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_steps10000 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 10000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_steps20000 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_steps40000 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 40000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_steps80000 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 80000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_lr0.0005 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --lr 0.0005 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_lr0.001 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --lr 0.001 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_lr0.002 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --lr 0.002 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_wd0 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --wd 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_wd0.0001 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --wd 0.0001 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_wd0.01 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --wd 0.01 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_batch8 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --batch 8 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_batch32 --model fno --width 64 --modes 12 --layers 4 --res 64 --steps 20000 --seed 0 --batch 32 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_joint_m16w64L6 --model fno --width 64 --modes 16 --layers 6 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_joint_m24w96L4 --model fno --width 96 --modes 24 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_joint_m32w128L4 --model fno --width 128 --modes 32 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_joint_m24w64L4 --model fno --width 64 --modes 24 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_joint_m16w96L6 --model fno --width 96 --modes 16 --layers 6 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_joint_m32w64L4 --model fno --width 64 --modes 32 --layers 4 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_mlp_h1024x3 --model mlp --hidden 1024 1024 1024 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_mlp_h2048x3 --model mlp --hidden 2048 2048 2048 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_mlp_h4096x3 --model mlp --hidden 4096 4096 4096 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_mlp_h2048x5 --model mlp --hidden 2048 2048 2048 2048 2048 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta
+--name e2_mlp_h1024x2 --model mlp --hidden 1024 1024 --res 64 --steps 20000 --seed 0 --sched cosine --loss rel_l2 --aug d4 --tta

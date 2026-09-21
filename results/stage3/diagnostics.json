@@ -1,0 +1,112 @@
+{
+ "spec": {
+  "name": "final_fno_s0",
+  "model": "fno",
+  "width": 64,
+  "modes": 12,
+  "layers": 8,
+  "hidden": [
+   2048,
+   2048,
+   2048
+  ],
+  "res": 64,
+  "n_train": 900,
+  "aug": "d4",
+  "steps": 60000,
+  "batch": 16,
+  "lr": 0.001,
+  "wd": 0.0001,
+  "clip": 0.0,
+  "loss": "rel_l2",
+  "sched": "cosine",
+  "legacy_epochs": 100,
+  "seed": 0,
+  "eval_every": 0,
+  "eval_res": [
+   32,
+   128
+  ],
+  "tta": true,
+  "save_model": true
+ },
+ "res": 64,
+ "n": 200,
+ "rel_l2_mean": 0.020009323954582214,
+ "rel_l2_tta_mean": 0.020087052136659622,
+ "pde_res_pred_mean": 4.245287618788106,
+ "pde_res_gt_mean": 4.010311956411402,
+ "domain_mean_rel_err": 0.01669134385883808,
+ "neg_frac_pred": 1.46484375e-05,
+ "neg_frac_gt": 0.0,
+ "bc_ratio_pred": 0.11572688817977905,
+ "bc_ratio_gt": 0.11587271094322205,
+ "corr_err_area_hi": -0.5495063422188797,
+ "corr_err_hetero": 0.20577225614497827,
+ "corr_err_peak": 0.6138570164776886,
+ "corr_err_pderes": 0.2533119425136873,
+ "interface_error": [
+  {
+   "bin": [
+    0,
+    1
+   ],
+   "frac_pixels": 0.068765869140625,
+   "mean_abs_err_over_peak": 0.009750696830451488
+  },
+  {
+   "bin": [
+    1,
+    2
+   ],
+   "frac_pixels": 0.067266845703125,
+   "mean_abs_err_over_peak": 0.00876119639724493
+  },
+  {
+   "bin": [
+    2,
+    4
+   ],
+   "frac_pixels": 0.09161865234375,
+   "mean_abs_err_over_peak": 0.008449089713394642
+  },
+  {
+   "bin": [
+    4,
+    8
+   ],
+   "frac_pixels": 0.20386962890625,
+   "mean_abs_err_over_peak": 0.007988986559212208
+  },
+  {
+   "bin": [
+    8,
+    16
+   ],
+   "frac_pixels": 0.292142333984375,
+   "mean_abs_err_over_peak": 0.007474007550626993
+  },
+  {
+   "bin": [
+    16,
+    null
+   ],
+   "frac_pixels": 0.276336669921875,
+   "mean_abs_err_over_peak": 0.011253063566982746
+  }
+ ],
+ "spectral_floor": {
+  "2": 0.20397138193111183,
+  "4": 0.07594220668200387,
+  "6": 0.0415551189462188,
+  "8": 0.02697548825762457,
+  "12": 0.014544481967485434,
+  "16": 0.00922795635118882,
+  "24": 0.004456052961292586,
+  "32": 0.000656600063168136
+ },
+ "kappa_levels": [
+  0.10000000149011612,
+  1.0
+ ]
+}

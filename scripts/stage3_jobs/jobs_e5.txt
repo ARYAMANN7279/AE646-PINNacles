@@ -1,0 +1,5 @@
+--name e5_m16w96L6 --model fno --modes 16 --width 96 --layers 6 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 0
+--name e5_m12w64L8 --model fno --modes 12 --width 64 --layers 8 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 0
+--name e5_m16w64L6 --model fno --modes 16 --width 64 --layers 6 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 0
+--name e5_m12w64L4 --model fno --modes 12 --width 64 --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 0
+--name e5_m16w96L8 --model fno --modes 16 --width 96 --layers 8 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 60000 --seed 0
