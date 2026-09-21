@@ -186,4 +186,22 @@ On real PDEBench Darcy data the FNO outperforms an equally tuned MLP by $2\times
 \bibitem{takamoto2022pdebench} M.\ Takamoto et al., \emph{PDEBench: An Extensive Benchmark for Scientific Machine Learning}, NeurIPS Datasets and Benchmarks, 2022.
 \bibitem{pyamg} N.\ Bell, L.\ Olson, J.\ Schroder, \emph{PyAMG: Algebraic Multigrid Solvers in Python}, JOSS 2022.
 \end{thebibliography}
+
+\newpage
+\section*{Individual Contribution Statement and AI-Tool-Use Declaration}
+\small
+\begin{tabular}{@{}p{0.25\linewidth}p{0.71\linewidth}@{}}
+\toprule
+\textbf{Team member} & \textbf{Contribution}\\\midrule
+Aryamann\,Srivastava & Problem formulation and literature review; data pipeline (download, preprocessing, 900/100/200 split); \texttt{MLPBaseline}, \texttt{FNO2d}; Stage~2 training, evaluation, profiling, EDA and ablation scripts and figures; Stage~3 study: \texttt{stage3\_train.py}, job queue, finite-volume solver with calibration and timing, latency benchmark, physical diagnostics, aggregation and figures; ran all $\approx$140 Stage~3 runs on the lab GPU workstation; Stage~1--3 reports and presentations.\\
+Varun Sathaye & \textcolor{red}{[to be filled in by Varun: specific tasks, files or sections]}\\
+Atishay Jain & \textcolor{red}{[to be filled in by Atishay: specific tasks, files or sections]}\\
+Vedant S.\ Tiwari & \textcolor{red}{[to be filled in by Vedant: specific tasks, files or sections]}\\\bottomrule
+\end{tabular}
+
+\medskip\textbf{AI-tool-use declaration.} In line with the AE646 policy, Claude Code (Anthropic) was used (i)~for coding and debugging of the project scripts, including the Stage~3 experiment framework, solver, benchmarks and diagnostics; (ii)~at our direction, to execute the experiments on the lab workstation and cross-check every number in the reports, slides and README against the stored result files, which uncovered the sub-optimal Stage~2 training recipe and the invalid Stage~2 solver-timing reference reported above; and (iii)~for LaTeX/\texttt{python-pptx} drafting and formatting. The experimental design, results and interpretation were reviewed by the team. All numerical results come from real runs on real data; none were generated or invented by an AI tool.
+
+\medskip\noindent Signatures: \hfill Aryamann Srivastava \quad Varun Sathaye \quad Atishay Jain \quad Vedant S.\ Tiwari
+\normalsize
+
 \end{document}
