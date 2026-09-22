@@ -153,7 +153,7 @@ def run(a):
     dev = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
     torch.manual_seed(a.seed); np.random.seed(a.seed)
     gen = torch.Generator(device="cpu").manual_seed(a.seed)
-    out = OUT_ROOT / a.name
+    out = (Path(a.out_root) if a.out_root else OUT_ROOT) / a.name
     out.mkdir(parents=True, exist_ok=True)
 
     data = Data(a.n_train, dev)
@@ -253,6 +253,7 @@ def parse(argv=None):
     p.add_argument("--eval-every", type=int, default=0)
     p.add_argument("--eval-res", type=int, nargs="*", default=[])
     p.add_argument("--tta", action="store_true"); p.add_argument("--save-model", action="store_true")
+    p.add_argument("--out-root", default=None, help="override the default results/stage3/runs/ output directory")
     return p.parse_args(argv)
 
 
