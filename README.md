@@ -68,7 +68,8 @@ AE646-PINNacles/
 |-- ae646_handout.pdf        # course project spec
 |-- stage1/                  # Stage 1: proposal (LaTeX + PDF) and proposal deck (pptx/pdf + builder)
 |-- stage2/                  # Stage 2: interim report (.tex/.pdf), 10-slide deck, Stage 2 README, code ZIP + single notebook
-|-- stage3/                  # Stage 3: final report (.tex/.pdf), 13-slide deck (.pptx/.pdf + builder), README
+|-- stage3/                  # Stage 3: final report (.tex/.pdf), 13-slide deck (.pptx/.pdf + builder), README,
+|   #   contribution/AI declaration, code+notebook submission (PINNacles_Stage3_Code.zip, PINNacles_Stage3_Notebook.ipynb)
 |   (Stage 3 code: src/stage3_*.py, src/solvers.py, src/solver_vs_fno.py, src/run_jobs.py, src/data_cache.py; job lists in scripts/stage3_jobs/)
 `-- data/                    # NOT tracked - regenerate with the download + preprocess steps
     |-- raw_pdebench/        # downloaded PDEBench HDF5
