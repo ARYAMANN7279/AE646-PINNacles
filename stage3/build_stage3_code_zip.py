@@ -116,8 +116,9 @@ SOLVER_DEMO = '''
 sh("python src/solver_vs_fno.py", tail=6)
 solver = json.load(open("results/stage3/solver_vs_gt.json"))
 for n, r in solver["per_N"].items():
+    amg = f"{r['ms_cg_amg']:.1f} ms" if r["ms_cg_amg"] is not None else "n/a (pyamg not installed)"
     print(f"N={n:>3}  calibration {r['face']}, b={r['bc']}  error vs truth {r['test_err_calibrated']:.4f}  "
-          f"direct LU {r['ms_direct']:.1f} ms  AMG-CG {r['ms_cg_amg']:.1f} ms")
+          f"direct LU {r['ms_direct']:.1f} ms  AMG-CG {amg}")
 '''
 
 FULL_STUDY = '''
