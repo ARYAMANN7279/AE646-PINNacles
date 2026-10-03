@@ -112,6 +112,18 @@ for n, label in [("demo_legacy", "Stage 2-style recipe"), ("demo_full", "Stage 3
     print(f"{label:32s} test rel. L2 = {test_mean:.4f}  ({DEMO_STEPS} steps, 1 seed - see full study below for the reported 5-seed numbers)")
 '''
 
+INSTALL = """# Install only what is missing (Colab already ships numpy/scipy/torch/h5py/...). The exact versions
+# used for the reported results are pinned in requirements.txt; forcing those pins onto a newer
+# Python makes pip's resolver backtrack/build from source for many minutes, so we do not pin here.
+import importlib.util, subprocess, sys
+_pkgs = [("numpy", "numpy"), ("scipy", "scipy"), ("matplotlib", "matplotlib"), ("torch", "torch"), ("h5py", "h5py"),
+         ("tqdm", "tqdm"), ("pyyaml", "yaml"), ("wandb", "wandb"), ("requests", "requests"), ("pytest", "pytest"),
+         ("python-pptx", "pptx"), ("Pillow", "PIL"), ("pyamg", "pyamg")]
+_missing = [p for p, m in _pkgs if importlib.util.find_spec(m) is None]
+print("installing:", _missing or "nothing (all present)")
+if _missing:
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", *_missing], check=True)"""
+
 SOLVER_DEMO = '''
 sh("python src/solver_vs_fno.py", tail=6)
 solver = json.load(open("results/stage3/solver_vs_gt.json"))
@@ -179,7 +191,7 @@ too long to redo inside a notebook) - **loaded, not fabricated or re-estimated**
   to the stored ones (GPU non-determinism); the *loaded* Stage 3 study results are read verbatim
   from the files shipped in this archive and are not recomputed.
 """),
-        code(f"%pip install -q {' '.join(l for l in REQUIREMENTS.splitlines() if l and not l.startswith('#'))}"),
+        code(INSTALL),
         code(HELPER),
         md("## 1. Project files\nConfiguration files, source code and tests are written to disk by the next cells."),
     ]
