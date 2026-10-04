@@ -206,11 +206,12 @@ the Stage 2 results reproduce. **Stage 3 (`src/stage3_train.py`) evaluates this 
 The pipeline is a set of Python scripts (`src/`), run from the command line. The Stage 2 archive
 additionally ships `stage2/PINNacles_Stage2_Notebook.ipynb`, one notebook that combines the Stage 2
 scripts (data -> train -> evaluate -> EDA -> ablations -> tests); it was executed end to end on the GPU
-workstation below (0 errors; fresh seeded run: FNO 0.0528, MLP 0.0840 mean rel L2). No Colab/Kaggle
-service was used. Two machines were involved:
+workstation below (0 errors; fresh seeded run: FNO 0.0528, MLP 0.0840 mean rel L2). The Stage 3
+notebook was additionally run end to end on a Google Colab T4 GPU. Two machines were used for the
+experiments:
 - **Local development**: macOS, Apple Silicon (MPS backend), Python 3.11/3.14, PyTorch 2.3+.
   Used for coding, the pytest suite, and cross-checking numbers.
-- **Training/benchmarking**: a remote Linux workstation (4×NVIDIA RTX PRO 6000, CUDA 12.x),
+- **Training/benchmarking**: a GPU workstation (CUDA 12.x),
   accessed via SSH, running the identical `src/` scripts against a shared conda environment
   (Python 3.11, PyTorch 2.3, CUDA-enabled). This machine produced the FNO/MLP training runs,
   the GPU inference-speed benchmark, and (for the layer-profiling numbers specifically) an
@@ -226,7 +227,7 @@ service was used. Two machines were involved:
 - Relative-L2 metric is computed in physical (denormalized) units, matching the
   literature-standard convention — see the docstring of `physical_rel_l2` in `src/train.py`
   for why this matters
-- Training was run on an NVIDIA RTX PRO 6000 (CUDA); results were cross-checked against an
+- Training was run on a CUDA GPU workstation; results were cross-checked against an
   independent run on Apple Silicon (MPS) and matched closely (FNO 0.0521 vs 0.0544, MLP
   0.0820 vs 0.0840 mean rel L2); a later seeded CUDA re-run (the Stage 2 notebook) gave FNO 0.0528
   and MLP 0.0840. Differences of a few 1e-3 in mean error are the run-to-run / cross-hardware noise floor

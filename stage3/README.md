@@ -17,11 +17,11 @@ Compile: `tectonic PINNacles_Stage3_FinalReport.tex`; rebuild the deck: `python3
 | Figs. 5–6, §8 numbers | `stage3_diagnostics.py` | `diagnostics.json`, `diagnostics_arrays.npz` |
 
 Notes: `results/stage3/runs/*/metrics.json` hold the per-sample test errors and full configs; model checkpoints (`best_model.pt`) are not tracked
-(regenerate with `jobs_final.txt`). Timing numbers come from a shared 16-core host with an idle RTX PRO 6000; CPU timings are indicative.
+(regenerate with `jobs_final.txt`). Timing numbers come from the GPU workstation (idle GPU, 16-core CPU); CPU timings are indicative.
 Selection of all hyper-parameters used validation data only; the test set was evaluated once per run.
 `stage1/` and `stage2/` are the submitted earlier stages and are unchanged.
 
 ## Pending before the Nov 13 submission
 - Each member must confirm their entry in the contribution statement is accurate (edit the `.tex` if not) and sign it.
 - Viva / code-walkthrough preparation: each member should be able to explain the parts listed against their name.
-- Trained checkpoints are not tracked (git-ignored); the final FNO (seed 0, 73 MB) is kept locally in `results/stage3/checkpoints/`, all others on the lab VM.
+- Trained checkpoints are not tracked (git-ignored); the final FNO (seed 0, 73 MB) is kept locally in `results/stage3/checkpoints/`, all others on the GPU workstation.

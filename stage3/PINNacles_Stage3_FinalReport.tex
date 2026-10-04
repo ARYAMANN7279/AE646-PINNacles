@@ -129,7 +129,7 @@ $64\times64$ & harmonic, $b{=}0.8$ & 0.059 & 0.044 & 7.1 & 11.6\\
 $128\times128$ & arithmetic, $b{=}1.05$ & 0.051 & 0.024 & 37.4 & 30.7\\\bottomrule
 \end{tabular}\end{table}
 
-\textbf{Latency.} We timed the final models with CUDA events on an idle RTX PRO 6000 (Blackwell) GPU and with wall-clock on the CPU of the shared 16-core host (CPU numbers are indicative only).
+\textbf{Latency.} We timed the final models with CUDA events on an idle GPU of the GPU workstation and with wall-clock on its 16-core CPU (CPU numbers are indicative only).
 
 \begin{table}[H]\centering\small
 \caption{Inference time per solution at $64\times64$ (median over repetitions). b = batch size, smp = sample; GPU batch-1 latency is kernel-launch bound.}\label{tab:lat}

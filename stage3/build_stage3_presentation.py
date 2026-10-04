@@ -165,7 +165,7 @@ bullets(sl, [
     "Reference step budget = Stage 2 (100 epochs = 5,700 steps, batch 16); seeds 0-4; sd over seeds reported",
     "Symmetry: data are D4-invariant; augmentation applied at 128x128 before sub-sampling (valid), test-time averaging over {identity, transpose}",
     "Baseline given the same effort: MLP tuned on the same footing (capacity sweep, validation selection)",
-    "142 training runs on one shared GPU workstation; all configs and metrics stored per run",
+    "142 training runs on one GPU workstation; all configs and metrics stored per run",
 ], CL + Inches(0.3), CT + Inches(0.4), CW - Inches(0.6), Inches(4.6), sz=Pt(19), gap=Pt(12))
 
 # 4 Recipe
@@ -245,7 +245,7 @@ bullets(sl, [
 
 # 9 Latency
 sl = slide()
-header(sl, "Inference Cost: Error vs Time per Solution", "CUDA-event timing on an idle Blackwell GPU; CPU numbers from a shared host (indicative)")
+header(sl, "Inference Cost: Error vs Time per Solution", "CUDA-event timing on an idle GPU; CPU numbers from the workstation CPU (indicative)")
 footer(sl, 9)
 card(sl, CL, CT, Inches(7.3), CAH)
 pic(sl, "fig_pareto.png", CL + Inches(0.1), CT + Inches(0.2), Inches(7.1), CAH - Inches(0.4))

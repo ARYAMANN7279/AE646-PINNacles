@@ -14,7 +14,7 @@ training, evaluation, EDA) and the Stage 3 solver comparison, plus a small, real
 demonstration of the Stage 3 training-recipe effect (reduced step budget, so it finishes in
 minutes on a GPU / a short time on CPU). The full Stage 3 experiment matrix (142 runs, tens of
 GPU-hours) is NOT re-run inside the notebook; instead the notebook loads the actual stored results
-of that matrix (results/stage3/*.json, produced by `scripts/stage3_run_all.sh` on the lab GPU
+of that matrix (results/stage3/*.json, produced by `scripts/stage3_run_all.sh` on a GPU
 workstation and included in this archive verbatim) to display the final tables and figures. This is
 stated explicitly in the notebook - nothing is fabricated or silently assumed.
 
@@ -135,11 +135,21 @@ for n, r in solver["per_N"].items():
 
 FULL_STUDY = '''
 # The full Stage 3 experiment matrix (142 training runs across the recipe ablation, architecture
-# sweep, data-scaling and resolution studies, and the 5-seed final models) was run on the lab GPU
+# sweep, data-scaling and resolution studies, and the 5-seed final models) was run on a GPU
 # workstation with `scripts/stage3_run_all.sh` (tens of GPU-hours) - reproducing it here would take
 # too long for a notebook. Its ACTUAL, STORED results (this archive's results/stage3/*.json,
 # unedited) are loaded below; nothing here is fabricated or estimated.
-import numpy as np, re
+import numpy as np, re, urllib.request
+# When this notebook is opened on its own (e.g. straight from GitHub in Colab) the stored results are not
+# on disk; fetch them, unchanged, from the project repository. Inside the code archive they already exist.
+_RAW = "https://raw.githubusercontent.com/ARYAMANN7279/AE646-PINNacles/main/"
+os.makedirs("results/stage3/figures", exist_ok=True)
+for _f in ("summary.json", "diagnostics.json"):
+    if not os.path.exists(f"results/stage3/{_f}"):
+        urllib.request.urlretrieve(_RAW + f"results/stage3/{_f}", f"results/stage3/{_f}")
+for _f in ("fig_recipe_ablation", "fig_arch_sweeps", "fig_data_scaling", "fig_pareto", "fig_diagnostics", "fig_samples"):
+    if not os.path.exists(f"results/stage3/figures/{_f}.png"):
+        urllib.request.urlretrieve(_RAW + f"stage3/figures/{_f}.png", f"results/stage3/figures/{_f}.png")
 summary = json.load(open("results/stage3/summary.json"))
 
 def mean_sd(pattern, key="test"):
@@ -180,7 +190,7 @@ training and evaluation -> dataset analysis -> ablations -> unit tests -> **Stag
 reduced-budget demonstration of the training-recipe finding, the finite-volume solver
 comparison (run live), and the complete Stage 3 study (recipe/architecture/data/resolution/
 latency/diagnostics), whose numbers and figures are loaded from the actual results produced by
-the full experiment matrix on the lab GPU workstation (`scripts/stage3_run_all.sh`, 142 runs,
+the full experiment matrix on a GPU workstation (`scripts/stage3_run_all.sh`, 142 runs,
 too long to redo inside a notebook) - **loaded, not fabricated or re-estimated**.
 
 * **Run all cells top to bottom.** A GPU is needed for the full pipeline in reasonable time.
@@ -255,7 +265,7 @@ the PDEBench ground truth and its wall-clock cost, at N = 32/64/128.
         md("""
 ## 10. Stage 3 - full experiment matrix (loaded from stored results)
 The complete Stage 3 study - training-recipe ablation, architecture sweep, data-scaling and
-resolution studies, and the 5-seed final models (142 runs total) - was executed on the lab GPU
+resolution studies, and the 5-seed final models (142 runs total) - was executed on a GPU
 workstation with `scripts/stage3_run_all.sh`. Its results are shipped in this archive verbatim
 (`results/stage3/*.json`, `results/stage3/figures/`) and loaded below; **they are not recomputed
 in this notebook**. See `stage3/PINNacles_Stage3_FinalReport.pdf` for the full discussion.
