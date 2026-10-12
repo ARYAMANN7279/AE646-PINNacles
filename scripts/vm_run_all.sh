@@ -1,9 +1,11 @@
 #!/bin/bash
-# Runs the full AE646 pipeline on the VM (GPU 1 - GPUs 0/2/3 are busy with other users' jobs).
+# Runs the full AE646 pipeline on a GPU workstation.
+# Override these on the command line if needed, e.g.:  CUDA_VISIBLE_DEVICES=1 PY=/path/to/python3 scripts/vm_run_all.sh
 set -e
-cd /SML_DISK_24TB/rajeshr/Aryamann/ae646
-export CUDA_VISIBLE_DEVICES=1
-PY=/SML_DISK_24TB/rajeshr/Aryamann/env/bin/python3
+PROJECT_DIR="${PROJECT_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"   # repo root
+cd "$PROJECT_DIR"
+export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"          # pick an idle GPU
+PY="${PY:-python3}"                                               # python with the project requirements
 
 echo "=== Preprocessing ==="
 $PY src/preprocess.py
