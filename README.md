@@ -1,6 +1,6 @@
-# AE646-PINNacles — Fourier Neural Operator for Parametric Darcy Flow
+# AE646-PINNacles: Fourier Neural Operator for Parametric Darcy Flow
 
-**AE646: Scientific Machine Learning for Fluid Mechanics — Project theme 8 (Operator learning for parametric PDEs)**
+**AE646: Scientific Machine Learning for Fluid Mechanics, Project theme 8 (Operator learning for parametric PDEs)**
 
 Learn the solution operator of the 2D parametric Darcy flow equation with a Fourier Neural
 Operator (FNO), compared against a fully-connected MLP baseline with no spatial inductive
@@ -18,24 +18,24 @@ u = 0 on the boundary,   f = beta = 1.0
 ```
 
 `kappa` is a piecewise-constant permeability field (values in {0.1, 1.0}, obtained by
-thresholding a smooth Gaussian random field) — this is PDEBench's actual Darcy setup
+thresholding a smooth Gaussian random field); this is PDEBench's actual Darcy setup
 (Takamoto et al., *PDEBench*, NeurIPS 2022), not the continuous log-permeability field used
 in the original Li et al. FNO paper's Darcy dataset. The task is to learn the operator
 `G: kappa -> u`.
 
 ## Dataset
 
-**Real PDEBench 2D Darcy Flow, β=1.0** — downloaded directly from the official source
+**Real PDEBench 2D Darcy Flow, β=1.0**, downloaded directly from the official source
 (`src/download_data.py`, DaRUS/Uni Stuttgart, DOI 10.18419/darus-2986), verified by checksum
 against PDEBench's published manifest. 10,000 genuine samples at native 128×128 resolution.
 
-`src/preprocess.py` draws a reproducible (seed=42), non-overlapping subset — 1000 samples
-for train/val (further split 900/100) and 200 held out for test — downsamples to 64×64 by
+`src/preprocess.py` draws a reproducible (seed=42), non-overlapping subset: 1000 samples
+for train/val (further split 900/100) and 200 held out for test, then downsamples to 64×64 by
 taking every 2nd grid point for the main train/eval pipeline, and separately keeps the 200
 test samples' **native 128×128 fields** aside for a genuine zero-shot super-resolution check.
 
 An optional, clearly-labeled synthetic fallback generator (`src/generate_data.py`) is included
-in case the real download is unavailable — see "Optional: synthetic fallback" below. It is
+in case the real download is unavailable; see "Optional: synthetic fallback" below. It is
 **not** what the results in this repo use.
 
 ## Project Structure
@@ -141,10 +141,10 @@ python3 src/generate_figures.py       # outputs to results/figures/
 | Improved (`fno_improved.yaml`) | 128 | 20 | 6 | 78.8M |
 
 ### MLP Baseline
-- Flatten (64×64×3) → 3×2048 hidden (GELU) → Flatten output (64×64) — 42.0M parameters
-- No spatial inductive bias — treats the field as a dense vector mapping
+- Flatten (64×64×3) → 3×2048 hidden (GELU) → Flatten output (64×64), 42.0M parameters
+- No spatial inductive bias; treats the field as a dense vector mapping
 
-## Stage 3 results (final) — optimised FNO, all real runs in `results/stage3/`
+## Stage 3 results (final): optimised FNO, all real runs in `results/stage3/`
 
 Test set of 200 fields, 5 seeds, 60,000 steps, relative L2 in physical units
 (details, all studies and caveats: [`stage3/PINNacles_Stage3_FinalReport.pdf`](stage3/PINNacles_Stage3_FinalReport.pdf)):
@@ -162,7 +162,7 @@ Test set of 200 fields, 5 seeds, 60,000 steps, relative L2 in physical units
 
 Reproduce: `bash scripts/stage3_run_all.sh` (see `stage3/README.md`).
 
-## Stage 2 results (submitted; superseded by Stage 3 above) — relative L2 in physical units
+## Stage 2 results (submitted; superseded by Stage 3 above): relative L2 in physical units
 
 | Model | Mean Rel L2 | Median | Std | Params |
 |-------|------------|--------|-----|--------|
@@ -171,7 +171,7 @@ Reproduce: `bash scripts/stage3_run_all.sh` (see `stage3/README.md`).
 | FNO (improved) | 0.0456 | 0.0307 | 0.0487 | 78.8M |
 
 Zero-shot at native 128×128 (real PDEBench ground truth, no retraining): FNO (original)
-0.0594, FNO (improved) 0.0563 — the MLP cannot be evaluated this way (fixed input size).
+0.0594, FNO (improved) 0.0563; the MLP cannot be evaluated this way (fixed input size).
 
 Measured inference speed (`results/benchmark_speed.json`): FNO 0.71 ms/sample and MLP
 0.13 ms/sample on GPU vs 1030 ms/sample for a scipy sparse FDM solve on CPU. See
@@ -182,25 +182,25 @@ the Stage 2 report; the Stage 3 report supersedes the speed claims (fair solver 
 0.21); 180/200 native-resolution test samples have exactly one connected high-κ region
 (multi-region samples are rare). Correlating FNO's per-sample test error against κ
 heterogeneity gives only a weak relationship (region count r=0.24, interface perimeter
-r=−0.17, wrong sign) — the single worst test sample instead has *zero* connected
+r=−0.17, wrong sign); the single worst test sample instead has *zero* connected
 regions (a near-degenerate, almost-uniform field). See
 [`stage3/PINNacles_Stage3_FinalReport.pdf`](stage3/PINNacles_Stage3_FinalReport.pdf) §8 for the Stage 3 physical analysis.
 
-**MLP baseline ablation** (`results/ablation_mlp.json`, `src/ablation_mlp.py`) — real
+**MLP baseline ablation** (`results/ablation_mlp.json`, `src/ablation_mlp.py`): real
 re-trained runs, not asserted: 1-layer 0.1008, 2-layer 0.0796, 3-layer/AdamW (reported
 baseline) 0.0857, 3-layer/SGD+momentum 0.1209. SGD is clearly worse (justifies AdamW);
 depth beyond 2 layers shows diminishing/non-monotonic returns.
 
 **MLP preprocessing ablation** (`results/ablation_preprocess.json`, 3 seeds per variant,
 identical split/target): reference 0.0842 ± 0.0002, no coordinate channels 0.0843 ± 0.0011,
-no input normalisation 0.0864 ± 0.0018, no target normalisation 0.0917 ± 0.0012 —
+no input normalisation 0.0864 ± 0.0018, no target normalisation 0.0917 ± 0.0012:
 normalising the target matters (+9% error without it); coordinates don't matter for the MLP.
 
 **Training-loss / schedule note:** `train.py` optimises MSE on standardised pressure (the
 relative-L2 error is the *reported metric*, computed in physical units), and steps
 `CosineAnnealingLR(T_max=epochs)` once per mini-batch, so the LR cycles between 1e-3 and 0
 every 2·T_max steps (~28 cycles per 100-epoch run) rather than decaying once. Kept as-is so
-the Stage 2 results reproduce. **Stage 3 (`src/stage3_train.py`) evaluates this recipe against a relative-L2 loss, a single cosine decay and D4 augmentation** — see above.
+the Stage 2 results reproduce. **Stage 3 (`src/stage3_train.py`) evaluates this recipe against a relative-L2 loss, a single cosine decay and D4 augmentation**; see above.
 
 ## Computational Environment
 The pipeline is a set of Python scripts (`src/`), run from the command line. The Stage 2 archive
@@ -215,7 +215,7 @@ experiments:
   accessed via SSH, running the identical `src/` scripts against a shared conda environment
   (Python 3.11, PyTorch 2.3, CUDA-enabled). This machine produced the FNO/MLP training runs,
   the GPU inference-speed benchmark, and (for the layer-profiling numbers specifically) an
-  MPS run on the local Mac — both are noted explicitly wherever they're reported.
+  MPS run on the local Mac; both are noted explicitly wherever they're reported.
 - No GPU/cloud credits or paid services were used.
 
 ## Reproducibility
@@ -225,7 +225,7 @@ experiments:
   now reproduces those numbers closely but not bit-for-bit.
 - Normalization stats computed from the training split only, saved to `norm_stats.json`
 - Relative-L2 metric is computed in physical (denormalized) units, matching the
-  literature-standard convention — see the docstring of `physical_rel_l2` in `src/train.py`
+  literature-standard convention; see the docstring of `physical_rel_l2` in `src/train.py`
   for why this matters
 - Training was run on a CUDA GPU workstation; results were cross-checked against an
   independent run on Apple Silicon (MPS) and matched closely (FNO 0.0521 vs 0.0544, MLP

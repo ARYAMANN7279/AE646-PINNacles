@@ -17,7 +17,7 @@
 \setlist{nosep}
 \graphicspath{{figures/}}\emergencystretch=4em
 
-\title{\textbf{AE646 --- Final Report (Stage 3)}\\[0.4em]
+\title{\textbf{AE646: Final Report (Stage 3)}\\[0.4em]
 \large Optimising a Fourier Neural Operator for Parametric Darcy Flow:\\
 Recipe, Architecture, Data, Resolution, Latency and Comparison with a Finite-Volume Solver}
 \author{Team PINNacles\\Aryamann Srivastava, Varun Sathaye, Atishay Jain, Vedant S.\ Tiwari\\Department of Aerospace Engineering, IIT Kanpur}
@@ -43,7 +43,7 @@ The split is unchanged from Stage~2 (seed 42): 900 train, 100 validation, 200 te
 \section{Models}
 \textbf{FNO2d}: lifting $3\to w$; $L$ Fourier layers, each combining a spectral convolution (rfft2, learned complex weights on the lowest $m\times m$ modes of two frequency bands, irfft2), a $1\times1$ convolution bypass, layer normalisation and GELU; projection $w\to128\to1$. Stage~2 configuration: $m=12$, $w=64$, $L=4$ (4.74\,M parameters). \textbf{MLP}: flatten $64^2\!\cdot\!3$, three hidden layers, GELU, output $64^2$ (Stage~2: $3\times2048$, 42\,M parameters). Both use AdamW.
 
-\section{Study 1 --- What Limited Stage~2? The Training Recipe}\label{sec:recipe}
+\section{Study 1: What Limited Stage~2? The Training Recipe}\label{sec:recipe}
 While designing Stage~3 we found two properties of the Stage~2 recipe: the loss was MSE on standardised pressure (whereas the reported metric is a \emph{relative} error, so low-amplitude samples were under-weighted), and the cosine schedule was stepped per batch with $T_{\max}$ equal to the number of epochs, so the learning rate cycled $10^{-3}\to0$ every 200 steps ($\approx$28 cycles) instead of decaying once. We reproduced this recipe exactly (row~1 of Table~\ref{tab:recipe}: $0.0524\pm0.0018$, matching the reported $0.052$) and ablated each change at the same 5\,700-step budget, three seeds each.
 
 \begin{table}[H]\centering\small
@@ -65,7 +65,7 @@ single cosine & MSE & D4 & $0.0369\pm0.0004$ & 0.0343 & $0.0649\pm0.0004$\\
 
 The relative-$L_2$ loss is the largest single gain ($-26\%$ for the FNO), D4 augmentation adds a further $-35\%$ on top of it, and the schedule fix contributes $\approx-7\%$; the full recipe halves the FNO error and reduces the MLP error by $43\%$ at identical cost. D4 augmentation \emph{alone} does not help under the MSE loss and the restarting schedule (MLP: $0.0817$ vs.\ $0.0802$, within noise), so the gains are interactions: better-optimised training is what lets the model use the 8$\times$ larger effective data set. The FNO retains its advantage everywhere ($1.8\times$ better in the full recipe, vs.\ $1.5\times$ with the Stage~2 recipe). All later studies use the full recipe.
 
-\section{Study 2 --- Optimising the FNO Architecture}\label{sec:arch}
+\section{Study 2: Optimising the FNO Architecture}\label{sec:arch}
 With the full recipe and 20\,000 steps we varied one factor at a time around $(m,w,L)=(12,64,4)$, then trained joint candidates for 60\,000 steps (Figure~\ref{fig:arch}, Table~\ref{tab:arch}).
 
 \begin{figure}[H]\centering\includegraphics[width=\linewidth]{fig_arch_sweeps.pdf}
@@ -103,7 +103,7 @@ Stage 2 MLP (reported) & 42.0\,M & 0.0820 & 0.0695 & --\\
 \end{tabular}\end{table}
 Training the final FNO takes $\approx32$\,min on one shared GPU. The FNO error is 2.6$\times$ lower than the Stage~2 FNO and 2.05$\times$ lower than the best MLP, with 10.6$\times$ fewer parameters. The median FNO error is only $0.7\%$: the mean is dominated by a small tail (\S\ref{sec:physics}).
 
-\section{Study 3 --- Data Scaling and Resolution}\label{sec:res}
+\section{Study 3: Data Scaling and Resolution}\label{sec:res}
 \textbf{Data scaling.} We trained FNO $(12,64,4)$ and the $3\times2048$ MLP with $n\in\{100,\dots,9700\}$ samples (900 course samples plus the unused real data; fixed 20\,000 steps, 2 seeds each, TTA).
 
 \begin{figure}[H]\centering
@@ -115,7 +115,7 @@ The FNO is much more sample-efficient: with 400 samples it is already better tha
 
 \textbf{Resolution.} FNOs trained at 32, 64 and 128 and evaluated at all three resolutions (Fig.~\ref{fig:scaling}b). In-resolution errors are $0.027$, $0.022$, $0.021$: refining from 64 to 128 gains only $\approx4\%$ while costing $4\times$ more compute. Zero-shot transfer works but is far from free: a model trained at 64 attains $0.038$ at 128 (the final 60\,000-step model: $0.037$) and $0.065$ at 32 (final: $0.063$), i.e.\ 1.7--3$\times$ worse than a native-resolution model; coarse-trained models transfer worst ($0.085$ at 128). Zero-shot super-resolution is therefore useful for cheap grid refinement, but ``resolution-independent'' should be read as \emph{applicable} at any resolution, not \emph{accurate} at any resolution: the input statistics and discretisation error of the target change with the grid.
 
-\section{Study 4 --- Comparison with a Finite-Volume Solver and Inference Cost}\label{sec:solver}
+\section{Study 4: Comparison with a Finite-Volume Solver and Inference Cost}\label{sec:solver}
 \textbf{A correction.} Stage~2 reported FNO speed-ups of $1443\times$ and $7740\times$ relative to a 1030\,ms FDM solve. That reference used a solver whose boundary rows were set in a Python loop over sparse-matrix rows, which is orders of magnitude slower than a competent implementation; \emph{those speed-up figures are withdrawn}. We wrote a vectorised cell-centred finite-volume solver (\texttt{src/solvers.py}: COO assembly, sparse LU, and algebraic-multigrid-preconditioned CG via \texttt{pyamg}); the two solvers agree to $10^{-9}$.
 
 \textbf{Which discretisation reproduces the ground truth?} Ideal cell-centred FV (Dirichlet boundary half a cell outside the array) differs from PDEBench's arrays by 5--10\%, because the reference data behave as if the Dirichlet boundary were about one cell outside the grid. We therefore calibrated the face averaging and boundary distance $b$ per resolution on 40 validation fields (Table~\ref{tab:solver}), i.e.\ we give the classical solver the same advantage of tuning to the data that the FNO gets by training on it. Coarse grids use stride sub-sampling of both $\kappa$ and $u$, exactly as the FNO sees them.
