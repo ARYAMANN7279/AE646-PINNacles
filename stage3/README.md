@@ -1,6 +1,6 @@
 # Stage 3: Final report, deck, code map
 
-Deliverables: `PINNacles_Stage3_FinalReport.pdf` (8 pages), `PINNacles_Stage3_FinalPresentation.pptx/.pdf` (13 slides),
+Deliverables: `PINNacles_Stage3_FinalReport.pdf` (8 pages), `PINNacles_Stage3_FinalPresentation.pptx/.pdf` (11 slides),
 `PINNacles_Stage3_ContributionStatement.pdf` (one page: contribution statement + AI-tool-use declaration), code in `../src`.
 
 ## Run instructions (Google Colab notebook)

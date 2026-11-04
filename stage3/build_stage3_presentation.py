@@ -1,324 +1,354 @@
 """
-Builds the Stage 3 (final) presentation: PINNacles_Stage3_FinalPresentation.pptx
+Build the Stage 3 final presentation (11 slides, ~10 minutes).
 
-Scope: optimised FNO vs tuned MLP, recipe/architecture/data/resolution studies, comparison with a
-finite-volume solver, latency, physical diagnostics. Figures come from stage3/figures/
-(regenerate with src/stage3_figures.py).
+Style: light-blue title slide, white content slides, one idea per slide, big-number cards,
+real plots from stage3/figures, short plain-language text. No code, little maths.
+All numbers come from results/stage3/*.json or the final report tables.
 
-Run:  python3 stage3/build_stage3_presentation.py     (needs python-pptx, Pillow)
+Run (from repo root):  python3 stage3/build_stage3_presentation.py
+Output: stage3/PINNacles_Stage3_FinalPresentation.pptx
 """
-import os
+import json
+import re
+from pathlib import Path
+
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
 from PIL import Image
 from pptx import Presentation
-from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_ALIGN
+from pptx.enum.shapes import MSO_SHAPE
+from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
+from pptx.util import Emu, Inches, Pt
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-FIG = os.path.join(HERE, "figures")
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parent
+FIG = HERE / "figures"
+OUT = HERE / "PINNacles_Stage3_FinalPresentation.pptx"
 
-DARK_BLUE   = RGBColor(0x1A, 0x2E, 0x4A)
-MID_BLUE    = RGBColor(0x1F, 0x4E, 0x79)
-ACCENT_BLUE = RGBColor(0x2E, 0x86, 0xC1)
-LIGHT_BLUE  = RGBColor(0xD6, 0xE4, 0xF0)
-WHITE       = RGBColor(0xFF, 0xFF, 0xFF)
-OFF_WHITE   = RGBColor(0xF4, 0xF6, 0xF9)
-DARK_GRAY   = RGBColor(0x2C, 0x3E, 0x50)
-GREEN       = RGBColor(0x1E, 0x8B, 0x4C)
-ORANGE      = RGBColor(0xCA, 0x6F, 0x1E)
-
-W, H = Inches(13.33), Inches(7.5)
-CL, CR = Inches(0.45), Inches(12.88)
-CW = CR - CL
-CT = Inches(1.5)
-CB = Inches(7.05)
-CAH = CB - CT
-TOTAL = 13
+# palette
+NAVY = RGBColor(0x14, 0x2F, 0x4E)
+BLUE = RGBColor(0x2F, 0x7F, 0xD1)
+LIGHTBLUE = RGBColor(0xCF, 0xE6, 0xF8)
+PALE = RGBColor(0xF3, 0xF8, 0xFD)
+LINE = RGBColor(0xD3, 0xE3, 0xF3)
+GREY = RGBColor(0x5F, 0x6B, 0x7A)
+GREEN = RGBColor(0x1E, 0x8E, 0x5A)
+ORANGE = RGBColor(0xC9, 0x6F, 0x1E)
+WHITE = RGBColor(0xFF, 0xFF, 0xFF)
+FONT = "Arial"
 
 prs = Presentation()
-prs.slide_width, prs.slide_height = W, H
+prs.slide_width = Inches(13.333)
+prs.slide_height = Inches(7.5)
 BLANK = prs.slide_layouts[6]
+SW, SH = 13.333, 7.5
 
 
-def slide():
-    return prs.slides.add_slide(BLANK)
+# ---------------------------------------------------------------- numbers
+def stored_numbers():
+    sm = json.load(open(ROOT / "results/stage3/summary.json"))
+
+    def ms(pat):
+        v = [x["test"] for n, x in sm.items() if re.fullmatch(pat, n)]
+        return float(np.mean(v)), float(np.std(v, ddof=1))
+
+    return {
+        "fno_final": ms("final_fno_s."),
+        "mlp_final": ms("final_mlp_s."),
+        "fno_s2recipe": ms("e1_fno_leg_mse_none_s."),
+        "mlp_s2recipe": ms("e1_mlp_leg_mse_none_s."),
+        "fno_s3recipe": ms("e1_fno_cos_rel_l2_d4_s."),
+        "mlp_s3recipe": ms("e1_mlp_cos_rel_l2_d4_s."),
+    }
 
 
-def box(sl, l, t, w, h, fill=None, border=None, bw=Pt(1.2)):
-    s = sl.shapes.add_shape(1, l, t, w, h)
-    s.line.width = bw
-    if fill:
-        s.fill.solid(); s.fill.fore_color.rgb = fill
-    else:
-        s.fill.background()
-    if border:
-        s.line.color.rgb = border
-    else:
-        s.line.fill.background()
+N = stored_numbers()
+
+
+def make_story_figure():
+    """Four bars: Stage 2 recipe vs final models, FNO and MLP."""
+    labels = ["Stage 2", "Final"]
+    fno = [N["fno_s2recipe"][0], N["fno_final"][0]]
+    mlp = [N["mlp_s2recipe"][0], N["mlp_final"][0]]
+    fno_e = [N["fno_s2recipe"][1], N["fno_final"][1]]
+    mlp_e = [N["mlp_s2recipe"][1], N["mlp_final"][1]]
+    x = np.arange(2)
+    w = 0.34
+    fig, ax = plt.subplots(figsize=(6.2, 4.4), dpi=200)
+    b1 = ax.bar(x - w / 2, fno, w, yerr=fno_e, color="#1E8E5A", capsize=4, label="FNO")
+    b2 = ax.bar(x + w / 2, mlp, w, yerr=mlp_e, color="#C96F1E", capsize=4, label="MLP")
+    for bars in (b1, b2):
+        for b in bars:
+            ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 0.004, f"{b.get_height():.3f}",
+                    ha="center", va="bottom", fontsize=11)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, fontsize=12)
+    ax.set_ylabel("test error (lower is better)", fontsize=11)
+    ax.set_ylim(0, 0.095)
+    ax.legend(frameon=False, fontsize=11, loc="upper right")
+    for s in ("top", "right"):
+        ax.spines[s].set_visible(False)
+    ax.grid(axis="y", alpha=0.25)
+    fig.tight_layout()
+    path = FIG / "fig_story.png"
+    fig.savefig(path)
+    plt.close(fig)
+    return path
+
+
+def crop_first_row_of_samples():
+    """Top row of fig_samples (best sample): permeability, truth, FNO, error."""
+    im = Image.open(FIG / "fig_samples.png").convert("RGB")
+    w, h = im.size
+    row = im.crop((0, 0, w, int(h * 0.335)))
+    path = FIG / "fig_sample_row.png"
+    row.save(path)
+    return path
+
+
+# ---------------------------------------------------------------- helpers
+def rgb_fill(shape, color):
+    shape.fill.solid()
+    shape.fill.fore_color.rgb = color
+
+
+def textbox(slide, x, y, w, h, text, size=14, bold=False, color=NAVY, align=PP_ALIGN.LEFT,
+            anchor=MSO_ANCHOR.TOP, italic=False):
+    tb = slide.shapes.add_textbox(Inches(x), Inches(y), Inches(w), Inches(h))
+    tf = tb.text_frame
+    tf.word_wrap = True
+    tf.vertical_anchor = anchor
+    tf.margin_left = tf.margin_right = Inches(0.05)
+    tf.margin_top = tf.margin_bottom = Inches(0.03)
+    lines = text if isinstance(text, list) else [text]
+    for i, line in enumerate(lines):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        p.alignment = align
+        r = p.add_run()
+        r.text = line
+        r.font.size = Pt(size)
+        r.font.bold = bold
+        r.font.italic = italic
+        r.font.name = FONT
+        r.font.color.rgb = color
+    return tb
+
+
+def rounded(slide, x, y, w, h, fill=PALE, line=LINE, line_w=1.0, radius=0.06):
+    s = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(x), Inches(y), Inches(w), Inches(h))
+    s.adjustments[0] = radius
+    rgb_fill(s, fill)
+    s.line.color.rgb = line
+    s.line.width = Pt(line_w)
+    s.shadow.inherit = False
     return s
 
 
-def tx(sl, text, l, t, w, h, sz=Pt(14), bold=False, color=DARK_GRAY, align=PP_ALIGN.LEFT):
-    tb = sl.shapes.add_textbox(l, t, w, h)
-    tb.text_frame.word_wrap = True
-    p = tb.text_frame.paragraphs[0]
-    p.text = text
-    p.alignment = align
-    p.font.name = "Arial"; p.font.size = sz; p.font.bold = bold; p.font.color.rgb = color
-    return tb
+def base_slide(title, subtitle, number):
+    s = prs.slides.add_slide(BLANK)
+    bg = s.background.fill
+    bg.solid()
+    bg.fore_color.rgb = WHITE
+    bar = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.6), Inches(0.52), Inches(0.09), Inches(0.82))
+    rgb_fill(bar, BLUE)
+    bar.line.fill.background()
+    textbox(s, 0.82, 0.42, 11.6, 0.6, title, size=30, bold=True, color=NAVY)
+    textbox(s, 0.84, 0.98, 11.6, 0.4, subtitle, size=15, color=GREY)
+    textbox(s, 0.6, 7.05, 6, 0.3, "AE646  |  Team PINNacles  |  Stage 3", size=10, color=GREY)
+    textbox(s, 11.9, 7.05, 0.85, 0.3, str(number), size=10, color=GREY, align=PP_ALIGN.RIGHT)
+    return s
 
 
-def bullets(sl, items, l, t, w, h, sz=Pt(16), color=DARK_GRAY, gap=Pt(8)):
-    tb = sl.shapes.add_textbox(l, t, w, h)
-    tf = tb.text_frame
-    tf.word_wrap = True
-    for i, item in enumerate(items):
-        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-        p.text = "•  " + item
-        p.font.name = "Arial"; p.font.size = sz; p.font.color.rgb = color
-        p.space_after = gap
-    return tb
+def stat_card(slide, x, y, w, h, value, label, color=BLUE, vsize=34):
+    rounded(slide, x, y, w, h)
+    textbox(slide, x, y + 0.12, w, h * 0.55, value, size=vsize, bold=True, color=color,
+            align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+    textbox(slide, x + 0.1, y + h * 0.58, w - 0.2, h * 0.4, label, size=12, color=GREY,
+            align=PP_ALIGN.CENTER)
 
 
-def pic(sl, name, l, t, maxw, maxh):
-    """Insert an image scaled to fit inside (maxw x maxh), centred in that box."""
-    path = os.path.join(FIG, name)
+def callout(slide, text, y=6.25, h=0.62, x=0.6, w=12.1):
+    s = rounded(slide, x, y, w, h, fill=RGBColor(0xFF, 0xF8, 0xF0), line=ORANGE, line_w=1.5)
+    textbox(slide, x + 0.2, y, w - 0.4, h, text, size=16, bold=True, color=ORANGE,
+            align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+
+
+def picture(slide, path, x, y, w, h, card=True):
+    """Place an image inside a white card, preserving aspect ratio (fit inside w x h)."""
+    if card:
+        rounded(slide, x, y, w, h, fill=WHITE, line=LINE)
     iw, ih = Image.open(path).size
-    scale = min(maxw / iw, maxh / ih)
-    w, h = int(iw * scale), int(ih * scale)
-    sl.shapes.add_picture(path, l + (maxw - w) // 2, t + (maxh - h) // 2, width=w, height=h)
+    pad = 0.12
+    bw, bh = w - 2 * pad, h - 2 * pad
+    scale = min(bw / iw, bh / ih)
+    pw, ph = iw * scale, ih * scale
+    slide.shapes.add_picture(str(path), Inches(x + (w - pw) / 2), Inches(y + (h - ph) / 2),
+                             Inches(pw), Inches(ph))
 
 
-def header(sl, title, sub):
-    box(sl, 0, 0, W, H, fill=OFF_WHITE)
-    box(sl, 0, 0, W, Inches(1.15), fill=DARK_BLUE)
-    box(sl, 0, Inches(1.15), W, Inches(0.08), fill=ACCENT_BLUE)
-    tx(sl, title, Inches(0.5), Inches(0.18), W - Inches(1.0), Inches(0.55), sz=Pt(30), bold=True, color=WHITE)
-    tx(sl, sub, Inches(0.52), Inches(0.72), W - Inches(1.0), Inches(0.35), sz=Pt(16), color=LIGHT_BLUE)
+def bullets(slide, x, y, w, items, size=16, gap=0.78, num_color=BLUE):
+    """Short numbered points: bold lead word(s) + one plain sentence."""
+    for i, (lead, body) in enumerate(items):
+        yy = y + i * gap
+        circ = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x), Inches(yy + 0.05), Inches(0.42), Inches(0.42))
+        rgb_fill(circ, num_color)
+        circ.line.fill.background()
+        tf = circ.text_frame
+        tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
+        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p = tf.paragraphs[0]
+        p.alignment = PP_ALIGN.CENTER
+        r = p.add_run()
+        r.text = str(i + 1)
+        r.font.size = Pt(14)
+        r.font.bold = True
+        r.font.name = FONT
+        r.font.color.rgb = WHITE
+        textbox(slide, x + 0.55, yy, w - 0.55, 0.3, lead, size=size, bold=True, color=NAVY)
+        textbox(slide, x + 0.55, yy + 0.32, w - 0.55, 0.45, body, size=size - 3, color=GREY)
 
 
-def footer(sl, num):
-    box(sl, 0, H - Inches(0.35), W, Inches(0.35), fill=DARK_BLUE)
-    tx(sl, "AE646 Stage 3 Final Evaluation  |  Team PINNacles", CL, H - Inches(0.32), CW, Inches(0.3),
-       sz=Pt(12), color=LIGHT_BLUE)
-    tx(sl, f"{num} / {TOTAL}", W - Inches(1.5), H - Inches(0.32), Inches(1.0), Inches(0.3),
-       sz=Pt(12), bold=True, color=WHITE, align=PP_ALIGN.RIGHT)
+# ================================================================ slides
+# 1. Title (light blue)
+s = prs.slides.add_slide(BLANK)
+s.background.fill.solid()
+s.background.fill.fore_color.rgb = LIGHTBLUE
+textbox(s, 0.9, 0.7, 8, 0.4, "AE646  |  Stage 3 final presentation", size=16, color=NAVY)
+textbox(s, 0.9, 2.1, 11.5, 1.6, ["Making a Neural Operator Better"], size=48, bold=True, color=NAVY)
+textbox(s, 0.9, 3.35, 11.5, 1.0,
+        "What actually mattered when comparing an FNO with an MLP on Darcy flow",
+        size=22, color=NAVY)
+acc = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.9), Inches(4.55), Inches(1.4), Inches(0.07))
+rgb_fill(acc, BLUE)
+acc.line.fill.background()
+textbox(s, 0.9, 4.85, 11.5, 0.45, "Team PINNacles", size=20, bold=True, color=NAVY)
+textbox(s, 0.9, 5.3, 11.5, 0.45,
+        "Aryamann Srivastava, Varun Sathaye, Atishay Jain, Vedant S. Tiwari", size=17, color=NAVY)
+textbox(s, 0.9, 6.7, 8, 0.4, "November 2026", size=14, color=GREY)
 
+# 2. The task
+sl = base_slide("The Task", "Predict how fluid pressure spreads through a porous material, quickly", 2)
+picture(sl, crop_first_row_of_samples(), 0.6, 1.65, 8.4, 2.5)
+textbox(sl, 0.6, 4.2, 8.4, 0.35,
+        "Left to right: permeability map (input), true pressure, FNO prediction, error",
+        size=12, color=GREY, italic=True, align=PP_ALIGN.CENTER)
+stat_card(sl, 9.3, 1.65, 3.4, 1.15, "10,000", "real simulations (PDEBench)", vsize=28)
+stat_card(sl, 9.3, 2.95, 3.4, 1.15, "900 / 100", "train / validation samples", vsize=28)
+stat_card(sl, 9.3, 4.25, 3.4, 1.15, "200", "held-out test samples", vsize=28)
+textbox(sl, 0.6, 4.75, 8.4, 0.9,
+        ["Two models learn this map from data:",
+         "FNO: sees the whole field, works with patterns in space.",
+         "MLP: a plain fully connected network, no spatial structure."],
+        size=15, color=NAVY)
+callout(sl, "Error = relative difference to the true field (smaller is better)", y=6.0)
 
-def card(sl, l, t, w, h, title=None, title_color=DARK_BLUE):
-    box(sl, l, t, w, h, fill=WHITE, border=LIGHT_BLUE, bw=Pt(1.0))
-    if title:
-        tx(sl, title, l + Inches(0.25), t + Inches(0.15), w - Inches(0.5), Inches(0.4),
-           sz=Pt(19), bold=True, color=title_color)
+# 3. Where we started
+sl = base_slide("Where We Started", "Stage 2 gave a clear winner, but we suspected we could do much better", 3)
+stat_card(sl, 0.6, 1.7, 3.9, 1.7, "0.052", "FNO error in Stage 2", color=GREEN, vsize=44)
+stat_card(sl, 4.7, 1.7, 3.9, 1.7, "0.08", "MLP error in Stage 2", color=ORANGE, vsize=44)
+stat_card(sl, 8.8, 1.7, 3.9, 1.7, "1.6x", "FNO advantage", color=BLUE, vsize=44)
+textbox(sl, 0.6, 3.75, 12.1, 0.4, "How Stage 2 trained both models", size=18, bold=True, color=NAVY)
+textbox(sl, 0.6, 4.2, 12.1, 1.4,
+        ["Standard squared-error loss",
+         "Learning rate that restarted again and again",
+         "No data augmentation"],
+        size=16, color=GREY)
+callout(sl, "Question: was the remaining error about the model, or about how we trained it?", y=5.9, h=0.8)
 
+# 4. Training recipe
+sl = base_slide("Finding 1: The Training Recipe", "Changing how we train, not the model, cut the error roughly in half", 4)
+picture(sl, FIG / "fig_recipe_ablation.png", 0.6, 1.55, 7.4, 4.3)
+bullets(sl, 8.3, 1.7, 4.5, [
+    ("Match the loss to the metric", "Train on relative error, the number we report"),
+    ("One smooth learning-rate decay", "Instead of repeated restarts"),
+    ("Flip and rotate the inputs", "Free extra training data (symmetries)"),
+], size=17, gap=1.05)
+fa, ma = N["fno_s2recipe"][0], N["mlp_s2recipe"][0]
+fb, mb = N["fno_s3recipe"][0], N["mlp_s3recipe"][0]
+callout(sl, f"Same model, same budget: FNO error {fa:.3f} to {fb:.3f}, MLP {ma:.3f} to {mb:.3f}", y=6.05)
 
+# 5. Architecture
+sl = base_slide("Finding 2: Architecture Matters Little", "Width, depth and Fourier modes were tuned one at a time on validation data", 5)
+picture(sl, FIG / "fig_arch_sweeps.png", 0.6, 1.6, 12.1, 3.2)
+stat_card(sl, 0.6, 5.0, 3.9, 1.1, "Modes, width", "almost no effect past modest values", color=BLUE, vsize=20)
+stat_card(sl, 4.7, 5.0, 3.9, 1.1, "Depth, training length", "small, steady gains", color=BLUE, vsize=20)
+stat_card(sl, 8.8, 5.0, 3.9, 1.1, "Final choice", "9.5 M parameters, 8 layers", color=GREEN, vsize=20)
+callout(sl, "The training recipe was the big lever; architecture tuning added only a few percent", y=6.25, h=0.6)
 
-def table(sl, data, l, t, w, h, sz=Pt(14), bold_rows=(), first_left=True):
-    rows, cols = len(data), len(data[0])
-    tbl = sl.shapes.add_table(rows, cols, l, t, w, h).table
-    for r in range(rows):
-        for c in range(cols):
-            cell = tbl.cell(r, c); cell.text = data[r][c]
-            para = cell.text_frame.paragraphs[0]
-            para.font.name = "Arial"; para.font.size = sz
-            para.font.bold = (r == 0) or (r in bold_rows)
-            para.alignment = PP_ALIGN.LEFT if (c == 0 and first_left) else PP_ALIGN.CENTER
-            cell.fill.solid()
-            cell.fill.fore_color.rgb = MID_BLUE if r == 0 else (LIGHT_BLUE if r in bold_rows else WHITE)
-            para.font.color.rgb = WHITE if r == 0 else DARK_GRAY
+# 6. Final models
+sl = base_slide("The Final Models", "Both models tuned fairly, validation data only, 5 random seeds each", 6)
+picture(sl, make_story_figure(), 0.6, 1.55, 6.2, 4.35)
+stat_card(sl, 7.1, 1.65, 2.75, 1.45, f"{N['fno_final'][0]:.4f}", "FNO error, 9.5 M parameters", color=GREEN, vsize=32)
+stat_card(sl, 10.0, 1.65, 2.75, 1.45, f"{N['mlp_final'][0]:.4f}", "MLP error, 100.7 M parameters", color=ORANGE, vsize=32)
+stat_card(sl, 7.1, 3.3, 2.75, 1.45, "2x", "more accurate", color=BLUE, vsize=36)
+stat_card(sl, 10.0, 3.3, 2.75, 1.45, "10x", "fewer parameters", color=BLUE, vsize=36)
+textbox(sl, 7.1, 4.95, 5.65, 0.9,
+        "The gap between FNO and MLP grew from 1.6x to 2x once both were trained well.",
+        size=15, color=NAVY)
+callout(sl, "Spatial structure helps: the FNO wins with a tenth of the parameters", y=6.05)
 
+# 7. Data and resolution
+sl = base_slide("Finding 3: Data and Resolution", "The FNO needs less data and can be used on other grid sizes, with a cost", 7)
+picture(sl, FIG / "fig_data_scaling.png", 0.6, 1.55, 6.1, 3.85)
+picture(sl, FIG / "fig_resolution.png", 6.9, 1.55, 3.85, 3.85)
+rounded(sl, 10.95, 1.55, 1.75, 3.85)
+textbox(sl, 11.05, 1.65, 1.55, 3.6,
+        ["How to read the grid", "", "Rows: grid used for training", "", "Columns: grid used for testing", "",
+         "Numbers: test error"],
+        size=11, color=GREY)
+textbox(sl, 0.6, 5.5, 6.1, 0.35, "400 samples", size=16, bold=True, color=NAVY)
+textbox(sl, 0.6, 5.83, 6.1, 0.35, "The FNO already beats an MLP trained on 9,700", size=13, color=GREY)
+textbox(sl, 6.9, 5.5, 5.8, 0.35, "Other grid sizes", size=16, bold=True, color=NAVY)
+textbox(sl, 6.9, 5.83, 5.8, 0.35, "Works, but about 2 to 3x worse than a model trained on that grid", size=13, color=GREY)
+callout(sl, "More data helps until about 5,000 samples, then error levels off near 0.02", y=6.35, h=0.55)
 
-# 1 Title
-sl = slide()
-box(sl, 0, 0, W, H, fill=DARK_BLUE)
-box(sl, 0, H - Inches(0.8), W, Inches(0.8), fill=MID_BLUE)
-tx(sl, "AE646 Stage 3 (Final) Presentation", Inches(1.0), Inches(1.5), W - Inches(2.0), Inches(0.5), sz=Pt(20), color=LIGHT_BLUE)
-tx(sl, "Optimising a Fourier Neural Operator\nfor Parametric Darcy Flow", Inches(1.0), Inches(2.1), W - Inches(2.0), Inches(1.5), sz=Pt(42), bold=True, color=WHITE)
-tx(sl, "Recipe, architecture, data, resolution, latency, and comparison with a finite-volume solver", Inches(1.0), Inches(3.9), W - Inches(2.0), Inches(0.5), sz=Pt(18), color=LIGHT_BLUE)
-tx(sl, "Team: PINNacles (Aryamann Srivastava, Varun Sathaye, Atishay Jain, Vedant S. Tiwari)", Inches(1.0), Inches(4.7), W - Inches(2.0), Inches(0.5), sz=Pt(16), color=LIGHT_BLUE)
+# 8. vs classical solver
+sl = base_slide("FNO versus a Classical Solver", "Compared with a finite-volume solver tuned to the same data", 8)
+picture(sl, FIG / "fig_pareto.png", 0.6, 1.55, 7.2, 4.25)
+stat_card(sl, 8.1, 1.65, 4.6, 1.2, "0.020 vs 0.044", "FNO vs solver error at 64 x 64", color=GREEN, vsize=28)
+stat_card(sl, 8.1, 3.0, 4.6, 1.2, "5x to 35x", "faster than the solver on a GPU", color=BLUE, vsize=28)
+stat_card(sl, 8.1, 4.35, 4.6, 1.2, "Not faster", "on a single CPU core", color=ORANGE, vsize=28)
+callout(sl, "Best when used on GPUs and in batches; the solver stays competitive on one core", y=6.05)
 
-# 2 Recap and goals
-sl = slide()
-header(sl, "Recap and Stage 3 Questions", "Learning the operator kappa -> u of -div(kappa grad u) = 1, on real PDEBench data")
-footer(sl, 2)
-half = (CW - Inches(0.3)) / 2
-card(sl, CL, CT, half, CAH, "Where Stage 2 ended", ORANGE)
-bullets(sl, ["Real PDEBench pipeline: 900 / 100 / 200 split at 64x64, EDA, preprocessing and baseline ablations",
-             "MLP (42 M): 0.082 mean rel. L2;  FNO (4.7 M): 0.052",
-             "Speed-up claim vs an FDM solver (1030 ms)",
-             ], CL + Inches(0.25), CT + Inches(0.7), half - Inches(0.5), Inches(4.5), sz=Pt(18), gap=Pt(12))
-card(sl, CL + half + Inches(0.3), CT, half, CAH, "Stage 3 questions", GREEN)
-bullets(sl, ["How much of the FNO error was optimisation, and how much capacity?",
-             "Which architecture choices matter? How much data? Which resolution?",
-             "What does inference cost, and how does the FNO compare with a proper finite-volume solver?",
-             "What does the residual error mean physically?"],
-        CL + half + Inches(0.55), CT + Inches(0.7), half - Inches(0.5), Inches(4.5), sz=Pt(18), gap=Pt(12))
+# 9. Physics
+sl = base_slide("Does It Obey the Physics?", "Checks beyond a single error number", 9)
+stat_card(sl, 0.6, 1.55, 2.9, 1.3, "0.1157", "boundary level (truth 0.1159)", color=GREEN, vsize=26)
+stat_card(sl, 3.65, 1.55, 2.9, 1.3, "1.7%", "error in average pressure", color=GREEN, vsize=26)
+stat_card(sl, 6.7, 1.55, 2.9, 1.3, "0.0015%", "pixels with negative pressure", color=GREEN, vsize=26)
+stat_card(sl, 9.75, 1.55, 2.95, 1.3, "4.25 vs 4.01", "equation residual (truth)", color=GREEN, vsize=26)
+picture(sl, FIG / "fig_diagnostics.png", 0.6, 3.05, 12.1, 2.85)
+callout(sl, "Largest errors: nearly uniform permeability with large pressure, where the amplitude is hard to infer", y=6.05, h=0.7)
 
-# 3 Protocol
-sl = slide()
-header(sl, "Experimental Protocol", "Same split as Stage 2; every choice made on validation data only")
-footer(sl, 3)
-card(sl, CL, CT, CW, CAH)
-bullets(sl, [
-    "Data: 900 train / 100 val / 200 test real fields (seed 42); 8,800 further real samples used only for the data-scaling study",
-    "Metric: per-sample relative L2 error in physical units, mean over test samples; test set evaluated once per run",
-    "Reference step budget = Stage 2 (100 epochs = 5,700 steps, batch 16); seeds 0-4; sd over seeds reported",
-    "Symmetry: data are D4-invariant; augmentation applied at 128x128 before sub-sampling (valid), test-time averaging over {identity, transpose}",
-    "Baseline given the same effort: MLP tuned on the same footing (capacity sweep, validation selection)",
-    "142 training runs on one GPU workstation; all configs and metrics stored per run",
-], CL + Inches(0.3), CT + Inches(0.4), CW - Inches(0.6), Inches(4.6), sz=Pt(19), gap=Pt(12))
+# 10. Examples
+sl = base_slide("Example Predictions", "Best, typical and worst test cases of the final FNO", 10)
+picture(sl, FIG / "fig_samples.png", 0.6, 1.5, 7.9, 5.1)
+bullets(sl, 8.8, 1.8, 4.0, [
+    ("Best", "Error 0.2%, almost no visible error"),
+    ("Typical", "Error 0.7%, shapes match closely"),
+    ("Worst", "Uniform permeability: right shape, wrong height (36%)"),
+], size=17, gap=1.35)
 
-# 4 Recipe
-sl = slide()
-header(sl, "Finding 1: The Training Recipe Limited Stage 2", "Same models, same 5,700 steps, 3 seeds - only the recipe changes")
-footer(sl, 4)
-card(sl, CL, CT, Inches(7.4), CAH)
-pic(sl, "fig_recipe_ablation.png", CL + Inches(0.1), CT + Inches(0.3), Inches(7.2), CAH - Inches(0.6))
-card(sl, CL + Inches(7.55), CT, CW - Inches(7.55), CAH, "Result")
-bullets(sl, [
-    "Stage 2 recipe: MSE loss; cosine LR restarted every 200 steps",
-    "Relative-L2 loss: -26%.  Single cosine: -7%.  D4 augmentation on top: -35%",
-    "FNO 0.0524 -> 0.0249 (2.1x lower); MLP 0.0802 -> 0.0454",
-    "Gains interact: D4 alone does not help under the old recipe",
-], CL + Inches(7.75), CT + Inches(0.7), CW - Inches(7.95), Inches(4.5), sz=Pt(16), gap=Pt(10))
+# 11. Summary and limits
+sl = base_slide("Summary and Limits", "What we learned and what we do not claim", 11)
+rounded(sl, 0.6, 1.6, 6.0, 4.3)
+textbox(sl, 0.85, 1.7, 5.5, 0.5, "What we learned", size=20, bold=True, color=BLUE)
+bullets(sl, 0.9, 2.35, 5.5, [
+    ("Training mattered most", "Error halved with a better recipe"),
+    ("FNO beats a tuned MLP", "2x more accurate, 10x fewer parameters"),
+    ("Strong against a solver", "More accurate at the same grid size"),
+], size=16, gap=1.15)
+rounded(sl, 6.85, 1.6, 5.85, 4.3, fill=RGBColor(0xFF, 0xF8, 0xF0), line=ORANGE)
+textbox(sl, 7.1, 1.7, 5.4, 0.5, "Honest limits", size=20, bold=True, color=ORANGE)
+bullets(sl, 7.15, 2.35, 5.3, [
+    ("One dataset", "Results are about agreement with this data"),
+    ("Timing caveats", "Solver tuned to the data, shared machine"),
+    ("Stage 2 speed claim withdrawn", "The old reference solver was slow"),
+], size=16, gap=1.15, num_color=ORANGE)
+callout(sl, "Better training beat a bigger model, and the FNO stayed accurate and fast", y=6.1, h=0.65)
 
-# 5 Architecture
-sl = slide()
-header(sl, "Finding 2: Architecture Choices Matter Little", "One-factor sweeps around (12 modes, width 64, 4 layers); selection on validation error")
-footer(sl, 5)
-card(sl, CL, CT, CW, Inches(2.6))
-pic(sl, "fig_arch_sweeps.png", CL + Inches(0.1), CT + Inches(0.1), CW - Inches(0.2), Inches(2.4))
-card(sl, CL, CT + Inches(2.8), CW, Inches(2.7), "What we learned", GREEN)
-bullets(sl, [
-    "Modes 4 to 32 (0.5 M to 34 M parameters): only 0.022-0.025 test error;  width >= 32 saturates",
-    "Depth and training length help slowly: 2 -> 8 layers 0.030 -> 0.020;  5.7k -> 80k steps 0.0247 -> 0.0205",
-    "Learning rate, weight decay, batch size: < 0.001 effect.  Validation picks deeper, not wider: (12, 64, 8), 9.5 M",
-], CL + Inches(0.3), CT + Inches(3.4), CW - Inches(0.6), Inches(2.0), sz=Pt(16), gap=Pt(8))
-
-# 6 Final results
-sl = slide()
-header(sl, "Final Models: FNO vs Tuned MLP", "60,000 steps, full recipe, 5 seeds, 200 held-out test fields")
-footer(sl, 6)
-table(sl, [["Model", "Params", "Mean rel. L2", "Median", "With TTA"],
-           ["Stage 2 MLP", "42.0 M", "0.0820", "0.0695", "-"],
-           ["Stage 2 FNO", "4.7 M", "0.0521", "0.0398", "-"],
-           ["Final MLP (3x4096)", "100.7 M", "0.0415 +- 0.0009", "0.0272", "0.0386"],
-           ["Final FNO (w64, L8)", "9.5 M", "0.0202 +- 0.0004", "0.0070", "0.0200"]],
-      CL, CT, CW, Inches(2.6), sz=Pt(17), bold_rows=(4,))
-card(sl, CL, CT + Inches(2.85), CW, Inches(2.65), "Take-aways", GREEN)
-bullets(sl, [
-    "FNO error 2.05x lower than an equally tuned MLP (Stage 2 gap: 1.6x) with 10.6x fewer parameters; 2.6x lower than the Stage 2 FNO",
-    "Median FNO error is 0.7%: the mean is dominated by a small tail (next slides)",
-    "Training the final FNO: about 32 minutes on one shared GPU",
-], CL + Inches(0.3), CT + Inches(3.5), CW - Inches(0.6), Inches(2.0), sz=Pt(17), gap=Pt(8))
-
-# 7 Data + resolution
-sl = slide()
-header(sl, "Finding 3: Data Scaling and Resolution", "FNO vs MLP with 100 to 9,700 samples; train-vs-evaluation resolution matrix")
-footer(sl, 7)
-card(sl, CL, CT, Inches(6.1), Inches(3.5))
-pic(sl, "fig_data_scaling.png", CL + Inches(0.1), CT + Inches(0.1), Inches(5.9), Inches(3.3))
-card(sl, CL + Inches(6.25), CT, CW - Inches(6.25), Inches(3.5))
-pic(sl, "fig_resolution.png", CL + Inches(6.35), CT + Inches(0.1), CW - Inches(6.45), Inches(3.3))
-card(sl, CL, CT + Inches(3.7), CW, Inches(1.8))
-bullets(sl, [
-    "FNO with 400 samples beats the MLP with 9,700; FNO plateaus near 0.0195 for >= 5,000 samples",
-    "Zero-shot transfer 64 -> 128: 0.038 (native 128: 0.021); 64 -> 32: 0.065: useful, but 1.7-3x worse than native resolution",
-], CL + Inches(0.3), CT + Inches(3.85), CW - Inches(0.6), Inches(1.6), sz=Pt(16), gap=Pt(6))
-
-# 8 Solver
-sl = slide()
-header(sl, "Finding 4: Comparison with a Finite-Volume Solver", "Correction to Stage 2: the old FDM reference was inefficient - the 1443x / 7740x speed-ups are withdrawn")
-footer(sl, 8)
-table(sl, [["Grid", "Calibrated FV", "Error vs truth", "Direct LU", "AMG-CG"],
-           ["32 x 32", "harmonic, b = 0.7", "0.094", "1.8 ms", "5.5 ms"],
-           ["64 x 64", "harmonic, b = 0.8", "0.044", "7.1 ms", "11.6 ms"],
-           ["128 x 128", "arithmetic, b = 1.05", "0.024", "37.4 ms", "30.7 ms"],
-           ["FNO, 64 x 64 (GPU)", "9.5 M parameters", "0.020", "1.4 ms (b=1)", "0.20 ms (batched)"]],
-      CL, CT, CW, Inches(2.5), sz=Pt(16), bold_rows=(4,))
-card(sl, CL, CT + Inches(2.75), CW, Inches(2.75), "How to read it", ORANGE)
-bullets(sl, [
-    "Vectorised solver; boundary distance b calibrated on validation data (PDEBench's truth behaves as if the Dirichlet boundary were ~1 cell outside the array)",
-    "At equal resolution the FNO agrees with the data 2.2x better; partly because it learns the generator's own discretisation",
-    "Single CPU thread: FNO 37 ms at batch 1 - NOT faster than the 64^2 solver (7 ms); the gain is GPU batching",
-], CL + Inches(0.3), CT + Inches(3.35), CW - Inches(0.6), Inches(2.1), sz=Pt(16), gap=Pt(6))
-
-# 9 Latency
-sl = slide()
-header(sl, "Inference Cost: Error vs Time per Solution", "CUDA-event timing on an idle GPU; CPU numbers from the workstation CPU (indicative)")
-footer(sl, 9)
-card(sl, CL, CT, Inches(7.3), CAH)
-pic(sl, "fig_pareto.png", CL + Inches(0.1), CT + Inches(0.2), Inches(7.1), CAH - Inches(0.4))
-card(sl, CL + Inches(7.45), CT, CW - Inches(7.45), CAH, "Latency at 64 x 64", GREEN)
-bullets(sl, [
-    "FNO (9.5 M): 1.44 ms at batch 1, 0.20 ms per sample at batch 128",
-    "5x (batch 1) to 35x (batched) faster than the 64^2 solver, and 26-187x faster than the 128^2 solver",
-    "MLP: 0.006 ms/sample but 2x worse accuracy",
-    "TF32 gives no gain; bfloat16 unsupported for complex FFT",
-    "Break-even vs the 128^2 solver: ~5e4 solves",
-], CL + Inches(7.65), CT + Inches(0.7), CW - Inches(7.85), Inches(4.6), sz=Pt(15), gap=Pt(8))
-
-# 10 Physics
-sl = slide()
-header(sl, "Physical Interpretation", "Final FNO on the 200 test fields")
-footer(sl, 10)
-card(sl, CL, CT, CW, Inches(2.5))
-pic(sl, "fig_diagnostics.png", CL + Inches(0.1), CT + Inches(0.1), CW - Inches(0.2), Inches(2.3))
-card(sl, CL, CT + Inches(2.7), CW, Inches(2.8))
-bullets(sl, [
-    "Physics respected: PDE residual within 6% of the truth's own; mean pressure to 1.7%; boundary ring ratio 0.1157 vs 0.1159; 1.5e-5 of pixels negative",
-    "Error is NOT concentrated at interfaces (0.0098 next to them vs 0.0075 at 8-16 cells); largest in large low-kappa regions with high pressure (r = 0.61 with peak u)",
-    "Spectral: truth needs ~12 modes (1.5% truncation error), but a 4-mode FNO still reaches 2.5%: the bypass, nonlinearity and depth regenerate high frequencies",
-], CL + Inches(0.3), CT + Inches(2.85), CW - Inches(0.6), Inches(2.6), sz=Pt(15), gap=Pt(6))
-
-# 11 Samples
-sl = slide()
-header(sl, "Best, Median and Worst Test Sample", "kappa | truth | FNO | absolute error")
-footer(sl, 11)
-card(sl, CL, CT, Inches(6.6), CAH)
-pic(sl, "fig_samples.png", CL + Inches(0.1), CT + Inches(0.1), Inches(6.4), CAH - Inches(0.2))
-card(sl, CL + Inches(6.75), CT, CW - Inches(6.75), CAH, "Reading the figure", ORANGE)
-bullets(sl, [
-    "Best 0.002, median 0.007",
-    "Worst 0.358: uniform kappa = 0.1; correct shape, saturated amplitude",
-    "The two uniform fields have errors 0.358 and 0.085; without them the mean falls from 2.0% to 1.8%",
-    "Since u ~ 1/kappa for uniform kappa, a scale-normalised formulation could remove this failure (not tested)",
-], CL + Inches(6.95), CT + Inches(0.7), CW - Inches(7.15), Inches(4.6), sz=Pt(15), gap=Pt(9))
-
-# 12 Limitations
-sl = slide()
-header(sl, "Limitations and Honest Notes", "What the results do and do not show")
-footer(sl, 12)
-card(sl, CL, CT, CW, CAH)
-bullets(sl, [
-    "One PDE, one dataset, binary kappa, f = 1; the plateau and scaling laws may not transfer",
-    "Top architectures differ by less than seed noise; single seed per sweep point (final models: 5 seeds)",
-    "Stage 2 absolute errors reflected a sub-optimal recipe (same for both models, so the comparison was fair); Stage 2 speed-up figures withdrawn",
-    "Solver was calibrated to the dataset: the comparison measures agreement with PDEBench, not fidelity to the continuous PDE; single-thread, uncompiled solver",
-    "Timings on a shared machine: CPU numbers are indicative; GPU timing on an idle GPU",
-], CL + Inches(0.3), CT + Inches(0.4), CW - Inches(0.6), Inches(4.6), sz=Pt(19), gap=Pt(14))
-
-# 13 Summary
-sl = slide()
-box(sl, 0, 0, W, H, fill=DARK_BLUE)
-box(sl, 0, Inches(1.12), W, Inches(0.07), fill=ACCENT_BLUE)
-tx(sl, "Summary", Inches(0.6), Inches(0.18), W - Inches(1.2), Inches(0.85), sz=Pt(36), bold=True, color=WHITE)
-summary = [
-    ("Recipe",   "Relative-L2 loss + single cosine + D4 augmentation halve the FNO error at equal cost (0.052 -> 0.025)"),
-    ("Final",    "FNO 9.5 M: 0.0202 +- 0.0004 vs tuned MLP 100.7 M: 0.0415 +- 0.0009 (5 seeds): 2.05x, 10.6x fewer parameters"),
-    ("Limits",   "Insensitive to modes/width; plateaus near 2% for >= 5,000 samples; zero-shot resolution transfer is moderate"),
-    ("Solver",   "2.2x more accurate than a calibrated FV solver at 64x64 and 5-35x faster on GPU; not faster on one CPU core"),
-    ("Physics",  "Respects BC, positivity, discrete PDE; residual error sits in uniform / low-contrast, high-amplitude fields"),
-]
-RH = Inches(0.95)
-for j, (label, text) in enumerate(summary):
-    RT = Inches(1.5) + j * RH
-    box(sl, Inches(0.5), RT, Inches(2.0), RH - Inches(0.12), fill=ACCENT_BLUE)
-    tx(sl, label, Inches(0.5), RT + Inches(0.2), Inches(2.0), RH - Inches(0.15), sz=Pt(17), bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-    tx(sl, text, Inches(2.7), RT + Inches(0.12), W - Inches(3.2), RH - Inches(0.14), sz=Pt(15), color=LIGHT_BLUE)
-box(sl, 0, H - Inches(0.62), W, Inches(0.62), fill=MID_BLUE)
-tx(sl, "Thank you  -  Questions welcome", Inches(0.5), H - Inches(0.55), W - Inches(1.0), Inches(0.46), sz=Pt(19), color=WHITE, align=PP_ALIGN.CENTER)
-
-OUT = os.path.join(HERE, "PINNacles_Stage3_FinalPresentation.pptx")
 prs.save(OUT)
-print(f"Saved -> {OUT}")
+print("Saved ->", OUT)
