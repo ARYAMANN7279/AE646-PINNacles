@@ -159,7 +159,7 @@ def base_slide(title, subtitle, number):
     textbox(s, 0.82, 0.42, 11.6, 0.6, title, size=30, bold=True, color=NAVY)
     textbox(s, 0.84, 0.98, 11.6, 0.4, subtitle, size=15, color=GREY)
     textbox(s, 0.6, 7.05, 6, 0.3, "AE646  |  Team PINNacles  |  Stage 3", size=10, color=GREY)
-    textbox(s, 11.9, 7.05, 0.85, 0.3, str(number), size=10, color=GREY, align=PP_ALIGN.RIGHT)
+    textbox(s, 11.7, 7.05, 1.05, 0.3, f"{number} / 12", size=10, color=GREY, align=PP_ALIGN.RIGHT)
     return s
 
 
@@ -217,18 +217,18 @@ def bullets(slide, x, y, w, items, size=16, gap=0.78, num_color=BLUE):
 s = prs.slides.add_slide(BLANK)
 s.background.fill.solid()
 s.background.fill.fore_color.rgb = LIGHTBLUE
-textbox(s, 0.9, 0.7, 8, 0.4, "AE646  |  Stage 3 final presentation", size=16, color=NAVY)
-textbox(s, 0.9, 2.1, 11.5, 1.6, ["Making a Neural Operator Better"], size=48, bold=True, color=NAVY)
-textbox(s, 0.9, 3.35, 11.5, 1.0,
-        "What actually mattered when comparing an FNO with an MLP on Darcy flow",
-        size=22, color=NAVY)
+textbox(s, 0.9, 0.7, 10.5, 0.4, "AE646: Scientific Machine Learning for Fluid Mechanics  |  End-Semester Presentation", size=15, color=NAVY)
+textbox(s, 0.9, 1.85, 11.5, 1.45, ["Operator Learning for", "Parametric Darcy Flow"], size=46, bold=True, color=NAVY)
+textbox(s, 0.9, 3.45, 11.5, 0.85,
+        "Fourier Neural Operator (FNO) vs. MLP Baseline: Optimization, Scaling & Solver Comparison",
+        size=21, color=NAVY)
 acc = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.9), Inches(4.55), Inches(1.4), Inches(0.07))
 rgb_fill(acc, BLUE)
 acc.line.fill.background()
 textbox(s, 0.9, 4.85, 11.5, 0.45, "Team PINNacles", size=20, bold=True, color=NAVY)
 textbox(s, 0.9, 5.3, 11.5, 0.45,
         "Aryamann Srivastava, Varun Sathaye, Atishay Jain, Vedant S. Tiwari", size=17, color=NAVY)
-textbox(s, 0.9, 6.7, 8, 0.4, "November 2026", size=14, color=GREY)
+textbox(s, 0.9, 6.7, 10.5, 0.4, "Department of Aerospace Engineering, IIT Kanpur  |  November 2026", size=13, color=GREY)
 
 # 2. The task
 sl = base_slide("The Task", "Predict how fluid pressure spreads through a porous material, quickly", 2)
@@ -349,6 +349,66 @@ bullets(sl, 7.15, 2.35, 5.3, [
     ("Stage 2 speed claim withdrawn", "The old reference solver was slow"),
 ], size=16, gap=1.15, num_color=ORANGE)
 callout(sl, "Better training beat a bigger model, and the FNO stayed accurate and fast", y=6.1, h=0.65)
+
+# 12. Team contributions & AI declaration
+sl = base_slide("Team Contributions & AI Declaration", "Individual ownership and adherence to AE646 academic integrity guidelines", 12)
+
+members = [
+    ("Aryamann Srivastava", "Lead Developer",
+     ["Stage 3 pipeline & D4 augmentation",
+      "Recipe & architecture studies; final models",
+      "Finite-volume solver & latency benchmarks",
+      "Reports, decks & code packaging"],
+     BLUE),
+    ("Varun Sathaye", "Data & Baseline Verification",
+     ["PDEBench train/val/test split verification",
+      "Normalisation & Stage 2 baseline checks",
+      "Solver calibration & timing review",
+      "Section 7 results & presentation"],
+     NAVY),
+    ("Atishay Jain", "Architecture & Ablation Review",
+     ["Training recipe & mode/width/depth sweeps",
+      "Ablation tables & Pareto analysis",
+      "Model-selection protocol verification",
+      "Section 4-5 results & presentation"],
+     GREEN),
+    ("Vedant S. Tiwari", "Scaling & Diagnostics",
+     ["Data-scaling & cross-resolution transfer",
+      "Physical diagnostics & residual checks",
+      "Failure mode analysis (uniform kappa)",
+      "Section 6 & 8 results & presentation"],
+     ORANGE),
+]
+
+card_w = 2.85
+gap = 0.23
+for i, (name, role, tasks, col) in enumerate(members):
+    x_pos = 0.6 + i * (card_w + gap)
+    rounded(sl, x_pos, 1.55, card_w, 3.65, fill=WHITE, line=LINE)
+    top_bar = sl.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(x_pos), Inches(1.55), Inches(card_w), Inches(0.08))
+    rgb_fill(top_bar, col)
+    top_bar.line.fill.background()
+    textbox(sl, x_pos + 0.12, 1.7, card_w - 0.24, 0.42, name, size=14, bold=True, color=NAVY)
+    textbox(sl, x_pos + 0.12, 2.08, card_w - 0.24, 0.32, role, size=10, bold=True, color=col)
+
+    tb = sl.shapes.add_textbox(Inches(x_pos + 0.08), Inches(2.42), Inches(card_w - 0.16), Inches(2.7))
+    tf = tb.text_frame
+    tf.word_wrap = True
+    for j, t in enumerate(tasks):
+        p = tf.paragraphs[0] if j == 0 else tf.add_paragraph()
+        p.text = "• " + t
+        p.font.name = FONT
+        p.font.size = Pt(10)
+        p.font.color.rgb = GREY
+        p.space_after = Pt(3)
+
+# AI Tool Use Declaration Callout
+rounded(sl, 0.6, 5.35, 12.1, 1.5, fill=PALE, line=BLUE, line_w=1.2)
+textbox(sl, 0.85, 5.43, 11.6, 0.3, "AI-Tool-Use Declaration", size=13, bold=True, color=NAVY)
+textbox(sl, 0.85, 5.75, 11.6, 1.0,
+        ["AI tools were used for coding assistance, debugging, experiment orchestration (Colab/Kaggle GPU runtimes), and LaTeX/PPT drafting.",
+         "All numerical results come from real runs on real PDEBench data; no results or metrics were generated or invented. Every line of code, equation, and conclusion is fully owned, verified, and defendable by all team members in the viva."],
+        size=10.5, color=GREY)
 
 prs.save(OUT)
 print("Saved ->", OUT)
