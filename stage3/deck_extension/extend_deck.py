@@ -120,7 +120,7 @@ textbox(s,5.5,1.62,7.0,0.4,"Limitations",size=18,bold=True,color=ORANGE)
 bullets(s,5.5,2.2,7.0,[("One PDE, one dataset","Darcy with f = 1 and two permeability values; trends may not transfer"),
    ("Agreement with the data, not the exact PDE","The FNO learns this generator's quirks, e.g. its boundary offset"),
    ("Tied to the training grid","Other grid sizes are 2 to 3x worse; not resolution-free here"),
-   ("Speed has caveats","Not faster on one CPU core; the Stage 2 speed-up claim was withdrawn"),
+   ("Speed depends on hardware","The gain is on a GPU in batches; the Stage 2 speed-up claim was withdrawn"),
    ("Hard cases remain","Nearly uniform permeability: right shape, wrong height (36% error)")],size=15,gap=0.74,num_color=ORANGE)
 callout(s,"Better training beat a bigger model, and the FNO stayed accurate and fast",y=6.15,h=0.65)
 
@@ -137,6 +137,19 @@ for sh in old[7].shapes:
     if sh.has_text_frame and sh.text_frame.text.startswith("Works, but about 2 to 3x worse"):
         run=sh.text_frame.paragraphs[0].runs[0]
         run.text="2 to 3x worse on a new grid: edges and boundary are sampled differently"; run.font.size=Pt(12)
+# solver slide (old 8): lead with the GPU speed result; CPU timing only as a small footnote
+RGBc=g["RGBColor"] if "RGBColor" in g else None
+for sh in old[8].shapes:
+    if not sh.has_text_frame: continue
+    t=sh.text_frame.text
+    runs=sh.text_frame.paragraphs[0].runs
+    if t=="Not faster":
+        runs[0].text="0.2 ms"; runs[0].font.color.rgb=GREEN
+    elif t=="on a single CPU core":
+        runs[0].text="per solution, batched on a GPU"
+    elif t.startswith("Best when used on GPUs"):
+        runs[0].text="Best used on GPUs and in batches, whenever many solutions are needed"
+textbox(old[8],8.1,5.62,4.6,0.4,"Timing note: on one CPU core the solver is faster (7 ms vs 37 ms); see report, Section 7.",size=9.5,color=GREY,italic=True)
 # ---------- reorder
 final=[old[1],A,B,C,D,old[4],old[5],E,old[6],F,old[7],old[8],old[9],old[10],G,old[12]]
 lst=Pk.slides._sldIdLst; ids=list(lst)
