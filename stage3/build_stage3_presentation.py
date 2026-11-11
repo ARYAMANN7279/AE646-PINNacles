@@ -1,5 +1,6 @@
 """
-Build the Stage 3 final presentation (11 slides, ~10 minutes).
+Build the BASE Stage 3 presentation (12 slides). The final 16-slide deck is this base (plus manual polish,
+stored as deck_extension/base_deck_12.pptx) extended by deck_extension/extend_deck.py.
 
 Style: light-blue title slide, white content slides, one idea per slide, big-number cards,
 real plots from stage3/figures, short plain-language text. No code, little maths.

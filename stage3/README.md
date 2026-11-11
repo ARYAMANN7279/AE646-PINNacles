@@ -1,6 +1,6 @@
 # Stage 3: Final report, deck, code map
 
-Deliverables: `PINNacles_Stage3_FinalReport.pdf` (8 pages), `PINNacles_Stage3_FinalPresentation.pptx/.pdf` (11 slides),
+Deliverables: `PINNacles_Stage3_FinalReport.pdf` (8 pages), `PINNacles_Stage3_FinalPresentation.pptx/.pdf` (16 slides),
 `PINNacles_Stage3_ContributionStatement.pdf` (one page: contribution statement + AI-tool-use declaration), code in `../src`.
 
 ## Run instructions (Google Colab notebook)
@@ -23,7 +23,7 @@ The full Stage 3 study (142 training runs: recipe, architecture, data-scaling an
 hardware with `scripts/stage3_run_all.sh`; its results are shipped in `results/stage3/` and loaded (not recomputed) by Section 10 of the notebook. The notebook says so explicitly.
 
 Reproduce everything: `bash scripts/stage3_run_all.sh` (from the repo root; see the script header).
-Compile: `tectonic PINNacles_Stage3_FinalReport.tex`; rebuild the deck: `python3 build_stage3_presentation.py`.
+Compile: `tectonic PINNacles_Stage3_FinalReport.tex`; the 16-slide deck is the 12-slide base deck (`deck_extension/base_deck_12.pptx`, from `build_stage3_presentation.py` plus manual polish) extended by `python3 deck_extension/make_figures.py && python3 deck_extension/extend_deck.py`.
 
 | Report item | Produced by | Data |
 |---|---|---|
