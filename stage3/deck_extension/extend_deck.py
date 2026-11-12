@@ -169,6 +169,11 @@ set_text(old[9],"Checks beyond a single error number","Do the predictions behave
 set_text(old[9],"boundary level (truth 0.1157)".replace("0.1157","0.1159") if False else "boundary level (truth 0.1159)","edge pressure level (real data 0.1159)")
 set_text(old[9],"equation residual (truth)","equation mismatch (real data 4.01)")
 set_text(old[9],"Largest errors: nearly uniform permeability with large pressure, where the amplitude is hard to infer","Worst cases: almost uniform maps, where the pressure height is hard to guess")
+
+# ---------- slide 16: remove the role tags under the names
+TAGS={"Lead Developer","Data & Baseline Verification","Architecture & Ablation Review","Scaling & Diagnostics"}
+for sh in list(old[12].shapes):
+    if sh.has_text_frame and sh.text_frame.text.strip() in TAGS: sh._element.getparent().remove(sh._element)
 # ---------- reorder
 final=[old[1],A,B,C,D,old[4],old[5],E,old[6],F,old[7],old[8],old[9],old[10],G,old[12]]
 lst=Pk.slides._sldIdLst; ids=list(lst)
