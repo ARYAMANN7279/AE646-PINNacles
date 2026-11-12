@@ -174,6 +174,20 @@ set_text(old[9],"Largest errors: nearly uniform permeability with large pressure
 TAGS={"Lead Developer","Data & Baseline Verification","Architecture & Ablation Review","Scaling & Diagnostics"}
 for sh in list(old[12].shapes):
     if sh.has_text_frame and sh.text_frame.text.strip() in TAGS: sh._element.getparent().remove(sh._element)
+
+# ---------- slide 13: drop the equation-mismatch card, respread the other three
+from pptx.util import Emu
+cards={0:[],1:[],2:[],3:[]}
+for sh in list(old[9].shapes):
+    x=sh.left/914400; y=sh.top/914400
+    if 1.5<y<2.95 and sh.width/914400<3.2:
+        cards[0 if x<3.5 else 1 if x<6.5 else 2 if x<9.6 else 3].append(sh)
+for sh in cards[3]: sh._element.getparent().remove(sh._element)
+for i in range(3):
+    xn=0.6+i*4.1
+    for sh in cards[i]:
+        isl=sh.has_text_frame and sh.text_frame.text.strip()!="" and sh.top/914400>2.0
+        sh.left=Inches(xn+(0.1 if isl else 0)); sh.width=Inches(3.9-(0.2 if isl else 0))
 # ---------- reorder
 final=[old[1],A,B,C,D,old[4],old[5],E,old[6],F,old[7],old[8],old[9],old[10],G,old[12]]
 lst=Pk.slides._sldIdLst; ids=list(lst)
