@@ -24,7 +24,7 @@ n0=len(Pk.slides)  # 12
 s=base_slide("Objectives and Project Phases","What we set out to do, and what each stage delivered",0); A=s
 cols=[("Stage 1","Problem and plan",BLUE,["Darcy flow as an operator-learning task","Real PDEBench data, FNO vs MLP","Evaluation plan and metrics"]),
       ("Stage 2","First real results",GREEN,["Trained FNO and MLP on real data","FNO error 0.052, MLP 0.08","FNO about 1.6x more accurate"]),
-      ("Stage 3","Make it better, and check it",ORANGE,["Better training, tuning, data and grid study","Fair comparison with a classical solver","Physics checks on the predictions"])]
+      ("Stage 3","Make it better, and check it",ORANGE,["Training, tuning, data, grid and noise studies","Fair comparison with a classical solver","Physics checks and hard-map weighting"])]
 for i,(h,sub,c,pts) in enumerate(cols):
     x=0.6+i*4.1
     rounded(s,x,1.6,3.9,3.1,fill=WHITE,line=LINE)
@@ -113,14 +113,15 @@ rounded(s,0.6,1.55,4.5,4.4)
 textbox(s,0.8,1.62,4.1,0.4,"What we learned",size=18,bold=True,color=BLUE)
 bullets(s,0.8,2.2,4.1,[("Training mattered most","Error halved with a better recipe"),
    ("FNO beats a tuned MLP","2x more accurate, 10x fewer parameters"),
-   ("Strong against a solver","More accurate at the same grid size")],size=16,gap=1.2)
+   ("Strong against a solver","More accurate at the same grid size"),
+   ("Robust to label noise","Still ahead of the MLP with 10% noise")],size=15,gap=0.98)
 rounded(s,5.3,1.55,7.4,4.4,fill=CREAM,line=ORANGE)
 textbox(s,5.5,1.62,7.0,0.4,"Limitations",size=18,bold=True,color=ORANGE)
 bullets(s,5.5,2.2,7.0,[("One PDE, one dataset","Darcy with f = 1 and two permeability values; trends may not transfer"),
    ("Agreement with the data, not the exact PDE","The FNO learns this generator's quirks, e.g. its boundary offset"),
    ("Tied to the training grid","Other grid sizes are 2 to 3x worse; not resolution-free here"),
    ("Speed depends on hardware","The gain is on a GPU in batches; the Stage 2 speed-up claim was withdrawn"),
-   ("Hard cases remain","Nearly uniform permeability: right shape, wrong height (36% error)")],size=15,gap=0.74,num_color=ORANGE)
+   ("Hard cases remain","Nearly uniform maps: wrong height (36% error); adaptive weights did not fix it")],size=15,gap=0.74,num_color=ORANGE)
 callout(s,"Better training beat a bigger model, and the FNO stayed accurate and fast",y=6.15,h=0.65)
 
 # ---------- edit existing slides
@@ -129,7 +130,7 @@ old={i+1:sl for i,sl in enumerate(slides[:n0])}
 # recipe slide (old 4): add loss formula card
 r=old[4]
 rounded(r,8.3,4.55,4.4,1.35,fill=WHITE,line=LINE)
-textbox(r,8.4,4.58,4.2,0.32,"Loss function: relative L2 error per sample",size=11.5,bold=True,color=NAVY)
+textbox(r,8.4,4.58,4.2,0.32,"Loss: relative L2 per sample (i = map, j = pixel)",size=10.5,bold=True,color=NAVY)
 r.shapes.add_picture(str(FIG/"eq_loss.png"),Inches(8.55),Inches(4.9),width=Inches(3.9))
 # data/res slide (old 7): explain resolution error
 for sh in old[7].shapes:
@@ -188,8 +189,26 @@ for i in range(3):
     for sh in cards[i]:
         isl=sh.has_text_frame and sh.text_frame.text.strip()!="" and sh.top/914400>2.0
         sh.left=Inches(xn+(0.1 if isl else 0)); sh.width=Inches(3.9-(0.2 if isl else 0))
+
+# ---------- new slides from the post-presentation studies (numbers read from results/stage3_extra/summary.json)
+import json
+X=json.load(open(R/"results/stage3_extra/summary.json"))
+nf=X["noise"]["fno"]; nm=X["noise"]["mlp"]; ad=X["adaptive"]; wt=X["weights"]
+s=base_slide("Finding 4: Noisy Labels","Training pressure maps made noisy (up to 10%), testing on clean maps",0); N1=s
+picture(s,R/"results/stage3_extra/fig_noise.png",0.6,1.55,6.7,4.35)
+stat_card(s,7.6,1.6,5.1,1.3,f"{nf['0']['mean']:.3f} to {nf['0.1']['mean']:.3f}","FNO error on clean maps, from no noise to 10% noise",color=BLUE,vsize=26)
+stat_card(s,7.6,3.0,5.1,1.3,f"{nf['0.1']['mean']:.3f} vs {nm['0.1']['mean']:.3f}",f"FNO vs MLP at 10% noise (gap {nm['0']['mean']/nf['0']['mean']:.1f}x to {nm['0.1']['mean']/nf['0.1']['mean']:.1f}x)",color=GREEN,vsize=26)
+stat_card(s,7.6,4.4,5.1,1.3,f"10% to {nf['0.1']['mean']*100:.1f}%","labels are 10% off; the FNO is only 3.6% off the clean truth",color=GREEN,vsize=26)
+textbox(s,7.6,5.72,5.1,0.3,"Gaussian noise, sized as a % of each map; 3 seeds, 5,700 steps, full recipe.",size=9.5,color=GREY,italic=True)
+callout(s,"Label noise hurts, but the FNO stays ahead of the MLP at every noise level",y=6.1,h=0.7)
+s=base_slide("Finding 5: Self-Adjusting Weights","Per-sample loss weights that adjust themselves from each map's own error",0); N2=s
+stat_card(s,0.6,1.55,3.9,1.3,f"{wt['alpha1']['hard']:.1f}x",f"weight on the 27 hard training maps (others {wt['alpha1']['other']:.2f})",color=BLUE,vsize=28)
+stat_card(s,4.7,1.55,3.9,1.3,f"{ad['plain']['hard']['mean']:.3f} vs {ad['alpha1']['hard']['mean']:.3f}","error on the 8 hard test maps: plain loss vs adaptive",color=ORANGE,vsize=28)
+stat_card(s,8.8,1.55,3.9,1.3,f"{ad['plain']['all']['mean']:.4f} to {ad['alpha1']['all']['mean']:.4f}","overall error got slightly worse with adaptive weights",color=ORANGE,vsize=26)
+picture(s,R/"results/stage3_extra/fig_adaptive_slide.png",0.6,3.05,12.1,2.85,card=False)
+callout(s,"It found the hard maps itself, but weighting did not fix them: only 27 of 900 are like this",y=6.05,h=0.7)
 # ---------- reorder
-final=[old[1],A,B,C,D,old[4],old[5],E,old[6],F,old[7],old[8],old[9],old[10],G,old[12]]
+final=[old[1],A,B,C,D,old[4],old[5],E,old[6],F,old[7],N1,N2,old[8],old[9],old[10],G,old[12]]
 lst=Pk.slides._sldIdLst; ids=list(lst)
 by={sl.slide_id:el for sl,el in zip(Pk.slides,ids)}
 new_order=[by[sl.slide_id] for sl in final]

@@ -1,6 +1,6 @@
 # Stage 3: Final report, deck, code map
 
-Deliverables: `PINNacles_Stage3_FinalReport.pdf` (8 pages), `PINNacles_Stage3_FinalPresentation.pptx/.pdf` (16 slides),
+Deliverables: `PINNacles_Stage3_FinalReport.pdf` (11 pages), `PINNacles_Stage3_FinalPresentation.pptx/.pdf` (18 slides),
 `PINNacles_Stage3_ContributionStatement.pdf` (one page: contribution statement + AI-tool-use declaration), code in `../src`.
 
 ## Run instructions (Google Colab notebook)
@@ -23,7 +23,7 @@ The full Stage 3 study (142 training runs: recipe, architecture, data-scaling an
 hardware with `scripts/stage3_run_all.sh`; its results are shipped in `results/stage3/` and loaded (not recomputed) by Section 10 of the notebook. The notebook says so explicitly.
 
 Reproduce everything: `bash scripts/stage3_run_all.sh` (from the repo root; see the script header).
-Compile: `tectonic PINNacles_Stage3_FinalReport.tex`; the 16-slide deck is the 12-slide base deck (`deck_extension/base_deck_12.pptx`, from `build_stage3_presentation.py` plus manual polish) extended by `python3 deck_extension/make_figures.py && python3 deck_extension/extend_deck.py`.
+Compile: `tectonic PINNacles_Stage3_FinalReport.tex`; the 18-slide deck is the 12-slide base deck (`deck_extension/base_deck_12.pptx`, from `build_stage3_presentation.py` plus manual polish) extended by `python3 deck_extension/make_figures.py && python3 deck_extension/extend_deck.py`.
 
 | Report item | Produced by | Data |
 |---|---|---|
@@ -34,10 +34,13 @@ Compile: `tectonic PINNacles_Stage3_FinalReport.tex`; the 16-slide deck is the 1
 | Table 4 (solver) | `solver_vs_fno.py` (uses `solvers.py`) | `solver_vs_gt.json` |
 | Table 5, Fig. 4 (latency) | `stage3_latency.py` | `latency.json`, `pareto.json` |
 | Figs. 5–6, §8 numbers | `stage3_diagnostics.py` | `diagnostics.json`, `diagnostics_arrays.npz` |
+| Table 6, Fig. 7 (noisy labels, §9) | `stage3_robust.py` via `jobs_extra.txt`; `stage3_robust_aggregate.py` | `results/stage3_extra/runs/rb_*_n*` |
+| Table 7, Fig. 8 (self-adjusting weights, §10) | same | `results/stage3_extra/runs/rb_fno_ad*`, `rb_sanity_s0` |
 
 Notes: `results/stage3/runs/*/metrics.json` hold the per-sample test errors and full configs; model checkpoints (`best_model.pt`) are not tracked
 (regenerate with `jobs_final.txt`). Timing numbers were measured on an idle GPU; CPU timings are indicative.
 Selection of all hyper-parameters used validation data only; the test set was evaluated once per run.
+The two studies of report §9–§10 (noisy labels, self-adjusting weights; 25 runs) were added after the presentation. They ran on Kaggle T4 GPUs with `src/stage3_robust.py` (job list `scripts/stage3_jobs/jobs_extra.txt`; per-run results and the Kaggle progress log in `results/stage3_extra/`); the runner downloads the MD5-checked PDEBench file and checks that the split equals the one used for all earlier results. The clean baseline reproduces on that hardware (0.0243 vs 0.0247). Section 11 of the notebook loads the stored results.
 `stage1/` and `stage2/` are the submitted earlier stages and are unchanged.
 
 Trained checkpoints are not tracked (git-ignored); regenerate them with `jobs_final.txt`.

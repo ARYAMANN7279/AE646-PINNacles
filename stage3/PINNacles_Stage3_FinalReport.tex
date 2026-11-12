@@ -33,10 +33,10 @@ We study a Fourier Neural Operator (FNO) and an MLP baseline as surrogates for t
 \section{Introduction and Scope}
 The physical problem is steady single-phase flow in a heterogeneous porous medium: $-\nabla\!\cdot(\kappa\nabla u)=f$ on $(0,1)^2$ with $u=0$ on the boundary and $f=1$, where $\kappa\in\{0.1,1.0\}$ is a piecewise-constant permeability and $u$ the pressure. The SciML task is to learn the operator $\mathcal G:\kappa\mapsto u$. Baseline: an MLP; SciML model: FNO~\cite{li2021fno}; data: PDEBench 2D Darcy ($\beta=1$)~\cite{takamoto2022pdebench}.
 
-Stage~2 delivered the pipeline, EDA, preprocessing/baseline ablations and a first MLP-vs-FNO comparison. Stage~3 asks: \emph{how good can the FNO be made, what limits it, what does it cost, and how does it compare with a classical solver?} We answer with five controlled studies (\S\ref{sec:recipe}--\S\ref{sec:solver}) and a physical analysis (\S\ref{sec:physics}). Every number below comes from a run whose configuration and metrics are stored in \texttt{results/stage3/}.
+Stage~2 delivered the pipeline, EDA, preprocessing/baseline ablations and a first MLP-vs-FNO comparison. Stage~3 asks: \emph{how good can the FNO be made, what limits it, what does it cost, and how does it compare with a classical solver?} We answer with five controlled studies (\S\ref{sec:recipe}--\S\ref{sec:solver}) and a physical analysis (\S\ref{sec:physics}). Two further studies, added after the final presentation on the instructor's suggestions, test robustness to noisy training labels (\S\ref{sec:noise}) and a self-adjusting sample weighting aimed at the hardest fields (\S\ref{sec:adapt}). Every number below comes from a run whose configuration and metrics are stored in \texttt{results/stage3/}.
 
 \section{Data, Protocol and Metric}
-The split is unchanged from Stage~2 (seed 42): 900 train, 100 validation, 200 test samples out of 1\,200 drawn from the 10\,000 real PDEBench fields; inputs are $\kappa$ plus $(x,y)$ coordinate channels, standardised with training statistics; the $128\times128$ fields are stride-2 subsampled to $64\times64$ (\S\ref{sec:res} also uses 32 and 128). The other 8\,800 real samples were never used in Stage~1--2 and appear only in the data-scaling study. \textbf{All hyper-parameter and design choices are made on the validation set; the test set is evaluated once per run.} The metric is the per-sample relative $L_2$ error $\|\hat u-u\|_2/\|u\|_2$ in physical (de-normalised) units, averaged over test samples. Unless stated otherwise, ``$\pm$'' is the standard deviation over seeds.
+The split is unchanged from Stage~2 (seed 42): 900 train, 100 validation, 200 test samples out of 1\,200 drawn from the 10\,000 real PDEBench fields; inputs are $\kappa$ plus $(x,y)$ coordinate channels, standardised with training statistics; the $128\times128$ fields are stride-2 subsampled to $64\times64$ (\S\ref{sec:res} also uses 32 and 128). The other 8\,800 real samples were never used in Stage~1--2 and appear only in the data-scaling study. \textbf{All hyper-parameter and design choices are made on the validation set; the test set is evaluated once per run.} The metric is the per-sample relative $L_2$ error in physical (de-normalised) units, \[\mathrm{err}_i=\frac{\|\hat u_i-u_i\|_2}{\|u_i\|_2}=\frac{\sqrt{\sum_{j}(\hat u_{ij}-u_{ij})^2}}{\sqrt{\sum_{j}u_{ij}^2}},\] where $i$ indexes the map and $j$ the pixels (numerator and denominator are summed separately over the pixels of one map), averaged over the test samples. The relative-$L_2$ training loss is the same quantity averaged over a batch of $B=16$ maps, $\mathcal L=\frac1B\sum_{i=1}^{B}\mathrm{err}_i$. Unless stated otherwise, ``$\pm$'' is the standard deviation over seeds.
 
 \textbf{Symmetry.} The data are statistically invariant under the dihedral group D4 (rotations/reflections of the square), and the PDE with $f=1$ and homogeneous Dirichlet conditions is exactly equivariant. We therefore (i) augment training with a random D4 element per batch, applied at $128\times128$ \emph{before} sub-sampling (rotating an already sub-sampled field would shift the grid phase and is not valid), and (ii) optionally average predictions over the group at test time (TTA; at $64\times64$ only \{identity, transpose\} are phase-consistent, so TTA there is a 2-element average). The Stage~2 protocol (100 epochs $=$ 5\,700 steps, batch 16) is kept as the reference \emph{step budget}.
 
@@ -162,22 +162,62 @@ All diagnostics use the seed-0 final FNO on the 200 test fields (\texttt{src/sta
 \begin{figure}[H]\centering\includegraphics[width=0.66\linewidth]{fig_samples.pdf}
 \caption{Best, median and worst test sample of the final FNO: $\kappa$ (relative error in title), truth, prediction, absolute error. The worst case has uniform $\kappa=0.1$.}\label{fig:samples}\end{figure}
 
+
+\section{Study 5: Noisy Labels}\label{sec:noise}
+The data are exact solver output of a simple linear PDE, so fitting them is easy; measured pressures would not be exact. We therefore add fixed Gaussian noise to the \emph{training and validation} pressure maps, with noise RMS equal to a fraction $s\in\{1,5,10\}\,\%$ of each map's own RMS, and keep the \emph{test} maps clean, so the reported error is the error against the true field. Checkpoints are selected on the noisy validation maps (all that would be available in practice). Everything else is the full recipe of \S\ref{sec:recipe} (5\,700 steps, three seeds, both models; \texttt{src/stage3\_robust.py}, run on Kaggle T4 GPUs).
+
+\begin{table}[H]\centering\small
+\caption{Test relative $L_2$ error on clean maps after training on noisy labels (mean $\pm$ sd, 3 seeds).}\label{tab:noise}
+\begin{tabular}{@{}lccc@{}}\toprule
+label noise & FNO & MLP & MLP / FNO\\\midrule
+none & $0.0249\pm0.0002$ & $0.0454\pm0.0002$ & $1.83\times$\\
+1\,\% & $0.0262\pm0.0002$ & $0.0453\pm0.0004$ & $1.73\times$\\
+5\,\% & $0.0298\pm0.0035$ & $0.0466\pm0.0007$ & $1.56\times$\\
+10\,\% & $0.0362\pm0.0011$ & $0.0509\pm0.0008$ & $1.41\times$\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{figure}[H]\centering\includegraphics[width=0.62\linewidth]{fig_noise.png}
+\caption{Test error on clean maps vs.\ label noise; the dashed line is the error of the noisy labels themselves.}\label{fig:noise}\end{figure}
+
+The FNO error rises by +5\,\%, +20\,\% and +45\,\% at 1, 5 and 10\,\% noise, the MLP error by 0\,\%, +3\,\% and +12\,\%. The FNO stays ahead of the MLP at every noise level, but the gap narrows from $1.8\times$ to $1.4\times$. Both models average the noise out: with labels that are $10\,\%$ from the truth, the FNO is $3.6\,\%$ and the MLP $5.1\,\%$ from the clean field. Caveats: the noise is i.i.d.\ Gaussian and relative to each map, the inputs $\kappa$ are kept clean, and the $5\,\%$ FNO result has one seed noticeably worse than the other two (hence the larger sd). A plausible reason that the MLP is less sensitive is that its error is limited by architecture rather than by the labels (its clean error is already high and flat across training-set size, \S\ref{sec:res}); we did not test this.
+
+\section{Study 6: Self-Adjusting Sample Weights}\label{sec:adapt}
+The error is concentrated in a few low-permeability, almost uniform fields (\S\ref{sec:physics}). Following the instructor's suggestion we tried self-adjusting weights: every training map $i$ keeps a running (EMA, momentum 0.9) estimate $e_i$ of its own loss, updated whenever it is seen, and its loss weight is $w_i=\mathrm{clip}\big((e_i/\bar e)^{a},0.2,5\big)$, renormalised to mean 1, so maps that are currently fitted badly count more ($a=0$ is the ordinary loss; we tried $a=1,2$). Setup as in Study~5 without noise (full recipe, 5\,700 steps, three seeds). ``Hard'' maps are those with less than $5\,\%$ high-permeability area: 8 of the 200 test maps and 27 of the 900 training maps.
+
+\begin{table}[H]\centering\small
+\caption{Self-adjusting weights, FNO test error (mean $\pm$ sd, 3 seeds).}\label{tab:adapt}
+\begin{tabular}{@{}lccc@{}}\toprule
+loss & all 200 maps & 192 other maps & 8 hard maps\\\midrule
+plain & $0.0249\pm0.0002$ & $0.0189\pm0.0004$ & $0.170\pm0.008$\\
+adaptive, $a=1$ & $0.0265\pm0.0006$ & $0.0204\pm0.0005$ & $0.172\pm0.005$\\
+adaptive, $a=2$ & $0.0277\pm0.0006$ & $0.0217\pm0.0002$ & $0.170\pm0.010$\\
+\bottomrule\end{tabular}\end{table}
+
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{fig_adaptive.png}
+\caption{Left: test error overall, on the other maps and on the 8 hard maps. Right: final loss weight of the 27 hard and the other training maps.}\label{fig:adapt}\end{figure}
+
+The mechanism works: the 27 hard training maps end with a mean weight of 2.7 ($a=1$) and 3.2 ($a=2$) against about $0.95$ for all others, and the weight correlates with the high-permeability share at $r\approx-0.6$, so the scheme finds the hard maps without being told. But the result is negative: the error on the hard test maps does not improve ($0.170\to0.172\ (a=1),\ 0.170\ (a=2)$, well within the seed spread), while the error on the other maps rises by +8\,\% and +15\,\% and the overall error by +6\,\% and +11\,\%. Our interpretation, not tested here, is that the limit is information rather than weighting: only 27 of 900 training maps are of this kind, and giving them more weight cannot supply the missing examples; more such maps or a scale-normalised target (Limitations) are the natural next steps. The evidence is limited to 8 hard test maps, one weighting rule and two exponents.
+
 \section{Limitations and Honest Notes}
 \begin{itemize}
 \item \textbf{One PDE, one dataset, one forcing} ($f=1$, binary $\kappa$); conclusions about scaling and plateau may not transfer to other operators or resolutions. Model selection used one seed per candidate; differences between top architectures are within seed noise.
 \item \textbf{Stage~2 numbers.} The Stage~2 recipe (MSE loss, per-step cosine restarts) was sub-optimal; the Stage~2 comparison was fair (same recipe for both models) but its absolute errors were not the best achievable. Stage~2's speed-up figures are withdrawn (\S\ref{sec:solver}). The earlier ``78.8\,M-parameter scaled FNO'' result (0.046) is superseded: a 9.5\,M model is $2.3\times$ better.
 \item \textbf{Solver fairness.} The solver was calibrated on validation data to reproduce PDEBench's arrays; the comparison measures agreement with this dataset. Solver timings use a single CPU thread without a compiled multigrid; a GPU or highly tuned solver would narrow the gap. The 2-element TTA costs $2\times$ the latency and is not included in Table~\ref{tab:lat}; it changes the final FNO's error by $<0.0003$.
-\item \textbf{Uniform $\kappa$.} The two degenerate uniform-$\kappa$ fields dominate the tail. Because $u\propto1/\kappa$ for a uniform field, a scale-normalised formulation (predict $\kappa u$) might remove this failure; we did not test it.
+\item \textbf{Uniform $\kappa$.} The two degenerate uniform-$\kappa$ fields dominate the tail. Because $u\propto1/\kappa$ for a uniform field, a scale-normalised formulation (predict $\kappa u$) might remove this failure; we did not test it. Self-adjusting sample weights (\S\ref{sec:adapt}) did not reduce the error on these fields.
+\item \textbf{Robustness studies} (\S\ref{sec:noise}--\S\ref{sec:adapt}) use the 5\,700-step recipe, three seeds, one noise type (relative i.i.d.\ Gaussian on the pressure labels only) and, for the weighting, one scheme with two exponents and 8 hard test maps; they ran on Kaggle T4 GPUs, whereas the main study ran on a different GPU (the clean baseline reproduces: $0.0243$ vs.\ $0.0247$).
 \item \textbf{Timing} was measured on a shared machine; CPU numbers are indicative. Training used concurrent jobs on shared GPUs, so reported steps/s in the run logs are not benchmarks.
 \end{itemize}
 
 \section{Conclusion}
 On real PDEBench Darcy data the FNO outperforms an equally tuned MLP by $2\times$ in accuracy with $10\times$ fewer parameters, and by $2.2\times$ in agreement with the data over a calibrated finite-volume solver at the same resolution, while being $5$--$35\times$ faster on a GPU (but not on a CPU core). The dominant lever was not architecture but training: the loss matching the metric, a single learning-rate decay and symmetry augmentation halved the error; width, modes, learning rate and weight decay hardly matter beyond modest values; and the error plateaus near $2\%$ once $\gtrsim5{,}000$ samples are available. Residual errors are concentrated in low-contrast, high-amplitude fields, not at material interfaces, and predictions respect the boundary condition, positivity and the discrete PDE as well as the reference data do.
 
+Two checks added after review: with up to $10\,\%$ noise on the training labels the FNO still beats the MLP at every level (clean-test error $0.025\to0.036$ vs.\ $0.045\to0.051$), and self-adjusting sample weights found the hardest fields but did not reduce their error.
+
 \section*{Reproducibility}
 \begin{itemize}
 \item Scripts in \texttt{src/}: \texttt{stage3\_train.py} (training, evaluation), \texttt{run\_jobs.py} (job queue), \texttt{solvers.py} and \texttt{solver\_vs\_fno.py} (FV solver, calibration, timing).
 \item \texttt{stage3\_latency.py} (latency), \texttt{stage3\_diagnostics.py} (physics), \texttt{stage3\_aggregate.py}, \texttt{stage3\_figures.py}.
+\item Robustness studies: \texttt{stage3\_robust.py}, \texttt{stage3\_robust\_aggregate.py}, job list \texttt{scripts/stage3\_jobs/jobs\_extra.txt}, results in \texttt{results/stage3\_extra/}.
 \item Job lists in \texttt{scripts/stage3\_jobs/}; all per-run metrics in \texttt{results/stage3/runs/*/metrics.json}; commands and the table/figure$\to$script map in \texttt{stage3/README.md}.
 \end{itemize}
 

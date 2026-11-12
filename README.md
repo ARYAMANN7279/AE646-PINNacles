@@ -68,7 +68,7 @@ AE646-PINNacles/
 |-- ae646_handout.pdf        # course project spec
 |-- stage1/                  # Stage 1: proposal (LaTeX + PDF) and proposal deck (pptx/pdf + builder)
 |-- stage2/                  # Stage 2: interim report (.tex/.pdf), 10-slide deck, Stage 2 README, code ZIP + single notebook
-|-- stage3/                  # Stage 3: final report (.tex/.pdf), 16-slide deck (.pptx/.pdf + builders), README,
+|-- stage3/                  # Stage 3: final report (.tex/.pdf), 18-slide deck (.pptx/.pdf + builders), README,
 |   #   contribution/AI declaration, code+notebook submission (PINNacles_Stage3_Code.zip, PINNacles_Stage3_Notebook.ipynb)
 |   (Stage 3 code: src/stage3_*.py, src/solvers.py, src/solver_vs_fno.py, src/run_jobs.py, src/data_cache.py; job lists in scripts/stage3_jobs/)
 `-- data/                    # NOT tracked - regenerate with the download + preprocess steps
@@ -159,6 +159,8 @@ Test set of 200 fields, 5 seeds, 60,000 steps, relative L2 in physical units
 - **Data / resolution (`E3`, `E4`)**: FNO saturates near 0.0195 beyond ≈5,000 samples; zero-shot resolution transfer 64→128 gives 0.038 (native 0.021).
 - **Finite-volume solver (`src/solvers.py`, `src/solver_vs_fno.py`)**: calibrated to the PDEBench arrays: 0.044 error at 64², 0.024 at 128² (7.1 / 37 ms, one CPU thread). FNO at 64²: 0.020, 1.4 ms (batch 1, GPU) / 0.20 ms per sample (batch 128); on one CPU core it is *not* faster. **The Stage 2 speed-up claims (1443×/7740× vs 1030 ms) used an inefficient reference solver and are withdrawn.**
 - **Physics (`src/stage3_diagnostics.py`)**: boundary values, positivity, discrete-PDE residual and mean pressure are respected; the residual error sits in uniform/low-contrast, high-amplitude fields.
+- **Noisy labels (`src/stage3_robust.py`, added after the presentation)**: Gaussian noise on the training pressure maps (1/5/10 % of each map's size), clean test maps: FNO error 0.025 → 0.036, MLP 0.045 → 0.051 at 10 % noise; the FNO stays ahead at every level (3 seeds, 5,700 steps, Kaggle T4).
+- **Self-adjusting sample weights (`src/stage3_robust.py`)**: per-map weights from a running estimate of each map's own loss find the 27 hard training maps (weight ≈ 2.7 vs 0.95) but do not reduce their test error (0.170 → 0.172) and slightly raise the overall error (0.0249 → 0.0265): a negative result.
 
 Reproduce: `bash scripts/stage3_run_all.sh` (see `stage3/README.md`).
 
@@ -253,7 +255,7 @@ The Stage 1, Stage 2 and Stage 3 decks are `.pptx` files built with `python-pptx
 python3 stage1/build_stage1_presentation.py
 python3 stage2/build_stage2_presentation.py
 python3 stage3/build_stage3_presentation.py    # 12-slide base deck
-python3 stage3/deck_extension/make_figures.py && python3 stage3/deck_extension/extend_deck.py   # final 16-slide deck
+python3 stage3/deck_extension/make_figures.py && python3 stage3/deck_extension/extend_deck.py   # final 18-slide deck
 ```
 `stage2/` also holds the Stage 2 submission code archive `PINNacles_Stage2_Code.zip` and its
 Stage 2 `README.md` (both scoped to Stage 2; rebuild with `python3 stage2/build_stage2_code_zip.py`).

@@ -1,0 +1,25 @@
+rb_sanity_s0|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 0
+rb_fno_ad1_s0|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 0 --adaptive 1.0
+rb_fno_ad1_s1|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 1 --adaptive 1.0
+rb_fno_ad1_s2|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 2 --adaptive 1.0
+rb_fno_n0.05_s0|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 0 --noise 0.05
+rb_mlp_n0.05_s0|--model mlp --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 0 --noise 0.05
+rb_fno_n0.05_s1|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 1 --noise 0.05
+rb_fno_n0.05_s2|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 2 --noise 0.05
+rb_mlp_n0.05_s1|--model mlp --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 1 --noise 0.05
+rb_mlp_n0.05_s2|--model mlp --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 2 --noise 0.05
+rb_fno_n0.1_s0|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 0 --noise 0.1
+rb_fno_n0.1_s1|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 1 --noise 0.1
+rb_fno_n0.1_s2|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 2 --noise 0.1
+rb_mlp_n0.1_s0|--model mlp --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 0 --noise 0.1
+rb_mlp_n0.1_s1|--model mlp --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 1 --noise 0.1
+rb_mlp_n0.1_s2|--model mlp --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 2 --noise 0.1
+rb_fno_n0.01_s0|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 0 --noise 0.01
+rb_fno_n0.01_s1|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 1 --noise 0.01
+rb_fno_n0.01_s2|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 2 --noise 0.01
+rb_mlp_n0.01_s0|--model mlp --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 0 --noise 0.01
+rb_mlp_n0.01_s1|--model mlp --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 1 --noise 0.01
+rb_mlp_n0.01_s2|--model mlp --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 2 --noise 0.01
+rb_fno_ad2_s0|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 0 --adaptive 2.0
+rb_fno_ad2_s1|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 1 --adaptive 2.0
+rb_fno_ad2_s2|--model fno --layers 4 --sched cosine --loss rel_l2 --aug d4 --tta --res 64 --steps 5700 --seed 2 --adaptive 2.0

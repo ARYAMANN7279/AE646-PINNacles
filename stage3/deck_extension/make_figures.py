@@ -12,7 +12,7 @@ NAVY="#142F4E";BLUE="#2F7FD1";GREEN="#1E8E5A";ORANGE="#C96F1E";GREY="#5F6B7A";LB
 def eq(path,tex,size=30,w=6,h=0.9):
     f=plt.figure(figsize=(w,h),dpi=220); f.text(0.5,0.5,tex,ha="center",va="center",fontsize=size,color=NAVY); f.savefig(path,transparent=False,facecolor="white"); plt.close(f)
 eq("eq_darcy.png",r"$-\nabla\cdot\left(\kappa\,\nabla u\right)=f$",size=34)
-eq("eq_loss.png",r"$\mathcal{L}=\frac{1}{B}\sum_{i=1}^{B}\frac{\|\hat{u}_i-u_i\|_2}{\|u_i\|_2}$",size=26,w=6,h=1.1)
+eq("eq_loss.png",r"$\mathcal{L}=\frac{1}{B}\sum_{i=1}^{B}\frac{\sqrt{\sum_{j}\left(\hat{u}_{ij}-u_{ij}\right)^{2}}}{\sqrt{\sum_{j}u_{ij}^{2}}}$",size=19,w=6,h=1.5)
 
 # --- model diagrams
 def box(ax,x,y,w,h,txt,fc,ec,fs=10,tc=NAVY,bold=False):

@@ -34,7 +34,8 @@ NB_NAME = "PINNacles_Stage3_Notebook.ipynb"
 SRC = ["download_data.py", "preprocess.py", "models.py", "train.py", "evaluate.py",
        "generate_data.py", "eda.py", "ablation_mlp.py", "ablation_preprocess.py",
        "data_cache.py", "solvers.py", "solver_vs_fno.py", "stage3_train.py", "run_jobs.py",
-       "stage3_latency.py", "stage3_diagnostics.py", "stage3_aggregate.py", "stage3_figures.py"]
+       "stage3_latency.py", "stage3_diagnostics.py", "stage3_aggregate.py", "stage3_figures.py",
+       "stage3_robust.py", "stage3_robust_aggregate.py"]
 CONFIGS = ["fno.yaml", "mlp.yaml"]
 RESULT_FILES = [
     "run_001/test_metrics.json", "run_001/evaluation/eval_metrics.json",
@@ -70,7 +71,7 @@ import json, os, subprocess, sys
 from pathlib import Path
 from IPython.display import Image, display
 
-for d in ("src", "configs", "tests", "results/figures", "results/stage3", "results/stage3/runs"):
+for d in ("src", "configs", "tests", "results/figures", "results/stage3", "results/stage3/runs", "results/stage3_extra"):
     os.makedirs(d, exist_ok=True)
 
 def sh(cmd, tail=None):
@@ -180,6 +181,29 @@ print(f"\\nPhysical diagnostics (final FNO, seed 0): PDE residual pred/gt = "
 '''
 
 
+
+SECTION11 = '''
+# Post-presentation studies (noisy labels, self-adjusting weights): STORED results of the Kaggle T4 runs
+# (src/stage3_robust.py, job list scripts/stage3_jobs/jobs_extra.txt). Not recomputed here.
+import json, os, urllib.request
+from IPython.display import Image, display
+_RAW = "https://raw.githubusercontent.com/ARYAMANN7279/AE646-PINNacles/main/"
+os.makedirs("results/stage3_extra", exist_ok=True)
+for _f in ("summary.json", "fig_noise.png", "fig_adaptive.png"):
+    if not os.path.exists(f"results/stage3_extra/{_f}"):
+        urllib.request.urlretrieve(_RAW + f"results/stage3_extra/{_f}", f"results/stage3_extra/{_f}")
+S = json.load(open("results/stage3_extra/summary.json"))
+print("Noisy pressure labels - test error on CLEAN maps (mean +- sd over seeds):")
+for m in ("fno", "mlp"):
+    for k, v in S["noise"][m].items():
+        print(f"  {m.upper():3s} label noise {float(k)*100:>4.0f}%   {v['mean']:.4f} +- {v['sd']:.4f}   (n={v['n']})")
+print("Self-adjusting per-sample weights (FNO, test error):")
+for t, d in S["adaptive"].items():
+    print(f"  {t:7s} all {d['all']['mean']:.4f}  other maps {d['rest']['mean']:.4f}  hard maps {d['hard']['mean']:.4f}  (n={d['all']['n']} seeds)")
+display(Image("results/stage3_extra/fig_noise.png", width=520))
+display(Image("results/stage3_extra/fig_adaptive.png", width=800))
+'''
+
 def build_notebook(stage):
     cells = [
         md("""
@@ -272,6 +296,15 @@ in this notebook**. See `stage3/PINNacles_Stage3_FinalReport.pdf` for the full d
 """),
         code(FULL_STUDY),
         md("""
+## 11. Post-presentation studies: noisy labels and self-adjusting weights (loaded from stored results)
+Two studies added after the final presentation, on the instructor's suggestions: (a) Gaussian noise
+added to the training pressure labels, (b) per-sample loss weights that adjust themselves from each
+map's own running error, aimed at the hard (nearly uniform, low-permeability) maps. They were run with
+`src/stage3_robust.py` on Kaggle T4 GPUs (job list: `scripts/stage3_jobs/jobs_extra.txt`, summary:
+`src/stage3_robust_aggregate.py`); the stored results below are not recomputed in this notebook.
+"""),
+        code(SECTION11),
+        md("""
 ## Notes
 * Seed 42 everywhere (data split); Stage 3 training runs use seeds 0-4 as stated in the report.
 * Stage 1/2 training loss is MSE on standardised pressure; Stage 3 additionally studies a
@@ -305,6 +338,14 @@ with tempfile.TemporaryDirectory() as tmp:
         copy(ROOT / "results" / "stage3" / f, out / "results" / "stage3" / f)
     for f in (ROOT / "stage3" / "figures").glob("*.png"):
         copy(f, out / "results" / "stage3" / "figures" / f.name)
+    for f in ("summary.json", "fig_noise.png", "fig_adaptive.png"):
+        if (ROOT / "results" / "stage3_extra" / f).exists():
+            copy(ROOT / "results" / "stage3_extra" / f, out / "results" / "stage3_extra" / f)
+    if (ROOT / "results" / "stage3_extra" / "runs").exists():
+        for d in (ROOT / "results" / "stage3_extra" / "runs").iterdir():
+            for name in ("metrics.json", "curve.json"):
+                if (d / name).exists():
+                    copy(d / name, out / "results" / "stage3_extra" / "runs" / d.name / name)
     for d in (ROOT / "results" / "stage3" / "runs").iterdir():
         for name in ("metrics.json", "curve.json"):
             p = d / name

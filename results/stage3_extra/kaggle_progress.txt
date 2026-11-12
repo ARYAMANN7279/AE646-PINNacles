@@ -1,0 +1,58 @@
+gpus: GPU 0: Tesla T4 (UUID: GPU-8961e0ca-0972-12b4-d1b9-2d1a516da3c2)
+GPU 1: Tesla T4 (UUID: GPU-4ccc9eca-851e-a83c-a17b-a5c8a37943ef)
+running download_data.py
+'x-coordinate', 'y-coordinate']
+  attrs: {'beta': np.float64(1.0)}
+  nu (permeability) shape: (10000, 128, 128), dtype: float32
+  tensor (pressure) shape: (10000, 1, 128, 128), dtype: float32
+  Downloaded and verified
+
+Done. This single file contains all 10,000 PDEBench samples (no separate test file); src/preprocess.py performs the train/val/test split.
+Next step: run `python src/preprocess.py`.
+ █████▍ | 1.10G/1.31G [00:01<00:00, 571MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  89%|████████▊ | 1.16G/1.31G [00:02<00:00, 570MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  93%|█████████▎| 1.22G/1.31G [00:02<00:00, 573MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  98%|█████████▊| 1.28G/1.31G [00:02<00:00, 573MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5: 100%|██████████| 1.31G/1.31G [00:02<00:00, 574MB/s]
+
+running preprocess.py
+ 64, 64, 3), targets: (100, 64, 64, 1)
+Test inputs:  (200, 64, 64, 3), targets: (200, 64, 64, 1)
+
+Normalization stats: {'coeff_mean': 0.5309522747993469, 'coeff_std': 0.44959667325019836, 'tensor_mean': 0.16486190259456635, 'tensor_std': 0.14429496228694916}
+Done. Processed data saved to /kaggle/temp/AE646/data/processed
+Next step: run training with `python src/train.py --config configs/fno.yaml`
+ 
+running data_cache.py
+{'train': 900, 'val': 100, 'test': 200, 'extra': 8800} | grid (128,) coords range 0.00390625 0.99609375
+  train: derived split == data/processed/train.npz : True
+  val: derived split == data/processed/val.npz : True
+  test: derived split == data/processed/test.npz : True
+ 
+split check: MATCH
+gpu0 rb_sanity_s0 rc=0 257s [rb_sanity_s0] noise 0.0 adaptive 0.0 | val(sel) 0.0331 | test 0.0243 | tta 0.0231 | 239s
+gpu1 rb_fno_ad1_s0 rc=0 257s [rb_fno_ad1_s0] noise 0.0 adaptive 1.0 | val(sel) 0.0339 | test 0.0268 | tta 0.0250 | 242s
+gpu0 rb_fno_ad1_s1 rc=0 243s [rb_fno_ad1_s1] noise 0.0 adaptive 1.0 | val(sel) 0.0351 | test 0.0271 | tta 0.0254 | 238s
+gpu1 rb_fno_ad1_s2 rc=0 245s [rb_fno_ad1_s2] noise 0.0 adaptive 1.0 | val(sel) 0.0348 | test 0.0256 | tta 0.0248 | 240s
+gpu1 rb_mlp_n0.05_s0 rc=0 102s [rb_mlp_n0.05_s0] noise 0.05 adaptive 0.0 | val(sel) 0.0752 | test 0.0473 | tta 0.0441 | 97s
+gpu0 rb_fno_n0.05_s0 rc=0 242s [rb_fno_n0.05_s0] noise 0.05 adaptive 0.0 | val(sel) 0.0691 | test 0.0348 | tta 0.0317 | 237s
+gpu1 rb_fno_n0.05_s1 rc=0 243s [rb_fno_n0.05_s1] noise 0.05 adaptive 0.0 | val(sel) 0.0678 | test 0.0271 | tta 0.0257 | 239s
+gpu1 rb_mlp_n0.05_s1 rc=0 102s [rb_mlp_n0.05_s1] noise 0.05 adaptive 0.0 | val(sel) 0.0758 | test 0.0469 | tta 0.0446 | 97s
+gpu0 rb_fno_n0.05_s2 rc=0 242s [rb_fno_n0.05_s2] noise 0.05 adaptive 0.0 | val(sel) 0.0688 | test 0.0276 | tta 0.0258 | 237s
+gpu1 rb_mlp_n0.05_s2 rc=0 102s [rb_mlp_n0.05_s2] noise 0.05 adaptive 0.0 | val(sel) 0.0737 | test 0.0456 | tta 0.0433 | 97s
+gpu0 rb_fno_n0.1_s0 rc=0 242s [rb_fno_n0.1_s0] noise 0.1 adaptive 0.0 | val(sel) 0.1128 | test 0.0352 | tta 0.0317 | 237s
+gpu1 rb_fno_n0.1_s1 rc=0 243s [rb_fno_n0.1_s1] noise 0.1 adaptive 0.0 | val(sel) 0.1134 | test 0.0377 | tta 0.0350 | 239s
+gpu1 rb_mlp_n0.1_s0 rc=0 102s [rb_mlp_n0.1_s0] noise 0.1 adaptive 0.0 | val(sel) 0.1171 | test 0.0504 | tta 0.0475 | 97s
+gpu0 rb_fno_n0.1_s2 rc=0 242s [rb_fno_n0.1_s2] noise 0.1 adaptive 0.0 | val(sel) 0.1133 | test 0.0356 | tta 0.0312 | 237s
+gpu1 rb_mlp_n0.1_s1 rc=0 102s [rb_mlp_n0.1_s1] noise 0.1 adaptive 0.0 | val(sel) 0.1180 | test 0.0520 | tta 0.0488 | 97s
+gpu0 rb_mlp_n0.1_s2 rc=0 102s [rb_mlp_n0.1_s2] noise 0.1 adaptive 0.0 | val(sel) 0.1164 | test 0.0502 | tta 0.0472 | 98s
+gpu1 rb_fno_n0.01_s0 rc=0 244s [rb_fno_n0.01_s0] noise 0.01 adaptive 0.0 | val(sel) 0.0369 | test 0.0265 | tta 0.0255 | 239s
+gpu0 rb_fno_n0.01_s1 rc=0 242s [rb_fno_n0.01_s1] noise 0.01 adaptive 0.0 | val(sel) 0.0369 | test 0.0261 | tta 0.0242 | 237s
+gpu0 rb_mlp_n0.01_s0 rc=0 102s [rb_mlp_n0.01_s0] noise 0.01 adaptive 0.0 | val(sel) 0.0507 | test 0.0458 | tta 0.0428 | 97s
+gpu1 rb_fno_n0.01_s2 rc=0 243s [rb_fno_n0.01_s2] noise 0.01 adaptive 0.0 | val(sel) 0.0365 | test 0.0259 | tta 0.0243 | 239s
+gpu0 rb_mlp_n0.01_s1 rc=0 102s [rb_mlp_n0.01_s1] noise 0.01 adaptive 0.0 | val(sel) 0.0508 | test 0.0452 | tta 0.0432 | 97s
+gpu1 rb_mlp_n0.01_s2 rc=0 102s [rb_mlp_n0.01_s2] noise 0.01 adaptive 0.0 | val(sel) 0.0493 | test 0.0447 | tta 0.0429 | 97s
+gpu0 rb_fno_ad2_s0 rc=0 243s [rb_fno_ad2_s0] noise 0.0 adaptive 2.0 | val(sel) 0.0359 | test 0.0285 | tta 0.0264 | 239s
+gpu1 rb_fno_ad2_s1 rc=0 245s [rb_fno_ad2_s1] noise 0.0 adaptive 2.0 | val(sel) 0.0370 | test 0.0272 | tta 0.0260 | 240s
+gpu0 rb_fno_ad2_s2 rc=0 243s [rb_fno_ad2_s2] noise 0.0 adaptive 2.0 | val(sel) 0.0359 | test 0.0272 | tta 0.0255 | 239s
+ALL-DONE
