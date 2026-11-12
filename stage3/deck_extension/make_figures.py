@@ -69,3 +69,39 @@ ax.legend(frameon=False,fontsize=10,loc="lower right")
 for s in ("top","right"): ax.spines[s].set_visible(False)
 ax.grid(alpha=.25); fig.tight_layout(); fig.savefig("fig_deck_mlp_limit.png"); plt.close(fig)
 print("ok", round(float(fno),4))
+
+# --- simple solver-vs-FNO figure (slide 12): one solver series, FNO on GPU
+P=json.load(open(R+"results/stage3/pareto.json"))
+sol=[p for p in P if p["label"].startswith("FV solver, direct")]
+fno=[p for p in P if p["label"]=="FNO, GPU"]
+fig,ax=plt.subplots(figsize=(7.2,4.25),dpi=200)
+ax.plot([p["ms"] for p in sol],[p["err"] for p in sol],"-o",color=GREY,ms=9,lw=1.8,label="FV solver")
+for p in sol:
+    ax.annotate(p["note"].replace("N=","")+" x "+p["note"].replace("N=",""),(p["ms"],p["err"]),textcoords="offset points",xytext=(8,8),fontsize=11,color=GREY)
+ax.plot([p["ms"] for p in fno],[p["err"] for p in fno],"s",color=GREEN,ms=11,label="FNO (on a GPU)")
+for p in fno:
+    ax.annotate("one map at a time" if p["note"]=="batch 1" else "many maps at once",(p["ms"],p["err"]),textcoords="offset points",xytext=(0,-22),ha="center",fontsize=11,color=GREEN)
+ax.set_xscale("log"); ax.set_xlim(0.05,100); ax.set_ylim(0,0.11)
+ax.set_xlabel("Time per solution (milliseconds, log scale)",fontsize=12); ax.set_ylabel("Error (lower is better)",fontsize=12)
+ax.tick_params(labelsize=11); ax.grid(alpha=.25); ax.legend(fontsize=12,loc="upper right",frameon=False)
+for s_ in ("top","right"): ax.spines[s_].set_visible(False)
+fig.tight_layout(); fig.savefig("fig_deck_solver.png"); plt.close(fig)
+
+# --- simple physics-slide figure (slide 13): how errors are spread, and where the bad ones are
+D=np.load(R+"results/stage3/diagnostics_arrays.npz"); rel=D["rel"]; area=D["area_hi"]
+fig,axs=plt.subplots(1,2,figsize=(12.1,2.85),dpi=200)
+ax=axs[0]
+ax.hist(rel,bins=np.linspace(0,0.4,21),color=GREEN,edgecolor="white")
+ax.axvline(np.median(rel),color=NAVY,ls="--",lw=1.5); ax.text(0.03,ax.get_ylim()[1]*0.55,f"typical map\n{np.median(rel):.3f}",fontsize=10,color=NAVY)
+ax.set_xlabel("Error of one test map",fontsize=11); ax.set_ylabel("Number of maps",fontsize=11)
+ax.set_title(f"Most maps are almost exact ({(rel<0.05).mean()*100:.0f}% are under 5% error)",fontsize=11,color=NAVY)
+ax.tick_params(labelsize=10)
+ax=axs[1]
+ax.scatter(area,rel,s=14,color=BLUE,alpha=.8)
+ax.set_xlabel("Share of the map that is high permeability",fontsize=11); ax.set_ylabel("Error",fontsize=11)
+ax.set_title("The worst maps are almost entirely low permeability",fontsize=11,color=NAVY)
+ax.tick_params(labelsize=10)
+for a_ in axs:
+    for s_ in ("top","right"): a_.spines[s_].set_visible(False)
+fig.tight_layout(); fig.savefig("fig_deck_physics.png"); plt.close(fig)
+print("mean/median/under5",rel.mean(),np.median(rel),(rel<0.05).mean())

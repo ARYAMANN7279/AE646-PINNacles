@@ -53,8 +53,7 @@ rounded(s,6.75,3.7,5.95,2.2,fill=CREAM,line=ORANGE)
 textbox(s,6.95,3.76,5.5,0.4,"How physics is involved",size=16,bold=True,color=ORANGE)
 textbox(s,6.95,4.18,5.55,1.7,["• The PDE generated every training sample",
    "• Its symmetry (flips, rotations) gives free extra data",
-   "• We check the predictions against the equation afterwards",
-   "• The physics is not in the loss: the FNO is data-driven, not a PINN"],size=14,color=NAVY)
+   "• We check the predictions against the equation afterwards"],size=14,color=NAVY)
 callout(s,"A trained model answers a new permeability map almost instantly",y=6.1,h=0.7)
 
 # C. Data and training setup
@@ -150,6 +149,26 @@ for sh in old[8].shapes:
     elif t.startswith("Best when used on GPUs"):
         runs[0].text="Best used on GPUs and in batches, whenever many solutions are needed"
 textbox(old[8],8.1,5.62,4.6,0.4,"Timing note: on one CPU core the solver is faster (7 ms vs 37 ms); see report, Section 7.",size=9.5,color=GREY,italic=True)
+
+# ---------- slide 12 (solver): one solver series, simple graph, plain wording
+def drop_pictures(sl):
+    for sh in list(sl.shapes):
+        if sh.shape_type==13: sh._element.getparent().remove(sh._element)
+def set_text(sl,old_t,new_t):
+    for sh in sl.shapes:
+        if sh.has_text_frame and sh.text_frame.text==old_t:
+            sh.text_frame.paragraphs[0].runs[0].text=new_t; return
+    raise SystemExit("not found: "+old_t)
+drop_pictures(old[8]); picture(old[8],FIG/"fig_deck_solver.png",0.6,1.55,7.2,4.25,card=False)
+set_text(old[8],"Compared with a finite-volume solver tuned to the same data","Neural network versus the classical calculation")
+set_text(old[8],"FNO vs solver error at 64 x 64","error: FNO vs solver (64 x 64 grid)")
+set_text(old[8],"faster than the solver on a GPU","faster than the solver, on a GPU")
+# ---------- slide 13 (physics): plain labels, simple graphs
+drop_pictures(old[9]); picture(old[9],FIG/"fig_deck_physics.png",0.6,3.05,12.1,2.85,card=False)
+set_text(old[9],"Checks beyond a single error number","Do the predictions behave like real pressure?")
+set_text(old[9],"boundary level (truth 0.1157)".replace("0.1157","0.1159") if False else "boundary level (truth 0.1159)","edge pressure level (real data 0.1159)")
+set_text(old[9],"equation residual (truth)","equation mismatch (real data 4.01)")
+set_text(old[9],"Largest errors: nearly uniform permeability with large pressure, where the amplitude is hard to infer","Worst cases: almost uniform maps, where the pressure height is hard to guess")
 # ---------- reorder
 final=[old[1],A,B,C,D,old[4],old[5],E,old[6],F,old[7],old[8],old[9],old[10],G,old[12]]
 lst=Pk.slides._sldIdLst; ids=list(lst)
