@@ -60,12 +60,11 @@ with $\kappa\in\{0.1,\,1.0\}$ (thresholded random field). We learn the \textbf{o
 \item \textbf{Split} (fixed, seed 42): 900 train, 100 validation, 200 test. All choices on validation, test used once.
 \item \textbf{Inputs:} $\kappa$ plus $x,y$ coordinates; standardised with training statistics.
 \end{itemize}
-\includegraphics[width=\linewidth]{fig_sample_row.png}\\[-1mm]
-{\smalltext\color{grey} Permeability, true pressure, FNO prediction and error for the best test map (error 0.2\,\%).}
+{\smalltext\color{grey} Example predictions (best, typical, worst) are in panel 5.}
 \end{psec}
 
 \begin{psec}{2\quad Two models, same inputs}
-\includegraphics[width=\linewidth]{fig_deck_models.pdf}
+\includegraphics[width=\linewidth]{fig_poster_models.pdf}
 \begin{itemize}
 \item \textbf{MLP:} flattens the grid into 12,288 numbers. No notion of neighbouring pixels. 100.7\,M parameters.
 \item \textbf{FNO:} each Fourier layer transforms to frequencies, keeps the lowest $12\times12$ modes, mixes channels with learned complex weights $R(k)$, transforms back and adds a local path:
@@ -96,7 +95,7 @@ MLP & 100.7\,M & $0.0415\pm0.0009$ & 0.0272\\\bottomrule
 \end{psec}
 
 \begin{psec}{5\quad Example test predictions}
-\begin{center}\includegraphics[width=0.84\linewidth]{fig_samples.pdf}\end{center}
+\begin{center}\includegraphics[width=0.84\linewidth]{fig_poster_samples.pdf}\end{center}
 {\smalltext\color{grey} Best (0.2\,\%), typical (0.7\,\%) and worst (36\,\%) test maps of the final FNO: permeability, truth, prediction, error. The worst map has uniform $\kappa=0.1$: right shape, wrong height.}
 \end{psec}
 
@@ -105,12 +104,12 @@ MLP & 100.7\,M & $0.0415\pm0.0009$ & 0.0272\\\bottomrule
 \begin{minipage}[t]{0.322\linewidth}\vspace{0pt}
 \begin{psec}{6\quad Finding 1: the training recipe}
 Stage 2 trained on MSE (the metric is relative), restarted the learning rate every 200 steps and used no augmentation. Fixing all three, same model and budget (3 seeds):
-\begin{center}\includegraphics[width=0.96\linewidth]{fig_recipe_ablation.pdf}\end{center}
+\begin{center}\includegraphics[width=0.96\linewidth]{fig_poster_recipe_ablation.pdf}\end{center}
 \begin{keybox}Same model: FNO 0.052 $\to$ 0.025, MLP 0.080 $\to$ 0.045\end{keybox}
 \end{psec}
 
 \begin{psec}{7\quad Finding 2: architecture matters little}
-\includegraphics[width=\linewidth]{fig_arch_sweeps.pdf}
+\includegraphics[width=\linewidth]{fig_poster_arch.pdf}
 \begin{itemize}
 \item Modes 4 to 32 and width $\ge32$: nearly flat. Depth 2 $\to$ 8 layers: 0.030 $\to$ 0.020.
 \item Batch 8/16/32: 0.0222 / 0.0219 / 0.0221. Learning rate $5\cdot10^{-4}$ to $2\cdot10^{-3}$: within 0.001.
@@ -124,8 +123,7 @@ $10\times$ more parameters, 3$\times$ more steps or 10$\times$ more data leave t
 \end{psec}
 
 \begin{psec}{9\quad Data and resolution}
-\begin{minipage}[t]{0.56\linewidth}\vspace{0pt}\includegraphics[width=\linewidth]{fig_data_scaling.pdf}\end{minipage}\hfill
-\begin{minipage}[t]{0.42\linewidth}\vspace{0pt}\includegraphics[width=\linewidth]{fig_resolution.pdf}\end{minipage}
+\includegraphics[width=\linewidth]{fig_poster_data.pdf}
 \begin{itemize}
 \item FNO error: 100 maps 0.044, 400 maps 0.026, 900 maps 0.022, 5,000 maps 0.020; levels off near 0.02.
 \item Same-grid error at $32^2/64^2/128^2$: 0.027 / 0.022 / 0.021. A $64^2$ model is 2 to 3$\times$ worse on another grid.
@@ -136,7 +134,7 @@ $10\times$ more parameters, 3$\times$ more steps or 10$\times$ more data leave t
 \begin{minipage}[t]{0.322\linewidth}\vspace{0pt}
 \begin{psec}{10\quad FNO versus a classical solver}
 Our cell-centred finite-volume solver: a water balance in every cell, face permeability by harmonic mean, one sparse system $Au=b$ solved by sparse LU, boundary treatment calibrated on validation data.
-\begin{center}\includegraphics[width=0.92\linewidth]{fig_deck_solver.pdf}\end{center}
+\begin{center}\includegraphics[width=0.92\linewidth]{fig_poster_solver.pdf}\end{center}
 \begin{itemize}
 \item At $64^2$: FNO error \textbf{0.020} vs solver 0.044; solver 7.1\,ms per map (one CPU thread).
 \item FNO on a GPU: 1.4\,ms per map, 0.2\,ms per map in batches of 128, i.e.\ \textbf{5--35$\times$ faster}.
