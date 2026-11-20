@@ -90,12 +90,13 @@ def make_mixed(n_maps, seed, lo_range=(0.02, 0.5)):
 
 
 if __name__ == "__main__":
-    if "--build-mixed" in sys.argv:                              # 900 training + 100 validation maps, randomised contrast
-        (ROOT / "data" / "mixed").mkdir(parents=True, exist_ok=True)
-        for name, n, seed in (("train", 900, 11), ("val", 100, 12)):
-            kap, u, lo = make_mixed(n, seed)
-            np.savez_compressed(ROOT / "data" / "mixed" / f"{name}.npz", kappa128=kap, u128=u, k_lo=lo.astype(np.float32))
-            print(name, n, "k_lo range", float(lo.min()), float(lo.max()), flush=True)
+    for flag, folder, rng_lo in (("--build-mixed", "mixed", (0.02, 0.5)), ("--build-mixed-wide", "mixed_wide", (0.005, 0.5))):
+        if flag in sys.argv:                                    # 900 training + 100 validation maps, randomised contrast
+            (ROOT / "data" / folder).mkdir(parents=True, exist_ok=True)
+            for name, n, seed in (("train", 900, 11 if folder == "mixed" else 21), ("val", 100, 12 if folder == "mixed" else 22)):
+                kap, u, lo = make_mixed(n, seed, rng_lo)
+                np.savez_compressed(ROOT / "data" / folder / f"{name}.npz", kappa128=kap, u128=u, k_lo=lo.astype(np.float32))
+                print(folder, name, n, "k_lo range", float(lo.min()), float(lo.max()), flush=True)
     if "--check" in sys.argv:
         # reference: the 200 PDEBench test maps at 64 x 64 stored by stage3_diagnostics.py
         ref = np.load(ROOT / "results" / "stage3" / "diagnostics_arrays.npz")["kappa"]

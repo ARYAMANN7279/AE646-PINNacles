@@ -1,0 +1,63 @@
+gpus: GPU 0: Tesla T4 (UUID: GPU-35f41c82-396b-15f3-3edf-861acf270447)
+GPU 1: Tesla T4 (UUID: GPU-fafa46b9-555e-c9c1-ee4a-8f178d0d4635)
+running download_data.py
+'x-coordinate', 'y-coordinate']
+  attrs: {'beta': np.float64(1.0)}
+  nu (permeability) shape: (10000, 128, 128), dtype: float32
+  tensor (pressure) shape: (10000, 1, 128, 128), dtype: float32
+  Downloaded and verified
+
+Done. This single file contains all 10,000 PDEBench samples (no separate test file); src/preprocess.py performs the train/val/test split.
+Next step: run `python src/preprocess.py`.
+ █████▌ | 1.12G/1.31G [00:02<00:00, 500MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  89%|████████▉ | 1.17G/1.31G [00:02<00:00, 496MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  93%|█████████▎| 1.22G/1.31G [00:02<00:00, 494MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  97%|█████████▋| 1.27G/1.31G [00:02<00:00, 484MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5: 100%|██████████| 1.31G/1.31G [00:02<00:00, 499MB/s]
+
+running preprocess.py
+ 64, 64, 3), targets: (100, 64, 64, 1)
+Test inputs:  (200, 64, 64, 3), targets: (200, 64, 64, 1)
+
+Normalization stats: {'coeff_mean': 0.5309522747993469, 'coeff_std': 0.44959667325019836, 'tensor_mean': 0.16486190259456635, 'tensor_std': 0.14429496228694916}
+Done. Processed data saved to /kaggle/temp/AE646/data/processed
+Next step: run training with `python src/train.py --config configs/fno.yaml`
+ 
+running data_cache.py
+{'train': 900, 'val': 100, 'test': 200, 'extra': 8800} | grid (128,) coords range 0.00390625 0.99609375
+  train: derived split == data/processed/train.npz : True
+  val: derived split == data/processed/val.npz : True
+  test: derived split == data/processed/test.npz : True
+ 
+split check: MATCH
+stage4_ood --build 0 t': 0.145, 'iface_mean': 0.006656465305118111, 'iface_sd': 0.003497608862270231} 17s
+rough {'share_mean': 0.498326416015625, 'share_sd': 0.11741202229973544, 'share_lt5pct': 0.0, 'iface_mean': 0.016363957923228346, 'iface_sd': 0.004062562639459821} 17s
+smooth {'share_mean': 0.4863394165039063, 'share_sd': 0.37273733338940707, 'share_lt5pct': 0.22, 'iface_mean': 0.0035765255905511805, 'iface_sd': 0.003133149836413182} 17s
+three_phase {'share_mean': 0.3321337890625, 'share_sd': 0.20523834969963092, 'share_lt5pct': 0.075, 'iface_mean': 0.007507689468503938, 'iface_sd': 0.0031854678336839396} 17s
+ 
+stage4_ood --build-mixed 0 train 900 k_lo range 0.020068693664932222 0.49915793152487825
+val 100 k_lo range 0.020700574205998357 0.4646642728241835
+ 
+generated data check: MATCH
+gpu1 s5_unet_pde_s0 rc=0 216s [s5_unet_pde_s0] unet params 7.77M | val 0.0285 | test 0.0246 | hard 0.167 | res32/64/128 0.367/0.025/0.304 | 195s
+gpu0 s5_fno_pde_s0 rc=0 265s [s5_fno_pde_s0] fno params 4.74M | val 0.0331 | test 0.0243 | hard 0.156 | res32/64/128 0.064/0.024/0.039 | 247s
+gpu1 s5_deeponet_pde_s0 rc=0 90s [s5_deeponet_pde_s0] deeponet params 2.60M | val 0.0701 | test 0.0677 | hard 0.183 | res32/64/128 0.173/0.068/0.153 | 84s
+gpu0 s5_fno_mixed_s0 rc=0 254s [s5_fno_mixed_s0] fno params 4.74M | val 0.0165 | test 0.1086 | hard 0.148 | res32/64/128 0.116/0.109/0.118 | 246s
+gpu1 s5_fno_mixed_logk_s0 rc=0 256s [s5_fno_mixed_logk_s0] fno params 4.74M | val 0.0125 | test 0.1013 | hard 0.156 | res32/64/128 0.115/0.101/0.107 | 248s
+gpu1 s5_unet_mixed_logk_s0 rc=0 204s [s5_unet_mixed_logk_s0] unet params 7.77M | val 0.0120 | test 0.1144 | hard 0.154 | res32/64/128 0.425/0.114/0.329 | 197s
+gpu0 s5_fno_pdemix_logk_s0 rc=0 253s [s5_fno_pdemix_logk_s0] fno params 4.74M | val 0.0293 | test 0.0247 | hard 0.124 | res32/64/128 0.064/0.025/0.038 | 245s
+gpu0 s5_unet_pde_s1 rc=0 201s [s5_unet_pde_s1] unet params 7.77M | val 0.0286 | test 0.0239 | hard 0.161 | res32/64/128 0.428/0.024/0.345 | 194s
+gpu1 s5_fno_pde_s1 rc=0 256s [s5_fno_pde_s1] fno params 4.74M | val 0.0328 | test 0.0251 | hard 0.164 | res32/64/128 0.065/0.025/0.040 | 249s
+gpu0 s5_deeponet_pde_s1 rc=0 89s [s5_deeponet_pde_s1] deeponet params 2.60M | val 0.0752 | test 0.0697 | hard 0.180 | res32/64/128 0.181/0.070/0.144 | 83s
+gpu1 s5_fno_mixed_s1 rc=0 256s [s5_fno_mixed_s1] fno params 4.74M | val 0.0162 | test 0.1080 | hard 0.144 | res32/64/128 0.116/0.108/0.117 | 248s
+gpu0 s5_fno_mixed_logk_s1 rc=0 253s [s5_fno_mixed_logk_s1] fno params 4.74M | val 0.0121 | test 0.1012 | hard 0.153 | res32/64/128 0.115/0.101/0.107 | 245s
+gpu0 s5_unet_mixed_logk_s1 rc=0 201s [s5_unet_mixed_logk_s1] unet params 7.77M | val 0.0128 | test 0.1173 | hard 0.148 | res32/64/128 0.340/0.117/0.344 | 194s
+gpu1 s5_fno_pdemix_logk_s1 rc=0 257s [s5_fno_pdemix_logk_s1] fno params 4.74M | val 0.0306 | test 0.0248 | hard 0.129 | res32/64/128 0.065/0.025/0.038 | 249s
+gpu1 s5_unet_pde_s2 rc=0 203s [s5_unet_pde_s2] unet params 7.77M | val 0.0286 | test 0.0240 | hard 0.155 | res32/64/128 0.425/0.024/0.329 | 197s
+gpu0 s5_fno_pde_s2 rc=0 253s [s5_fno_pde_s2] fno params 4.74M | val 0.0335 | test 0.0253 | hard 0.180 | res32/64/128 0.067/0.025/0.041 | 245s
+gpu1 s5_deeponet_pde_s2 rc=0 91s [s5_deeponet_pde_s2] deeponet params 2.60M | val 0.0703 | test 0.0688 | hard 0.181 | res32/64/128 0.173/0.069/0.148 | 85s
+gpu0 s5_fno_mixed_s2 rc=0 253s [s5_fno_mixed_s2] fno params 4.74M | val 0.0166 | test 0.1062 | hard 0.146 | res32/64/128 0.113/0.106/0.116 | 246s
+gpu1 s5_fno_mixed_logk_s2 rc=0 256s [s5_fno_mixed_logk_s2] fno params 4.74M | val 0.0117 | test 0.0983 | hard 0.150 | res32/64/128 0.112/0.098/0.105 | 248s
+gpu0 s5_fno_pdemix_logk_s2 rc=0 253s [s5_fno_pdemix_logk_s2] fno params 4.74M | val 0.0298 | test 0.0241 | hard 0.124 | res32/64/128 0.065/0.024/0.039 | 245s
+gpu1 s5_unet_mixed_logk_s2 rc=0 204s [s5_unet_mixed_logk_s2] unet params 7.77M | val 0.0115 | test 0.1013 | hard 0.150 | res32/64/128 0.358/0.101/0.349 | 197s
+ALL-DONE

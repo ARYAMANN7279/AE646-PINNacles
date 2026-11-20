@@ -64,3 +64,25 @@ if files:
     ax.set_title(f"Spread flags the bad maps (Spearman {rho:.2f})", fontsize=10, color=NAVY)
     save(fig, "fig_s4_uq")
 print(sorted(p.name for p in OUT.glob("*.png")))
+
+# 4. out-of-distribution heat map (configurations evaluated with --ood-dir)
+sets = ["ID", "rough", "smooth", "mostly_low", "contrast_lo", "three_phase", "contrast_hi"]
+setlab = ["same stats", "rougher", "smoother", "mostly low", "contrast 0.3", "three phases", "contrast 0.01"]
+names = {"s5_fno_pde": "FNO, PDEBench", "s5_unet_pde": "U-Net, PDEBench", "s5_deeponet_pde": "DeepONet, PDEBench",
+         "s5_fno_mixed": "FNO, random contrast", "s5_fno_mixed_logk": "FNO, random contrast, log k",
+         "s5_unet_mixed_logk": "U-Net, random contrast, log k", "s5_fno_pdemix_logk": "FNO, PDEBench + random, log k",
+         "s7_fno_pdemixwide_logk": "FNO, PDEBench + wide random, log k", "s7_fno_all": "FNO, all fixes",
+         "s7_fno_allwide": "FNO, all fixes, wide range"}
+rows = [c for c in names if c in S and "ood" in S[c]]
+if rows:
+    M = np.array([[S[c]["test"]["mean"]] + [S[c]["ood"][s]["mean"] for s in sets] for c in rows])
+    fig, ax = plt.subplots(figsize=(9.2, 0.42 * len(rows) + 1.4))
+    im = ax.imshow(np.log10(M), cmap="RdYlGn_r", vmin=-2.3, vmax=0, aspect="auto")
+    for i in range(M.shape[0]):
+        for j in range(M.shape[1]):
+            ax.text(j, i, f"{M[i, j]:.3f}", ha="center", va="center", fontsize=8, color="black")
+    ax.set_xticks(range(len(sets) + 1)); ax.set_xticklabels(["PDEBench test"] + setlab, rotation=25, ha="right", fontsize=8.5)
+    ax.set_yticks(range(len(rows))); ax.set_yticklabels([names[c] for c in rows], fontsize=8.5); ax.grid(False)
+    ax.set_title("Test error in and out of distribution (mean of 3 seeds)", fontsize=10, color=NAVY)
+    save(fig, "fig_s4_ood")
+print("ood figure:", (OUT / "fig_s4_ood.png").exists())
