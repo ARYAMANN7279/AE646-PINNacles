@@ -1,0 +1,57 @@
+gpus: GPU 0: Tesla T4 (UUID: GPU-367ee908-c238-7b9d-3db1-e03fc946eba5)
+GPU 1: Tesla T4 (UUID: GPU-81430bc8-6a8b-8cc0-ca62-0bf47b663ea9)
+running download_data.py
+'x-coordinate', 'y-coordinate']
+  attrs: {'beta': np.float64(1.0)}
+  nu (permeability) shape: (10000, 128, 128), dtype: float32
+  tensor (pressure) shape: (10000, 1, 128, 128), dtype: float32
+  Downloaded and verified
+
+Done. This single file contains all 10,000 PDEBench samples (no separate test file); src/preprocess.py performs the train/val/test split.
+Next step: run `python src/preprocess.py`.
+ █████▋ | 1.14G/1.31G [00:02<00:00, 536MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  91%|█████████ | 1.19G/1.31G [00:02<00:00, 540MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  95%|█████████▌| 1.25G/1.31G [00:02<00:00, 543MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  99%|█████████▉| 1.30G/1.31G [00:02<00:00, 540MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5: 100%|██████████| 1.31G/1.31G [00:02<00:00, 553MB/s]
+
+running preprocess.py
+ 64, 64, 3), targets: (100, 64, 64, 1)
+Test inputs:  (200, 64, 64, 3), targets: (200, 64, 64, 1)
+
+Normalization stats: {'coeff_mean': 0.5309522747993469, 'coeff_std': 0.44959667325019836, 'tensor_mean': 0.16486190259456635, 'tensor_std': 0.14429496228694916}
+Done. Processed data saved to /kaggle/temp/AE646/data/processed
+Next step: run training with `python src/train.py --config configs/fno.yaml`
+ 
+running data_cache.py
+{'train': 900, 'val': 100, 'test': 200, 'extra': 8800} | grid (128,) coords range 0.00390625 0.99609375
+  train: derived split == data/processed/train.npz : True
+  val: derived split == data/processed/val.npz : True
+  test: derived split == data/processed/test.npz : True
+ 
+split check: MATCH
+gpu1 s4_unet_s0 rc=0 211s [s4_unet_s0] unet params 7.77M | val 0.0284 | test 0.0252 | hard 0.179 | res32/64/128 0.363/0.025/0.304 | 192s
+gpu0 s4_fno_ref_s0 rc=0 265s [s4_fno_ref_s0] fno params 4.74M | val 0.0331 | test 0.0243 | hard 0.156 | res32/64/128 0.064/0.024/0.039 | 249s
+gpu1 s4_deeponet_s0 rc=0 86s [s4_deeponet_s0] deeponet params 2.60M | val 0.0701 | test 0.0675 | hard 0.179 | res32/64/128 0.176/0.067/0.152 | 82s
+gpu0 s4_fno_scale_s0 rc=0 255s [s4_fno_scale_s0] fno params 4.74M | val 0.0330 | test 0.0258 | hard 0.179 | res32/64/128 0.064/0.026/0.040 | 250s
+gpu1 s4_fno_xhard_s0 rc=0 250s [s4_fno_xhard_s0] fno params 4.74M | val 0.0340 | test 0.0244 | hard 0.125 | res32/64/128 0.063/0.024/0.039 | 245s
+gpu0 s4_fno_xrand_s0 rc=0 254s [s4_fno_xrand_s0] fno params 4.74M | val 0.0313 | test 0.0261 | hard 0.167 | res32/64/128 0.066/0.026/0.041 | 249s
+gpu1 s4_fno_scale_xhard_s0 rc=0 251s [s4_fno_scale_xhard_s0] fno params 4.74M | val 0.0339 | test 0.0246 | hard 0.114 | res32/64/128 0.061/0.025/0.039 | 245s
+gpu1 s4_fno_ref_s1 rc=0 250s [s4_fno_ref_s1] fno params 4.74M | val 0.0328 | test 0.0251 | hard 0.164 | res32/64/128 0.065/0.025/0.040 | 245s
+gpu0 s4_fno_multires_s0 rc=0 393s [s4_fno_multires_s0] fno params 4.74M | val 0.0333 | test 0.0283 | hard 0.181 | res32/64/128 0.033/0.028/0.029 | 388s
+gpu1 s4_unet_s1 rc=0 199s [s4_unet_s1] unet params 7.77M | val 0.0286 | test 0.0237 | hard 0.158 | res32/64/128 0.424/0.024/0.338 | 194s
+gpu0 s4_deeponet_s1 rc=0 89s [s4_deeponet_s1] deeponet params 2.60M | val 0.0745 | test 0.0695 | hard 0.180 | res32/64/128 0.183/0.070/0.144 | 84s
+gpu1 s4_fno_scale_s1 rc=0 251s [s4_fno_scale_s1] fno params 4.74M | val 0.0327 | test 0.0252 | hard 0.158 | res32/64/128 0.064/0.025/0.040 | 245s
+gpu0 s4_fno_xhard_s1 rc=0 255s [s4_fno_xhard_s1] fno params 4.74M | val 0.0334 | test 0.0249 | hard 0.127 | res32/64/128 0.064/0.025/0.040 | 249s
+gpu1 s4_fno_xrand_s1 rc=0 250s [s4_fno_xrand_s1] fno params 4.74M | val 0.0338 | test 0.0245 | hard 0.165 | res32/64/128 0.064/0.025/0.040 | 245s
+gpu0 s4_fno_scale_xhard_s1 rc=0 253s [s4_fno_scale_xhard_s1] fno params 4.74M | val 0.0344 | test 0.0273 | hard 0.122 | res32/64/128 0.063/0.027/0.039 | 248s
+gpu0 s4_fno_ref_s2 rc=0 254s [s4_fno_ref_s2] fno params 4.74M | val 0.0335 | test 0.0253 | hard 0.180 | res32/64/128 0.067/0.025/0.041 | 249s
+gpu1 s4_fno_multires_s1 rc=0 387s [s4_fno_multires_s1] fno params 4.74M | val 0.0341 | test 0.0274 | hard 0.158 | res32/64/128 0.031/0.027/0.029 | 382s
+gpu0 s4_unet_s2 rc=0 202s [s4_unet_s2] unet params 7.77M | val 0.0286 | test 0.0240 | hard 0.156 | res32/64/128 0.423/0.024/0.328 | 198s
+gpu1 s4_deeponet_s2 rc=0 87s [s4_deeponet_s2] deeponet params 2.60M | val 0.0706 | test 0.0691 | hard 0.187 | res32/64/128 0.173/0.069/0.148 | 83s
+gpu1 s4_fno_xhard_s2 rc=0 251s [s4_fno_xhard_s2] fno params 4.74M | val 0.0327 | test 0.0251 | hard 0.127 | res32/64/128 0.065/0.025/0.040 | 245s
+gpu0 s4_fno_scale_s2 rc=0 254s [s4_fno_scale_s2] fno params 4.74M | val 0.0327 | test 0.0243 | hard 0.159 | res32/64/128 0.064/0.024/0.039 | 249s
+gpu1 s4_fno_xrand_s2 rc=0 250s [s4_fno_xrand_s2] fno params 4.74M | val 0.0326 | test 0.0253 | hard 0.179 | res32/64/128 0.067/0.025/0.041 | 245s
+gpu0 s4_fno_scale_xhard_s2 rc=0 254s [s4_fno_scale_xhard_s2] fno params 4.74M | val 0.0333 | test 0.0256 | hard 0.134 | res32/64/128 0.064/0.026/0.040 | 248s
+gpu1 s4_fno_multires_s2 rc=0 380s [s4_fno_multires_s2] fno params 4.74M | val 0.0342 | test 0.0267 | hard 0.178 | res32/64/128 0.032/0.027/0.028 | 375s
+ALL-DONE
