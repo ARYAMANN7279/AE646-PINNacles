@@ -1,0 +1,44 @@
+gpus: GPU 0: Tesla T4 (UUID: GPU-795cecdb-aaea-82a8-5dcd-1266457d33c6)
+GPU 1: Tesla T4 (UUID: GPU-82f0f8b7-4ec2-d2f7-ce42-098d6d9782e4)
+running download_data.py
+'x-coordinate', 'y-coordinate']
+  attrs: {'beta': np.float64(1.0)}
+  nu (permeability) shape: (10000, 128, 128), dtype: float32
+  tensor (pressure) shape: (10000, 1, 128, 128), dtype: float32
+  Downloaded and verified
+
+Done. This single file contains all 10,000 PDEBench samples (no separate test file); src/preprocess.py performs the train/val/test split.
+Next step: run `python src/preprocess.py`.
+ █████▍ | 1.11G/1.31G [00:01<00:00, 578MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  89%|████████▉ | 1.16G/1.31G [00:02<00:00, 577MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  93%|█████████▎| 1.22G/1.31G [00:02<00:00, 569MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5:  98%|█████████▊| 1.28G/1.31G [00:02<00:00, 569MB/s]
+md5 2D_DarcyFlow_beta1.0_Train.hdf5: 100%|██████████| 1.31G/1.31G [00:02<00:00, 572MB/s]
+
+running preprocess.py
+ 64, 64, 3), targets: (100, 64, 64, 1)
+Test inputs:  (200, 64, 64, 3), targets: (200, 64, 64, 1)
+
+Normalization stats: {'coeff_mean': 0.5309522747993469, 'coeff_std': 0.44959667325019836, 'tensor_mean': 0.16486190259456635, 'tensor_std': 0.14429496228694916}
+Done. Processed data saved to /kaggle/temp/AE646/data/processed
+Next step: run training with `python src/train.py --config configs/fno.yaml`
+ 
+running data_cache.py
+{'train': 900, 'val': 100, 'test': 200, 'extra': 8800} | grid (128,) coords range 0.00390625 0.99609375
+  train: derived split == data/processed/train.npz : True
+  val: derived split == data/processed/val.npz : True
+  test: derived split == data/processed/test.npz : True
+ 
+split check: MATCH
+stage4_ood --build 0 t': 0.145, 'iface_mean': 0.006656465305118111, 'iface_sd': 0.003497608862270231} 16s
+rough {'share_mean': 0.498326416015625, 'share_sd': 0.11741202229973544, 'share_lt5pct': 0.0, 'iface_mean': 0.016363957923228346, 'iface_sd': 0.004062562639459821} 14s
+smooth {'share_mean': 0.4863394165039063, 'share_sd': 0.37273733338940707, 'share_lt5pct': 0.22, 'iface_mean': 0.0035765255905511805, 'iface_sd': 0.003133149836413182} 14s
+three_phase {'share_mean': 0.3321337890625, 'share_sd': 0.20523834969963092, 'share_lt5pct': 0.075, 'iface_mean': 0.007507689468503938, 'iface_sd': 0.0031854678336839396} 14s
+ 
+stage4_ood --build-mixed-wide 0 mixed_wide train 900 k_lo range 0.005127412447292411 0.49982261758004726
+mixed_wide val 100 k_lo range 0.005033674596360243 0.4897356010942094
+ 
+generated data check: MATCH
+gpu0 s8_fno_final_robust_s0 rc=0 4687s [s8_fno_final_robust_s0] fno params 9.48M | val 0.0282 | test 0.0200 | hard 0.133 | res32/64/128 0.066/0.020/0.037 | 4666s
+gpu1 s8_fno_final_robust_s1 rc=0 4772s [s8_fno_final_robust_s1] fno params 9.48M | val 0.0282 | test 0.0214 | hard 0.153 | res32/64/128 0.066/0.021/0.038 | 4754s
+ALL-DONE

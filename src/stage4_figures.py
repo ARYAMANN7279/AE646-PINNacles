@@ -72,7 +72,13 @@ names = {"s5_fno_pde": "FNO, PDEBench", "s5_unet_pde": "U-Net, PDEBench", "s5_de
          "s5_fno_mixed": "FNO, random contrast", "s5_fno_mixed_logk": "FNO, random contrast, log k",
          "s5_unet_mixed_logk": "U-Net, random contrast, log k", "s5_fno_pdemix_logk": "FNO, PDEBench + random, log k",
          "s7_fno_pdemixwide_logk": "FNO, PDEBench + wide random, log k", "s7_fno_all": "FNO, all fixes",
-         "s7_fno_allwide": "FNO, all fixes, wide range"}
+         "s7_fno_allwide": "FNO, all fixes, wide range", "s8_fno_final_robust": "FNO final, PDEBench + wide random, log k"}
+# the Stage 3 final FNO (PDEBench only, 8 layers, 60k steps): only seed 0's checkpoint survived, evaluated by hand
+_f = R4 / "ood_final_fno_stage3_s0.json"
+if _f.exists():
+    _o = json.load(open(_f))
+    S["stage3_final_fno"] = {"test": {"mean": 0.0202}, "ood": {k: {"mean": v[0]} for k, v in _o.items()}}
+    names = {"stage3_final_fno": "FNO final, PDEBench (1 checkpoint)", **names}
 rows = [c for c in names if c in S and "ood" in S[c]]
 if rows:
     M = np.array([[S[c]["test"]["mean"]] + [S[c]["ood"][s]["mean"] for s in sets] for c in rows])
