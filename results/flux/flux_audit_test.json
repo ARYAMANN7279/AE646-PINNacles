@@ -1,0 +1,93 @@
+{
+ "fno_final_stage3": {
+  "p_rel": 0.020009325541414408,
+  "q_rel": 0.0983063934886123,
+  "q_rel_band": NaN,
+  "q_rel_bulk": 0.07567737462473263,
+  "band_err_share": 0.490102366646647,
+  "band_area": 0.0955419921875,
+  "mass_res": 5.442900213981512,
+  "mass_res_label": 5.021094113945353,
+  "outflow_err": 0.5726117020458145,
+  "outflow_err_label": 0.569261145963242,
+  "n_seeds": 1
+ },
+ "s4_deeponet": {
+  "p_rel": 0.06869883763457832,
+  "q_rel": 0.49724902661520215,
+  "q_rel_band": NaN,
+  "q_rel_bulk": 0.39243508988456827,
+  "band_err_share": 0.4333181269373343,
+  "band_area": 0.0955419921875,
+  "mass_res": 10.742569498878185,
+  "mass_res_label": 5.021094113945353,
+  "outflow_err": 0.6705059875898686,
+  "outflow_err_label": 0.569261145963242,
+  "n_seeds": 3
+ },
+ "s4_fno_ref": {
+  "p_rel": 0.024911187326078634,
+  "q_rel": 0.24845304988918374,
+  "q_rel_band": NaN,
+  "q_rel_bulk": 0.21148139040875988,
+  "band_err_share": 0.37833492094378923,
+  "band_area": 0.0955419921875,
+  "mass_res": 7.819160720898869,
+  "mass_res_label": 5.021094113945353,
+  "outflow_err": 0.5997822910347658,
+  "outflow_err_label": 0.569261145963242,
+  "n_seeds": 3
+ },
+ "s4_fno_scale": {
+  "p_rel": 0.025082212455330846,
+  "q_rel": 0.25109755252973914,
+  "q_rel_band": NaN,
+  "q_rel_bulk": 0.21353794884694652,
+  "band_err_share": 0.36860017248684446,
+  "band_area": 0.0955419921875,
+  "mass_res": 7.805862769032969,
+  "mass_res_label": 5.021094113945353,
+  "outflow_err": 0.5967570649472829,
+  "outflow_err_label": 0.569261145963242,
+  "n_seeds": 3
+ },
+ "s4_unet": {
+  "p_rel": 0.024289826551028543,
+  "q_rel": 0.15765705571343344,
+  "q_rel_band": NaN,
+  "q_rel_bulk": 0.11242432334468971,
+  "band_err_share": 0.521182605979691,
+  "band_area": 0.0955419921875,
+  "mass_res": 6.491110646685868,
+  "mass_res_label": 5.021094113945353,
+  "outflow_err": 0.5542137705259936,
+  "outflow_err_label": 0.569261145963242,
+  "n_seeds": 3
+ },
+ "s6_unet_final": {
+  "p_rel": 0.019953116200394083,
+  "q_rel": 0.06908390827244663,
+  "q_rel_band": NaN,
+  "q_rel_bulk": 0.04457439762489585,
+  "band_err_share": 0.6495173853615591,
+  "band_area": 0.0955419921875,
+  "mass_res": 5.055927336227423,
+  "mass_res_label": 5.021094113945353,
+  "outflow_err": 0.5635233820012503,
+  "outflow_err_label": 0.569261145963242,
+  "n_seeds": 3
+ },
+ "s8_fno_final_robust": {
+  "p_rel": 0.020981276218567768,
+  "q_rel": 0.11657228379699162,
+  "q_rel_band": NaN,
+  "q_rel_bulk": 0.09192440614873605,
+  "band_err_share": 0.45257361088999964,
+  "band_area": 0.0955419921875,
+  "mass_res": 5.628559879013707,
+  "mass_res_label": 5.021094113945353,
+  "outflow_err": 0.5773341871083905,
+  "outflow_err_label": 0.569261145963242,
+  "n_seeds": 3
+ }
+}
