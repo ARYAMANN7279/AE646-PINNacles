@@ -15,6 +15,8 @@ checkpoint selection as stage3_train.py, whose functions are reused. New options
   --train-npz F [--train-mode replace|add]   train on F (kappa128, u128; e.g. data/mixed/train.npz) instead of, or in
                                     addition to, the 900 PDEBench maps;  --val-npz F  validate (select) on F instead
   --log-kappa                       feed log(kappa) to the network instead of kappa
+  --scale-equiv                     build in Darcy's exact scaling symmetry u[c kappa] = u[kappa] / c (f fixed): the input
+                                    map is divided by its geometric mean g and the prediction is divided by g
 Every run reports the test error at 32, 64 and 128 (not for the MLP, which is tied to its grid) and on the hard
 test maps (8 of 200).
 
@@ -38,9 +40,19 @@ from stage4_models import get_stage4_model
 ROOT = T.ROOT
 HARD = 0.05
 LOGK = False                                                       # --log-kappa: the network sees log(kappa)
+EQUIV = False                                                      # --scale-equiv: exact Darcy scaling symmetry
+
+
+def kgeo(k):
+    """Geometric-mean permeability per map (B, H, W) -> (B,)."""
+    return torch.exp(torch.log(k).mean(dim=(1, 2)))
 
 
 def kin(k):
+    """Network input. With --scale-equiv the map is divided by its geometric mean, so kappa and c * kappa give the
+    same input; the output is then divided by the same factor (u[c kappa] = u[kappa] / c holds exactly)."""
+    if EQUIV:
+        k = k / kgeo(k)[:, None, None]
     return torch.log(k) if LOGK else k
 
 
@@ -77,6 +89,8 @@ def evaluate(model, data, k128, u128, res, stats, scale, return_pred=False):
     out = T.predict(model, data, kin(k128), res, stats)[..., 0] * stats["u_std"] + stats["u_mean"]
     if scale:
         out = out / kappa_h(k128)[:, None, None]
+    if EQUIV:
+        out = out / kgeo(k128)[:, None, None]
     tgt = u128[:, ::s, ::s]
     e = ((out - tgt).reshape(len(out), -1).norm(dim=1) / tgt.reshape(len(tgt), -1).norm(dim=1)).cpu().numpy()
     return (e, out) if return_pred else e
@@ -96,6 +110,8 @@ def main(argv):
     val_npz = take(argv, "--val-npz", None)
     global LOGK
     LOGK = take(argv, "--log-kappa", False, is_bool=True)
+    global EQUIV
+    EQUIV = take(argv, "--scale-equiv", False, is_bool=True)
     if "--out-root" not in argv:
         argv += ["--out-root", str(ROOT / "results" / "stage4" / "runs")]
     if "--model" not in argv:
@@ -135,6 +151,8 @@ def main(argv):
         data.k_va, data.u_va = torch.tensor(z["kappa128"], device=dev), torch.tensor(z["u128"], device=dev)
     if scale:
         data.u_tr = data.u_tr * kappa_h(data.k_tr)[:, None, None]
+    if EQUIV:
+        data.u_tr = data.u_tr * kgeo(data.k_tr)[:, None, None]
     import types
     stats = T.make_stats(types.SimpleNamespace(k_tr=kin(data.k_tr), u_tr=data.u_tr), a.res)
 
@@ -182,7 +200,7 @@ def main(argv):
     hard = (area_hi(data.k_te[:, ::2, ::2]) < HARD).cpu().numpy()
     res = {"spec": vars(a), "arch": arch, "target_scale": "kappa_h" if scale else "none", "extra": extra, "n_extra": n_extra,
            "multires": multires, "train_npz": Path(train_npz).name if train_npz else None, "train_mode": train_mode if train_npz else None,
-           "val_npz": Path(val_npz).name if val_npz else None, "log_kappa": LOGK, "params": n_params, "gpu": torch.cuda.get_device_name(0) if dev.type == "cuda" else "cpu",
+           "val_npz": Path(val_npz).name if val_npz else None, "log_kappa": LOGK, "scale_equiv": EQUIV, "params": n_params, "gpu": torch.cuda.get_device_name(0) if dev.type == "cuda" else "cpu",
            "train_time_s": train_time, "best_step": best["step"], "best_val": best["val"],
            "test_mean": float(te.mean()), "test_median": float(np.median(te)), "test_per_sample": te.tolist(),
            "n_hard_test": int(hard.sum()), "test_hard": float(te[hard].mean()), "test_rest": float(te[~hard].mean())}

@@ -64,6 +64,8 @@ SETS = {                                                      # name: (generator
     "rough":       ({"tau": 7.0}, "shorter correlation length (tau = 7)"),
     "smooth":      ({"tau": 1.75}, "longer correlation length (tau = 1.75)"),
     "three_phase": ({"mid": (-0.4, 0.4, 0.4)}, "three phases (0.1 / 0.4 / 1.0)"),
+    "scaled_up":   ({"lo": 1.0, "hi": 10.0}, "both values x10 (1 / 10): same contrast, higher level"),
+    "scaled_down": ({"lo": 0.01, "hi": 0.1}, "both values x0.1 (0.01 / 0.1): same contrast, lower level"),
 }
 
 
@@ -72,7 +74,7 @@ def make(name, n_maps=200, seed=7):
     p = {**ID, **ch}
     rng = np.random.default_rng(seed)
     f = grf(n_maps, p["tau"], p["alpha"], rng)
-    kap = threshold(f, p.get("t", 0.0), lo=p.get("lo", 0.1), mid=p.get("mid"))
+    kap = threshold(f, p.get("t", 0.0), lo=p.get("lo", 0.1), hi=p.get("hi", 1.0), mid=p.get("mid"))
     cal = json.load(open(ROOT / "results" / "stage3" / "solver_vs_gt.json"))["per_N"]["128"]
     u = np.stack([S.solve(k, method="direct", face=cal["face"], bc=cal["bc"]) for k in kap]).astype(np.float32)
     return kap, u
@@ -107,7 +109,8 @@ if __name__ == "__main__":
                 print(f"tau {tau} alpha {alpha}:", stats(kap))
     if "--build" in sys.argv:
         OUT.mkdir(parents=True, exist_ok=True)
-        for name in SETS:
+        only = [a.split("=", 1)[1] for a in sys.argv if a.startswith("--only=")]
+        for name in (only[0].split(",") if only else SETS):
             t0 = time.time()
             kap, u = make(name)
             np.savez_compressed(OUT / f"{name}.npz", kappa128=kap, u128=u)
